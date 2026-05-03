@@ -225,19 +225,33 @@ import os
 
 def load_cloud_finops_skill(skill_dir: str) -> str:
     skill_md = open(f"{skill_dir}/SKILL.md").read()
-    references = []
+    sections = []
+
+    # References (long-form provider / capability files)
     ref_dir = f"{skill_dir}/references"
     for filename in sorted(os.listdir(ref_dir)):
         if filename.endswith(".md"):
             content = open(f"{ref_dir}/{filename}").read()
-            references.append(f"## {filename}\n\n{content}")
-    return skill_md + "\n\n---\n\n" + "\n\n---\n\n".join(references)
+            sections.append(f"## references/{filename}\n\n{content}")
+
+    # Playbooks (named-pattern runbooks - SKILL.md routes named waste
+    # patterns to playbooks/<slug>.md, so they must be loaded too)
+    pb_dir = f"{skill_dir}/playbooks"
+    if os.path.isdir(pb_dir):
+        for filename in sorted(os.listdir(pb_dir)):
+            if filename.endswith(".md") and filename != "README.md":
+                content = open(f"{pb_dir}/{filename}").read()
+                sections.append(f"## playbooks/{filename}\n\n{content}")
+
+    return skill_md + "\n\n---\n\n" + "\n\n---\n\n".join(sections)
 
 system_prompt = load_cloud_finops_skill("./cloud-finops")
 ```
 
 For token efficiency, load only the references relevant to your use case. For most
 single-domain queries, one reference file plus `optimnow-methodology.md` is sufficient.
+The playbooks layer is small (~3 KB each) so loading the full set is usually cheap;
+drop it only if your token budget is very tight.
 
 ### Recommended response contract
 
