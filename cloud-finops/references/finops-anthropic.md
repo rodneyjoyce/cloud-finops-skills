@@ -285,6 +285,4 @@ for premium modes and managed services - is reusable across the GenAI vendor lan
 
 ---
 
----
-
 > *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

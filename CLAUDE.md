@@ -13,11 +13,14 @@ Claude, GPT, Gemini, or any MCP-compatible agent.
 - **SKILL.md** - entry point for Claude Code and generic agents
 - **POWER.md** - entry point for Kiro IDE (same references, different format)
 - **references/** - domain-specific content files (billing mechanics, pricing, optimisation patterns)
-- **INSTALLATION.md** - 6 setup options including a model-agnostic response contract for non-Claude models
+- **INSTALLATION.md** - one cross-tool installer covering 11 tool integrations, plus
+  a model-agnostic response contract (system-prompt-injection section) for non-Claude
+  models
 
 Both entry points route to the same reference files. No content is duplicated.
-The response contract in INSTALLATION.md (Option 6) ensures structured, billing-grounded
-answers across all models, even when model defaults differ.
+The response contract in INSTALLATION.md (the "API integration" section) ensures
+structured, billing-grounded answers across all models, even when model defaults
+differ.
 
 ---
 
@@ -27,7 +30,7 @@ answers across all models, even when model defaults differ.
 cloud-finops-skills/
 ├── CLAUDE.md              <- You are here
 ├── README.md              <- Public-facing documentation
-├── INSTALLATION.md        <- Setup instructions (6 options) + response contract
+├── INSTALLATION.md        <- Setup instructions (11 tool integrations) + response contract
 ├── LICENSE.md             <- CC BY-SA 4.0
 ├── install.sh             <- One-liner installer script
 ├── assets/                <- Screenshots for installation guide
@@ -86,6 +89,59 @@ and not part of the public distribution.
 The pipeline is human-in-the-loop: nothing is changed automatically. Every proposed
 update goes through review (list, preview diffs, approve/reject) before touching any
 reference file. See `pipeline/README.md` for the full workflow.
+
+---
+
+## Lessons learned
+
+### Pipeline applier truncated 8 reference files (April-May 2026)
+
+The bi-monthly pipeline `applier/` truncated 8 reference files across two runs:
+- PR #8 (commit 647a7ef, 15 April 2026) damaged finops-azure.md (later restored
+  by commit dfab33b) and introduced the trailing-`> Sources` truncation in
+  finops-itam.md and finops-sam.md
+- "Content update - 1 May 2026" (commit 3e64f59) made 130 insertions / 5566
+  deletions across 6 files - aws, azure, gcp, framework, ai-dev-tools, for-ai -
+  in what was supposed to be an additive content update
+
+The recovery (May 2026) restored each file from a pre-truncation commit and
+re-injected the few real additions identified in the diffs.
+
+**What we learned:**
+- LLM-generated diffs on long files (>1500 lines) can hallucinate truncation,
+  produce diffs whose "after" state is shorter than the "before"
+- A "Content update" that removes thousands of lines is a regression by
+  construction, not a content choice. Aggregate stats (lines_added vs
+  lines_removed) catch this faster than line-by-line review
+- Without a footer-presence check, a truncated file looks valid in a `git diff`
+  review (the diff stops where the file stops) - the only signal is the missing
+  footer at the end
+- The previous recovery (PR #8 -> commit dfab33b) fixed the symptom without
+  fixing the pipeline, so the same failure mode recurred 16 days later
+
+**Guard rails added:**
+- `applier/` rejects any diff whose net change is < -20% of the file's line count
+- `applier/` post-apply check requires the OptimNow footer line to be present;
+  fail the commit otherwise
+- `applier/` snapshots every reference file to `cloud-finops/references/.backups/`
+  with a timestamp before each apply run
+- The pipeline is frozen (`pipeline/run_apply.py.FROZEN`) until these guard rails
+  are validated against a dry run on a sample of historical updates
+
+**Documentation drift correction:**
+The same recovery surfaced ~10 spots where doc had not kept pace with reference
+growth (AGENTS.md and llms.txt listed only 17 references when 28 existed; install.sh
+ChatGPT/Gemini routing missed the 6-7 newest domains; "6 setup options" appeared
+in 4 files when INSTALLATION.md had moved to 11 tools). The PR-checklist in this
+file now requires updating AGENTS.md, llms.txt, and the install.sh per-tool
+routing whenever a reference is added.
+
+### When in doubt, validate the baseline before comparing
+
+When asked to compare this skill to another repo, an agent that compares against
+the truncated state will conclude the other repo is more comprehensive than it
+really is. Always check that key reference files end with the OptimNow footer
+(and not mid-sentence) before drawing any coverage comparison.
 
 ---
 
@@ -282,6 +338,12 @@ Good test patterns:
 - [ ] Routing table updated in both SKILL.md and POWER.md
 - [ ] README directory listing and "What this skill covers" section updated
 - [ ] CLAUDE.md "Repository structure" directory listing updated
+- [ ] AGENTS.md and llms.txt updated to reflect the new reference (see "Lessons
+      learned" section for the documentation-drift correction)
+- [ ] install.sh per-tool routing updated: ChatGPT inline routing table, Gemini
+      grouped knowledge, and Cursor description must mention the new domain
+- [ ] File ends with the OptimNow footer (`> *Cloud FinOps Skill by [OptimNow]...
+      CC BY-SA 4.0...*`); no truncation mid-sentence or mid-table
 - [ ] Plugin version bumped in `.claude-plugin/plugin.json` (minor for user-visible feature)
 - [ ] Marketplace description in `.claude-plugin/marketplace.json` reflects the new
       reference file count and topic list

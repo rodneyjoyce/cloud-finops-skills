@@ -6,7 +6,7 @@ the conversion for every supported tool. Per-tool blocks below are copy-pasteabl
 
 ## Prerequisites
 
-- `git` (for clone / fetch — only required if running the installer remotely)
+- `git` (for clone / fetch - only required if running the installer remotely)
 - `bash` 4+ (macOS / Linux / WSL)
 - For the Claude Projects zip: `python3` or `zip`
 
@@ -72,8 +72,10 @@ Claude Code projects.
 Builds `dist/claude-projects/cloud-finops.zip`. Upload via Claude.ai or Claude Desktop:
 **Settings → Skills → Upload zip**.
 
-The release workflow also attaches the same zip to every GitHub release - you can grab
-it from https://github.com/OptimNow/cloud-finops-skills/releases.
+The release workflow also attaches a version-tagged build
+(`cloud-finops-vX.Y.Z.zip`) to every GitHub release - you can grab it from
+https://github.com/OptimNow/cloud-finops-skills/releases without running the
+installer locally.
 
 ### Cursor
 
@@ -105,9 +107,12 @@ Builds two artefacts in `dist/chatgpt/`:
 - `instructions.md` - target ≤ 8000 chars; the routing logic, reasoning sequence, and
   response contract that go into the GPT's Instructions field. The installer warns if
   the file exceeds the limit.
-- `knowledge/*.md` - 20 reference files for upload to the GPT's Knowledge section. The
-  21st reference (`optimnow-methodology.md`) is **merged into `finops-for-ai.md`** to
-  fit ChatGPT's 20-file cap; the methodology lens stays available via that file.
+- `knowledge/*.md` - one knowledge file per reference (currently 27, since
+  `optimnow-methodology.md` is **merged into `finops-for-ai.md`**). ChatGPT
+  historically capped Custom GPT Knowledge at 20 files. If your upload is
+  rejected, drop the references that are least relevant to your use case, or
+  switch to the Gemini-style grouped build (`./install.sh --tool gemini`) which
+  packs everything into 9 grouped files.
 
 Then manually:
 
@@ -128,8 +133,9 @@ retrieves chunks rather than loading the full skill into context.
 ```
 
 Builds `dist/gemini/instructions.md` (same content as ChatGPT) and
-`dist/gemini/knowledge/*.md` - references **grouped by domain** (aws, azure, gcp, ai,
-data-platforms, oci, cross-cutting, methodology) to fit Gemini Gems' tighter file cap.
+`dist/gemini/knowledge/*.md` - references **grouped by domain** (aws, azure, gcp,
+ai, data-platforms, oci, cross-cutting, finops-discipline, methodology - 9 files
+total) to fit Gemini Gems' tighter file cap.
 
 Manual upload at https://gemini.google.com/gems/. Same trade-off as ChatGPT applies.
 
@@ -301,9 +307,11 @@ already covers the major FinOps query types.
 the limit. If it does, manually trim the routing table to only the providers you care
 about, or upload the trimmed routing as a knowledge file and keep instructions minimal.
 
-**ChatGPT only allows 20 knowledge files:** the installer merges `optimnow-methodology.md`
-into `finops-for-ai.md` to fit. If you have other custom knowledge files you want to
-keep, drop one of the references manually instead.
+**ChatGPT rejects the knowledge upload (file count):** the build currently produces 27
+knowledge files (methodology merged into `finops-for-ai.md`). If ChatGPT enforces a
+lower cap, either drop the references least relevant to your use case, or use the
+Gemini-style grouped build (`./install.sh --tool gemini`) which packs the same content
+into 9 files.
 
 **Token budget exceeded on system-prompt injection:** load only the domain references
 relevant to your query. For most use cases, `SKILL.md` + 1-2 references is enough.

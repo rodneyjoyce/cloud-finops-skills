@@ -26,7 +26,7 @@ Snowflake does not bill for vCPUs or instance-hours directly. It bills in **Snow
 
 ### Compute and storage are architecturally separated
 
-Multiple virtual warehouses (VWH) can read the same storage simultaneously. This is a core Snowflake design principle, not a configuration option. The FinOps consequence: warehouse proliferation is structurally incentivized — teams create dedicated warehouses to simplify chargebacks, which produces a fleet of chronically underutilized warehouses. On AWS you oversize one instance; on Snowflake you oversize per warehouse, per team, per workload.
+Multiple virtual warehouses (VWH) can read the same storage simultaneously. This is a core Snowflake design principle, not a configuration option. The FinOps consequence: warehouse proliferation is structurally incentivized - teams create dedicated warehouses to simplify chargebacks, which produces a fleet of chronically underutilized warehouses. On AWS you oversize one instance; on Snowflake you oversize per warehouse, per team, per workload.
 
 ### 60-second billing minimum
 
@@ -46,13 +46,13 @@ These cost drivers do not appear in warehouse credit consumption and are frequen
 
 ### Commitment model vs. IaaS reserved capacity
 
-AWS Savings Plans and Reserved Instances commit to a compute capacity type and apply automatically against usage. Snowflake's equivalent is **pre-purchased credits** — you buy a credit pool at a volume discount. If you over-estimate consumption, unused credits are lost. There is no equivalent to a Compute Savings Plan that flexibly covers all compute workloads. Commitment sizing must be based on realistic historical consumption, not aspirational usage.
+AWS Savings Plans and Reserved Instances commit to a compute capacity type and apply automatically against usage. Snowflake's equivalent is **pre-purchased credits** - you buy a credit pool at a volume discount. If you over-estimate consumption, unused credits are lost. There is no equivalent to a Compute Savings Plan that flexibly covers all compute workloads. Commitment sizing must be based on realistic historical consumption, not aspirational usage.
 
 ### Cost attribution: roles and query logs, not tags
 
 On AWS, cost allocation relies primarily on resource tags feeding into CUR. Snowflake supports Object Tagging, but the practical attribution model is different:
 
-- **Virtual warehouses** are the primary cost boundary — who uses which warehouse defines the cost center split
+- **Virtual warehouses** are the primary cost boundary - who uses which warehouse defines the cost center split
 - **ACCOUNT_USAGE.QUERY_HISTORY** is the primary data source for tracing which user, role, or BI tool consumed what
 - **Resource Monitors** are the governance mechanism for setting credit budgets per warehouse
 
@@ -77,7 +77,7 @@ FinOps practitioners coming from AWS instinctively look for tags. On Snowflake, 
 4. What is the Time Travel retention period per table or schema?
 5. Is Snowpipe ingesting small files at high frequency?
 6. Are there pre-purchased credits, and what is the burn rate vs. the commitment expiry?
-7. How is cost attributed today — by warehouse, by role, or not at all?
+7. How is cost attributed today - by warehouse, by role, or not at all?
 
 ---
 
@@ -313,6 +313,4 @@ Organizations may experience unnecessary Snowflake spend due to inefficient quer
 
 ---
 
----
-
-> *Cloud FinOps Skill by [OptimNow](https://optimnow.io)  - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

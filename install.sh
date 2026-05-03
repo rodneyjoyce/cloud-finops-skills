@@ -112,16 +112,26 @@ do_write() {
   $content_fn > "$target"
 }
 
-# Idempotent directory copy with dry-run support
+# Idempotent directory copy with dry-run support.
+# Excludes local-only artefacts that may exist in the maintainer's worktree:
+#   .claude/         - local Claude Code settings
+#   .backups/        - pipeline backups (cloud-finops/references/.backups/)
+#   .git/            - if SRC happens to be a git repo
 do_copy_dir() {
   local src="$1" dest="$2"
   if [[ -n "$DRY_RUN" ]]; then
-    info "DRY-RUN would copy: $src -> $dest"
+    info "DRY-RUN would copy: $src -> $dest (excluding .claude, .backups, .git)"
     return
   fi
   mkdir -p "$(dirname "$dest")"
   rm -rf "$dest"
-  cp -r "$src" "$dest"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --exclude='.claude' --exclude='.backups' --exclude='.git' "$src/" "$dest/"
+  else
+    cp -r "$src" "$dest"
+    rm -rf "$dest/.claude" "$dest/.git" 2>/dev/null || true
+    find "$dest" -type d -name '.backups' -exec rm -rf {} + 2>/dev/null || true
+  fi
 }
 
 # ---- detection ----
@@ -163,10 +173,8 @@ install_claude_code() {
     target="$DEST_OVERRIDE/$SKILL_NAME"
   elif [[ -n "$USER_LEVEL" ]]; then
     target="$HOME/.claude/skills/$SKILL_NAME"
-  elif [[ -d ".claude" ]]; then
-    target="$PWD/.claude/skills/$SKILL_NAME"
   else
-    target="$PWD/$SKILL_NAME"
+    target="$PWD/.claude/skills/$SKILL_NAME"
   fi
   do_copy_dir "$SRC_DIR/cloud-finops" "$target"
   ok "Claude Code: skill copied -> $target"
@@ -185,7 +193,7 @@ install_claude_projects() {
 import os, sys, zipfile
 src_dir, out_zip = sys.argv[1], sys.argv[2]
 src_root = os.path.dirname(os.path.abspath(src_dir))
-EXCLUDE = {".claude"}
+EXCLUDE = {".claude", ".backups", ".git"}
 with zipfile.ZipFile(out_zip, 'w', zipfile.ZIP_DEFLATED) as z:
     for root, dirs, files in os.walk(src_dir):
         dirs[:] = [d for d in dirs if d not in EXCLUDE]
@@ -195,7 +203,10 @@ with zipfile.ZipFile(out_zip, 'w', zipfile.ZIP_DEFLATED) as z:
             z.write(full, arcname)
 PYEOF
   elif command -v zip >/dev/null 2>&1; then
-    (cd "$SRC_DIR" && zip -r -q "$outdir/cloud-finops.zip" cloud-finops -x 'cloud-finops/.claude/*')
+    (cd "$SRC_DIR" && zip -r -q "$outdir/cloud-finops.zip" cloud-finops \
+      -x 'cloud-finops/.claude/*' \
+      -x 'cloud-finops/**/.backups/*' \
+      -x 'cloud-finops/.git/*')
   else
     err "Neither python3 nor zip found. Cannot build claude-projects zip."
     return 1
@@ -214,7 +225,7 @@ install_cursor() {
 build_cursor_rule() {
   cat <<'EOF'
 ---
-description: Expert FinOps guidance for cloud, AI, SaaS, and data-platform spend (multi-provider, model-agnostic). Use for cost questions on AWS, Azure, GCP, Anthropic, Bedrock, Vertex AI, Azure OpenAI, Databricks, Microsoft Fabric, Snowflake, OCI, AI coding tools, GreenOps, FinOps Framework, SaaS asset management, ITAM.
+description: Expert FinOps guidance for cloud, AI, SaaS, and data-platform spend (multi-provider, model-agnostic). Use for cost questions on AWS, Azure, GCP, Anthropic, Bedrock, Vertex AI, Azure OpenAI, Databricks, Microsoft Fabric, Snowflake, OCI, AI coding tools, self-hosted vs managed AI inference, GenAI capacity planning, AI value management, GreenOps, FinOps Framework, SaaS asset management, ITAM, anomaly management, allocation and showback, chargeback, onboarding workloads, Kubernetes FinOps, waste detection.
 globs:
   - "**/*"
 alwaysApply: false
@@ -288,11 +299,16 @@ install_chatgpt() {
   if [[ $size -gt 8000 ]]; then
     warn "Instructions exceed ChatGPT's ~8000 char limit ($size chars). Manual trim needed."
   fi
+  if [[ $file_count -gt 20 ]]; then
+    warn "ChatGPT historically capped Custom GPT Knowledge at 20 files. Current build is $file_count files."
+    dim "  If your upload is rejected, drop the least relevant references for your use case,"
+    dim "  or use the Gemini-style grouped build instead (./install.sh --tool gemini)."
+  fi
   dim "  Manual upload steps:"
   dim "    1. Open https://chatgpt.com/gpts/editor"
   dim "    2. Paste $instructions_path into the Instructions field"
   dim "    3. Upload all files from $knowledge_dir/ to Knowledge"
-  dim "    4. Note: methodology is merged into finops-for-ai.md to fit ChatGPT's 20-file cap"
+  dim "    4. Note: methodology is merged into finops-for-ai.md to keep file count down"
 }
 
 build_chatgpt_instructions() {
@@ -319,6 +335,7 @@ Use these knowledge files for the following query types:
 | AI cost management, LLM economics, agentic patterns, ROI, methodology lens | finops-for-ai.md |
 | AI investment governance, Investment Council, stage gates | finops-ai-value-management.md |
 | GenAI capacity planning, provisioned vs shared, spillover | finops-genai-capacity.md |
+| Self-hosted vs managed AI inference, build-vs-buy LLM, vLLM, GPU rental, hidden cost surface | finops-ai-self-hosted-vs-managed.md |
 | AI coding tools (Cursor, Copilot, Claude Code, Codex, Windsurf, Gemini Code Assist) | finops-ai-dev-tools.md |
 | Databricks (system.billing.usage, DBCU, allocation, Photon) | finops-databricks.md |
 | Microsoft Fabric (F-SKUs, CU smoothing, pause/resume, governance trap) | finops-fabric.md |
@@ -326,9 +343,15 @@ Use these knowledge files for the following query types:
 | OCI (Cost Reports, FOCUS, cost-tracking tags, Universal Credits) | finops-oci.md |
 | FinOps Framework (4 domains 2024 + Executive Strategy Alignment 2026) | finops-framework.md |
 | Tagging strategy, naming conventions, IaC enforcement | finops-tagging.md |
-| SaaS management, license optimisation, shadow IT | finops-sam.md |
+| SaaS management, licence optimisation, shadow IT | finops-sam.md |
 | ITAM, BYOL, marketplace governance | finops-itam.md |
 | GreenOps, cloud carbon, sustainability | greenops-cloud-carbon.md |
+| Cost anomaly management, masked anomalies, layered detection, threshold tuning | finops-anomaly-management.md |
+| Cost allocation methodology and showback, FOCUS EffectiveCost vs BilledCost, defensible allocation keys, shared-services hard cases | finops-allocation-showback.md |
+| Chargeback, soft-to-hard maturity, Finance and accounting prerequisites (ERP, transfer pricing, cross-border tax, SOX), chargeback-revolt anti-pattern | finops-chargeback.md |
+| Onboarding workloads, migration-time cost hygiene, intake gate, 60-90 day forecast-then-commit rule, double-bubble cost, M&A integration | finops-onboarding-workloads.md |
+| Kubernetes FinOps (EKS / GKE / AKS), OpenCost / Kubecost, FOCUS-emitting K8s allocation, container rightsizing, Karpenter, Spot diversification | finops-kubernetes.md |
+| Waste detection playbooks, seven-category waste taxonomy, two-signal classification, WasteLine appliance | finops-waste-detection-playbooks.md |
 
 For multi-domain queries, retrieve all relevant files and synthesise.
 
@@ -394,11 +417,14 @@ build_gemini_grouped_knowledge() {
   cat "$refs/finops-gcp.md" "$refs/finops-vertexai.md" 2>/dev/null > "$outdir/gcp.md"
   cat "$refs/finops-for-ai.md" "$refs/finops-anthropic.md" "$refs/finops-ai-dev-tools.md" \
       "$refs/finops-genai-capacity.md" "$refs/finops-ai-value-management.md" \
-      ${refs}/finops-ai-self-hosted-vs-managed.md 2>/dev/null > "$outdir/ai.md"
+      "$refs/finops-ai-self-hosted-vs-managed.md" 2>/dev/null > "$outdir/ai.md"
   cat "$refs/finops-databricks.md" "$refs/finops-fabric.md" "$refs/finops-snowflake.md" 2>/dev/null > "$outdir/data-platforms.md"
   [[ -f "$refs/finops-oci.md" ]] && cp "$refs/finops-oci.md" "$outdir/oci.md"
   cat "$refs/finops-framework.md" "$refs/finops-tagging.md" "$refs/finops-sam.md" \
-      "$refs/finops-itam.md" "$refs/greenops-cloud-carbon.md" 2>/dev/null > "$outdir/cross-cutting.md"
+      "$refs/finops-itam.md" "$refs/greenops-cloud-carbon.md" \
+      "$refs/finops-kubernetes.md" "$refs/finops-waste-detection-playbooks.md" 2>/dev/null > "$outdir/cross-cutting.md"
+  cat "$refs/finops-anomaly-management.md" "$refs/finops-allocation-showback.md" \
+      "$refs/finops-chargeback.md" "$refs/finops-onboarding-workloads.md" 2>/dev/null > "$outdir/finops-discipline.md"
   [[ -f "$refs/optimnow-methodology.md" ]] && cp "$refs/optimnow-methodology.md" "$outdir/methodology.md"
 }
 

@@ -83,21 +83,16 @@ in detail provides a template for evaluating any seat + usage tool.
 
 ### Pricing model
 
-Cursor restructured its pricing in early 2026, moving from the older Pro / Business
-two-tier layout to a four-tier individual + team structure. As of April 2026 the
-canonical tiers are **Pro**, **Ultra**, **Teams**, and **Enterprise**:
+Cursor has two cost layers: a fixed subscription and variable usage-based token charges.
 
-| Plan | Tier focus | Notes |
-|---|---|---|
-| Hobby (free) | Trial | Limited requests and completions |
-| Pro | Individual | Includes a request allotment plus usage-based pricing after limits; some current marketing wording emphasises "unlimited agent requests" within fair-use bounds |
-| Ultra | Heavy individual | Larger request allotment, designed for full-time agentic use |
-| Teams | Team | Per-seat pricing, centralised billing, admin analytics, request allotment per seat with usage-based pricing on top |
-| Enterprise | Org | Custom contract, SSO, compliance, procurement-friendly billing |
+| Plan | Seat cost | Included usage | Overage billing |
+|---|---|---|---|
+| Hobby (free) | $0 | Limited requests and completions | Not available |
+| Pro | $20/month | $20 in usage credits | Per token at model rates |
+| Business | $40/seat/month | $20 in usage credits per seat | Per token at model rates |
+| Enterprise | Custom | Custom | Custom |
 
-**Verify live dollar amounts** against the official pricing page before quoting -
-Cursor has shipped multiple pricing changes in the past 12 months and absolute
-numbers move. Sources: https://www.cursor.com/en/pricing, https://docs.cursor.com/en/account/teams/pricing
+Annual billing on Pro reduces the seat cost to ~$16/month.
 
 ### Token rate variability
 
@@ -204,9 +199,16 @@ Codex is OpenAI's coding agent, available through ChatGPT and as a CLI tool.
 at no extra per-token charge. ChatGPT Plus at $20/month is the cheapest access path.
 
 **API key mode:** when switched to API key mode, Codex bills per token at standard OpenAI
-API rates. As of March 2026, OpenAI's API pricing structure includes:
+API rates:
 
 | Model | Input ($/MTok) | Output ($/MTok) |
+|---|---|---|
+| codex-mini-latest | $1.50 | $6.00 |
+| GPT-5 | $1.25 | $10.00 |
+
+API rates. As of March 2026, OpenAI's API pricing structure includes:
+
+| Model | Input ($/1M tokens) | Output ($/1M tokens) |
 |---|---|---|
 | GPT-4o | $2.50 | $10.00 |
 | GPT-4o mini | $0.15 | $0.60 |
@@ -217,12 +219,16 @@ API rates. As of March 2026, OpenAI's API pricing structure includes:
 current rates for GPT-5.5 and other models against the live pricing page before capacity
 planning.
 
+Sources: https://www.finout.io/blog/openai-pricing-in-2026,
+https://openai.com/index/introducing-gpt-5-5/,
+https://help.openai.com/en/articles/20001106,
+https://openai.com/api/pricing/
+
 OpenAI claims Codex CLI is approximately 4x more token-efficient than Claude Code, meaning
 the same budget covers more work. This claim should be validated against your own workloads
-before using it for capacity planning - the comparison is sensitive to which models the
-two tools route to and how each handles context.
-
-Sources: https://www.finout.io/blog/openai-pricing-in-2026, https://openai.com/index/introducing-gpt-5-5/, https://help.openai.com/en/articles/20001106, https://openai.com/api/pricing/
+before using it for capacity planning. Note that OpenAI's model naming evolves frequently
+(e.g. GPT-5.4, GPT-5.3-Codex, GPT-5.1-Codex-Mini) - verify current model names and rates
+against the OpenAI pricing page.
 
 ### Cost tracking
 
@@ -239,11 +245,6 @@ billing.
 
 ### GitHub Copilot
 
-GitHub Copilot is in the middle of a billing model transition. Plan accordingly when
-quoting in customer engagements.
-
-**Current model (until 31 May 2026) - premium-request billing:**
-
 | Plan | Seat cost | Notes |
 |---|---|---|
 | Free | $0 | Limited completions |
@@ -252,27 +253,10 @@ quoting in customer engagements.
 | Business | $19/seat/month | Admin controls, audit logs, IP indemnity |
 | Enterprise | $39/seat/month | Requires GH Enterprise Cloud ($21/seat/month extra) |
 
-Overage at $0.04 per premium request beyond the monthly allocation. Enterprise total
-cost of ownership is $60/seat/month including the required GitHub Enterprise Cloud
-subscription - a detail that often surprises procurement.
+Overage charges apply at $0.04 per premium request beyond the monthly allocation.
 
-**New model (from 1 June 2026) - usage-based billing with GitHub AI Credits:**
-
-GitHub announced on 27 April 2026 that Copilot is moving to **usage-based billing
-with GitHub AI Credits** starting **1 June 2026**, replacing the premium-request
-model. Subscription tiers continue to exist; the metered layer changes from "premium
-requests" to AI Credits consumed against the included allowance with overage billing
-on top.
-
-**FinOps implications during transition:**
-- Forecasts built on the premium-request model break for usage from June onwards.
-  Re-baseline using post-1-June consumption, not pre-1-June extrapolation.
-- Customers with custom enterprise contracts may retain the premium-request model
-  longer - confirm per contract before assuming the new model applies.
-- Allocation logic that maps premium requests to teams must be replaced with
-  AI-Credit accounting.
-
-Sources: https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/, https://docs.github.com/copilot/concepts/billing/usage-based-billing-for-individuals, https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing
+Enterprise total cost of ownership is $60/seat/month when including the required GitHub
+Enterprise Cloud subscription - a detail that often surprises procurement.
 
 ### Windsurf
 
@@ -288,35 +272,6 @@ tiers:
 Windsurf uses a credit system where each credit costs $0.04 and maps to the underlying
 model provider's API price plus a 20% margin. Add-on credits are available at $10 for 250
 (individual) or $40 for 1,000 (Teams/Enterprise).
-
-### Gemini Code Assist
-
-Gemini Code Assist is Google's AI coding tool, distributed primarily via Google
-Cloud and Google Workspace channels rather than as a standalone subscription.
-Two distinct entitlement paths matter for FinOps:
-
-- **Bundled with Google Workspace / Google Cloud editions.** Some Workspace and
-  GCP editions include Gemini Code Assist in the seat licence. The marginal cost
-  of enabling it for already-licensed users is zero - which makes adoption
-  economics very different from the seat + usage model of Cursor or Copilot.
-- **Standalone subscription tiers** (Standard, Enterprise) for organisations
-  without bundling. Per-user monthly pricing; verify current rate against the
-  Google Cloud pricing page.
-
-**FinOps angle:**
-- For organisations already on a Workspace edition that includes Code Assist,
-  pay-per-seat tools (Cursor / Copilot) become harder to justify on cost alone -
-  the comparison is "Code Assist for $0 marginal cost" vs "Cursor at $X / month
-  per seat". Quality benchmarking still matters; cost is no longer the only
-  driver.
-- For BYOK comparisons, Gemini Code Assist's token consumption against your
-  Vertex AI quota is the relevant cost line - similar to how Claude Code on API
-  key mode bills against your Anthropic account. Apply the same cost-attribution
-  patterns documented for BYOK tools earlier in this file.
-- Gemini API context-caching pricing differs from token billing - see
-  `finops-vertexai.md` for Vertex AI Context Caching mechanics.
-
-Source: https://cloud.google.com/products/gemini/code-assist
 
 ---
 
@@ -334,4 +289,143 @@ Limitations: Enterprise tier often required, no native team grouping, no alertin
 
 **Third-party FinOps platforms**: tools like Vantage, CloudZero, or Finout support native
 Cursor integrations and can aggregate spend, create virtual team tags from developer
-emails, provide trending and alerting, and show
+emails, provide trending and alerting, and show AI dev tool costs alongside cloud
+infrastructure spend.
+
+**Manual spreadsheet**: pull Admin API data periodically, map developer emails to teams,
+build charts. Works for small teams. Does not scale.
+
+### For BYOK tools (Claude Code, Codex in API key mode)
+
+**API gateway / proxy (LiteLLM)**: this is the most powerful option. Route all API calls
+through a self-hosted LiteLLM proxy to:
+
+- Inject metadata at request level (team ID, project, feature, environment)
+- Set per-team or per-project budget caps with automatic enforcement
+- Track usage by any dimension you define
+- Get unified analytics across Claude Code, Codex, and any other tool using the same
+  API keys
+- LiteLLM auto-detects tool type via User-Agent header (Claude Code, Codex CLI, etc.)
+
+**Dedicated tracking tools**: ClaudeXray for Claude Code provides purpose-built cost
+visibility without requiring a proxy setup.
+
+**Provider console**: Anthropic Console and OpenAI Dashboard provide organisation-level
+billing data but limited per-developer or per-team granularity.
+
+### Attribution maturity model
+
+| Maturity | Approach | Granularity |
+|---|---|---|
+| Crawl | Invoice total, headcount-based allocation | Organisation-level |
+| Walk | Admin API or provider console, spreadsheet rollup | Developer-level |
+| Run | API gateway with metadata injection + third-party aggregation | Team / project / feature level |
+
+---
+
+## Optimisation levers
+
+### For seat + usage tools (Cursor, Copilot, Windsurf)
+
+**Model routing governance** - the single highest-impact lever. Ensure expensive reasoning
+models (Opus, GPT-5) are used for tasks that benefit from them, not for routine code
+completions. A team defaulting to the most capable model for every request will spend
+10-50x more than one using the auto-routing or budget models for standard work.
+
+**Max mode / premium mode governance** - make premium modes opt-in per task, not default-on
+organisation-wide. Max mode increases input token consumption on every request by using the
+full context window.
+
+**Plan tier right-sizing** - track the ratio of included usage to overage spend monthly.
+If overages consistently exceed the subscription cost, either upgrade the tier or
+investigate whether usage patterns can be adjusted. If included usage is consistently
+underconsumed, you may be over-provisioned on seats.
+
+**Seat hygiene** - audit active vs licensed seats quarterly. Offboard promptly. Identify
+developers who have not used the tool in 30+ days and reclaim seats.
+
+**Context window policies** - large context windows cost more in input tokens. Not every
+task requires the full codebase as context. Teams that scope context deliberately spend
+less per request.
+
+### For BYOK tools (Claude Code, Codex)
+
+**Model selection** - Sonnet 4.6 at $3/$15 per MTok vs Opus 4.6 at $5/$25 for Claude Code.
+codex-mini at $1.50/$6 vs GPT-5 at $1.25/$10 for Codex. Choose the model that matches the
+task complexity. Default to the more efficient model and escalate only when needed.
+
+**Prompt caching** (Anthropic) - cache reads cost 0.1x the base input price. Cache writes
+cost 1.25x (5-minute TTL) or 2x (1-hour TTL). For repetitive workflows with stable system
+prompts, caching provides significant savings. See `finops-anthropic.md` for the full
+mechanics.
+
+**Batch API** (Anthropic) - 50% discount on all token costs for asynchronous workloads.
+Not applicable to interactive coding sessions, but useful for batch code review, test
+generation, or codebase analysis tasks.
+
+**LiteLLM budget caps** - set hard or soft budget limits per team or project at the proxy
+level. Prevents runaway spend from a single developer or workflow.
+
+**Context window management** - for Anthropic specifically, crossing the 200K input token
+threshold reprices the entire request at premium rates. Monitor input token counts and
+configure alerts before the cliff.
+
+---
+
+## Cross-tool spend overlap
+
+Many engineering organisations use multiple AI coding tools simultaneously - for example,
+Cursor for IDE-based work and Claude Code for terminal-based agentic tasks, with some
+developers also using direct Anthropic or OpenAI API keys for custom scripts.
+
+This is not inherently wasteful. Different tools serve different workflows. But it
+becomes a cost problem when:
+
+- The same developer is paying for Cursor Business ($40/month) and a Claude Max 5x
+  subscription ($100/month) but only actively using one
+- Cursor is routing requests to Claude models while the team also pays for direct
+  Anthropic API usage for the same models
+- Multiple API keys exist across the organisation with no centralised tracking, creating
+  shadow AI spend
+
+### How to audit
+
+1. List all AI dev tool subscriptions (Cursor, Copilot, Windsurf seats) and API accounts
+   (Anthropic, OpenAI)
+2. Map developer overlap - which individuals appear in multiple billing streams
+3. Assess whether the overlap is intentional (different tools for different workflows) or
+   accidental (tool proliferation without governance)
+4. Consolidate API keys where possible and route through a single proxy for unified
+   visibility
+5. Establish a policy on which tools are sanctioned and for which use cases
+
+---
+
+## Pricing comparison (March 2026)
+
+| Tool | Type | Seat cost | Token / usage model | Enterprise option | Proxy-compatible |
+|---|---|---|---|---|---|
+| **Cursor** | Seat + usage | $20 (Pro) / $40 (Business) | $20 included credits + per-token overage | Yes (custom) | No (vendor-mediated) |
+| **Claude Code** | BYOK or subscription | $20 (Pro) / $100 (Max 5x) / $200 (Max 20x) | API key: $3-$25/MTok depending on model | Via Anthropic Enterprise | Yes (API key mode) |
+| **OpenAI Codex** | BYOK or subscription | $20 (ChatGPT Plus) and up | API key: $1.25-$10/MTok depending on model | Via OpenAI Enterprise | Yes (API key mode) |
+| **GitHub Copilot** | Seat + usage | $10 (Pro) / $19 (Business) / $39 (Enterprise) | $0.04/premium request overage | Yes ($60/seat total with GH Enterprise Cloud) | No (vendor-mediated) |
+| **Windsurf** | Seat + usage | $20-$200 (individual) / $40 (Teams) | Credit-based ($0.04/credit, provider cost + 20% margin) | Yes (custom) | No (vendor-mediated) |
+
+---
+
+## Diagnostic questions for a new engagement
+
+1. Which AI coding tools are in use across the organisation, and is adoption sanctioned or shadow IT?
+2. How many seats are active vs licensed? When was the last seat audit?
+3. For seat + usage tools: what is the ratio of included usage to overage spend?
+4. Are developers also using direct API keys (Anthropic, OpenAI) alongside IDE tools?
+5. Is there any cost attribution beyond the total invoice? Can you see spend by team?
+6. Are premium modes (max mode, Fast mode) governed or default-on?
+7. Is an API gateway or proxy in place for BYOK tools?
+8. What is the monthly cost per developer, and how does it compare to the productivity value delivered?
+
+---
+
+---
+
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

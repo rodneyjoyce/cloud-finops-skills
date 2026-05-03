@@ -24,7 +24,7 @@ fcp_maturity_entry: "Walk"
 
 ## Context and scale
 
-Data centers consumed approximately 415 TWh globally in 2024  - roughly 1.5% of world
+Data centers consumed approximately 415 TWh globally in 2024 - roughly 1.5% of world
 electricity. The IEA projects this could reach 945 TWh by 2030, driven primarily by AI
 workloads and cloud scale. Tech sector emissions already rival the aviation industry.
 
@@ -187,9 +187,9 @@ into internal tooling, showback reports, or FinOps platforms.
 
 GreenOps reuses FinOps infrastructure. The same tagging, showback, and governance
 patterns that surface cost waste also surface carbon waste. The marginal effort to
-layer carbon metrics onto a mature FinOps practice is surprisingly small  - the
+layer carbon metrics onto a mature FinOps practice is surprisingly small - the
 hardest infrastructure work has already been done. The practical starting point is
-adding one column  - gCO₂e  - to existing cost reports.
+adding one column - gCO₂e - to existing cost reports.
 
 **GreenOps maturity phases (mapped from FinOps):**
 
@@ -287,7 +287,7 @@ data into scheduling decisions.
 - Kepler integration enables per-application carbon tracking in Kubernetes (v1.4+)
 
 **Workload types suitable for shifting:**
-- ML model training (highest impact  - long-running, compute-intensive, not time-critical)
+- ML model training (highest impact - long-running, compute-intensive, not time-critical)
 - Batch data processing jobs
 - CI/CD pipeline builds
 - Database backups and maintenance windows
@@ -597,13 +597,13 @@ Cloud providers report their data center emissions under Scope 1 and 2.
 ### Reporting checklist
 
 - [ ] Determine which reporting standard applies (GHG Protocol, CSRD, SEC, or internal)
-- [ ] Decide on location-based vs. market-based methodology  - document the choice
+- [ ] Decide on location-based vs. market-based methodology - document the choice
 - [ ] Enable Scope 3 data in the AWS Sustainability Console (Methodology v3, October 2025, externally verified)
 - [ ] Use GCP's location-based and market-based views to understand the gap
 - [ ] Export monthly carbon data to a central data store alongside cost data
 - [ ] Assign a carbon data owner (typically the FinOps lead or sustainability team)
 - [ ] Do not rely solely on provider-supplied carbon data for external reporting without
-  independent verification  - provider tools use different methodologies
+  independent verification - provider tools use different methodologies
 
 ---
 
@@ -647,4 +647,4 @@ re-measure.
 
 ---
 
-> *Cloud FinOps Skill by [OptimNow](https://optimnow.io)  - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

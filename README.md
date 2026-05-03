@@ -36,8 +36,9 @@ This makes it portable: the same skill works with Claude, GPT, Gemini, or any
 MCP-compatible agent - with no changes to the files.
 
 To keep responses consistent across models, add a **response contract** to your
-system prompt (see `INSTALLATION.md`, Option 6). This ensures structured,
-billing-grounded answers even when model defaults differ.
+system prompt (see `INSTALLATION.md`, "API integration / Recommended response
+contract"). This ensures structured, billing-grounded answers even when model
+defaults differ.
 
 ---
 
@@ -389,7 +390,9 @@ For the web / desktop apps, the installer can build a clean upload zip:
 ```
 
 Then upload `dist/claude-projects/cloud-finops.zip` via Settings → Skills → Upload zip.
-The same zip is also attached to every [GitHub release](https://github.com/OptimNow/cloud-finops-skills/releases).
+A version-tagged build (`cloud-finops-vX.Y.Z.zip`) is also attached to every
+[GitHub release](https://github.com/OptimNow/cloud-finops-skills/releases) for
+users who prefer downloading over building locally.
 
 ---
 
