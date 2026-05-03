@@ -373,7 +373,7 @@ VM-based Committed Use Discounts in GCP offer cost savings for predictable workl
 
 - Consolidate workloads onto committed VM types where feasible
 - Avoid renewing commitments for workloads that are scaling down or migrating
-- Use Resource-based CUDs when architectural flexibility is needed
+- For workloads where architecture is still evolving, prefer Flexible / spend-based CUDs (Compute Engine Flex CUDs) over Resource-based CUDs - they trade a few percentage points of discount depth for the freedom to move across machine families and regions without stranding commitments. Resource-based CUDs are the right fit only when the workload, family, and region are genuinely stable for the full term.
 
 ---
 
