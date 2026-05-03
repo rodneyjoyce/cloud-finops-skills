@@ -111,8 +111,11 @@ Builds two artefacts in `dist/chatgpt/`:
   `optimnow-methodology.md` is **merged into `finops-for-ai.md`**). ChatGPT
   historically capped Custom GPT Knowledge at 20 files. If your upload is
   rejected, drop the references that are least relevant to your use case, or
-  switch to the Gemini-style grouped build (`./install.sh --tool gemini`) which
-  packs everything into 9 grouped files.
+  re-run the installer with the grouped flag:
+  `./install.sh --tool chatgpt --grouped`. The grouped build still writes to
+  `dist/chatgpt/` (so all the upload steps below still apply) but emits a
+  9-file thematic bundle with a routing contract that points at the grouped
+  filenames.
 
 Then manually:
 
@@ -307,11 +310,12 @@ already covers the major FinOps query types.
 the limit. If it does, manually trim the routing table to only the providers you care
 about, or upload the trimmed routing as a knowledge file and keep instructions minimal.
 
-**ChatGPT rejects the knowledge upload (file count):** the build currently produces 27
+**ChatGPT rejects the knowledge upload (file count):** the default build produces 27
 knowledge files (methodology merged into `finops-for-ai.md`). If ChatGPT enforces a
-lower cap, either drop the references least relevant to your use case, or use the
-Gemini-style grouped build (`./install.sh --tool gemini`) which packs the same content
-into 9 files.
+lower cap, either drop the references least relevant to your use case, or re-run with
+the grouped flag: `./install.sh --tool chatgpt --grouped`. The grouped build packs the
+same content into 9 thematic files in `dist/chatgpt/` and emits a matching routing
+contract.
 
 **Token budget exceeded on system-prompt injection:** load only the domain references
 relevant to your query. For most use cases, `SKILL.md` + 1-2 references is enough.

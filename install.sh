@@ -343,7 +343,7 @@ build_chatgpt_instructions() {
 
 You are an expert FinOps practitioner. Help users understand and optimise spend on cloud (AWS / Azure / GCP / OCI), AI platforms (Anthropic, Bedrock, Azure OpenAI / Foundry, Vertex AI), data platforms (Databricks, Microsoft Fabric, Snowflake), AI coding tools (Cursor, Claude Code, Copilot, Codex, Windsurf, Gemini Code Assist), SaaS, and cross-cutting concerns (tagging, FinOps Framework, GreenOps, ITAM).
 
-Your knowledge files contain accurate, current billing mechanics and optimisation patterns refreshed bi-monthly. Always retrieve relevant knowledge files before answering - do not rely on general training data for billing specifics.
+Your knowledge files contain accurate, current billing mechanics and optimisation patterns refreshed twice a month (around the 1st and the 15th). Always retrieve relevant knowledge files before answering - do not rely on general training data for billing specifics.
 
 ## Domain routing
 
@@ -417,7 +417,7 @@ build_grouped_instructions() {
 
 You are an expert FinOps practitioner. Help users understand and optimise spend on cloud (AWS / Azure / GCP / OCI), AI platforms (Anthropic, Bedrock, Azure OpenAI / Foundry, Vertex AI), data platforms (Databricks, Microsoft Fabric, Snowflake), AI coding tools (Cursor, Claude Code, Copilot, Codex, Windsurf, Gemini Code Assist), SaaS, and cross-cutting concerns (tagging, FinOps Framework, GreenOps, ITAM, anomaly management, allocation/showback, chargeback, onboarding, Kubernetes, waste detection).
 
-Your knowledge files are grouped thematically. Always retrieve the relevant grouped file before answering - do not rely on general training data for billing specifics.
+Your knowledge files are grouped thematically and refreshed twice a month (around the 1st and the 15th). Always retrieve the relevant grouped file before answering - do not rely on general training data for billing specifics.
 
 ## Domain routing (grouped layout)
 
@@ -499,20 +499,47 @@ install_gemini() {
 build_gemini_grouped_knowledge() {
   local outdir="$1"
   local refs="$SRC_DIR/cloud-finops/references"
-  cat "$refs/finops-aws.md" "$refs/finops-bedrock.md" 2>/dev/null > "$outdir/aws.md"
-  cat "$refs/finops-azure.md" "$refs/finops-azure-openai.md" 2>/dev/null > "$outdir/azure.md"
-  cat "$refs/finops-gcp.md" "$refs/finops-vertexai.md" 2>/dev/null > "$outdir/gcp.md"
-  cat "$refs/finops-for-ai.md" "$refs/finops-anthropic.md" "$refs/finops-ai-dev-tools.md" \
-      "$refs/finops-genai-capacity.md" "$refs/finops-ai-value-management.md" \
-      "$refs/finops-ai-self-hosted-vs-managed.md" 2>/dev/null > "$outdir/ai.md"
-  cat "$refs/finops-databricks.md" "$refs/finops-fabric.md" "$refs/finops-snowflake.md" 2>/dev/null > "$outdir/data-platforms.md"
-  [[ -f "$refs/finops-oci.md" ]] && cp "$refs/finops-oci.md" "$outdir/oci.md"
-  cat "$refs/finops-framework.md" "$refs/finops-tagging.md" "$refs/finops-sam.md" \
-      "$refs/finops-itam.md" "$refs/greenops-cloud-carbon.md" \
-      "$refs/finops-kubernetes.md" "$refs/finops-waste-detection-playbooks.md" 2>/dev/null > "$outdir/cross-cutting.md"
-  cat "$refs/finops-anomaly-management.md" "$refs/finops-allocation-showback.md" \
-      "$refs/finops-chargeback.md" "$refs/finops-onboarding-workloads.md" 2>/dev/null > "$outdir/finops-discipline.md"
-  [[ -f "$refs/optimnow-methodology.md" ]] && cp "$refs/optimnow-methodology.md" "$outdir/methodology.md"
+
+  # cat_required <output> <input1> [<input2> ...]
+  # Concatenates the inputs into the output. Fails loudly if any input is
+  # missing - silent omission would let a renamed reference disappear from a
+  # grouped artefact without the maintainer noticing, defeating the purpose
+  # of the grouped build as a fallback path for capped uploads.
+  cat_required() {
+    local out="$1"; shift
+    local f
+    for f in "$@"; do
+      if [[ ! -f "$f" ]]; then
+        err "build_gemini_grouped_knowledge: missing input '$f' for $(basename "$out")"
+        return 1
+      fi
+    done
+    cat "$@" > "$out"
+  }
+
+  cat_required "$outdir/aws.md" \
+    "$refs/finops-aws.md" "$refs/finops-bedrock.md"
+  cat_required "$outdir/azure.md" \
+    "$refs/finops-azure.md" "$refs/finops-azure-openai.md"
+  cat_required "$outdir/gcp.md" \
+    "$refs/finops-gcp.md" "$refs/finops-vertexai.md"
+  cat_required "$outdir/ai.md" \
+    "$refs/finops-for-ai.md" "$refs/finops-anthropic.md" "$refs/finops-ai-dev-tools.md" \
+    "$refs/finops-genai-capacity.md" "$refs/finops-ai-value-management.md" \
+    "$refs/finops-ai-self-hosted-vs-managed.md"
+  cat_required "$outdir/data-platforms.md" \
+    "$refs/finops-databricks.md" "$refs/finops-fabric.md" "$refs/finops-snowflake.md"
+  cat_required "$outdir/oci.md" \
+    "$refs/finops-oci.md"
+  cat_required "$outdir/cross-cutting.md" \
+    "$refs/finops-framework.md" "$refs/finops-tagging.md" "$refs/finops-sam.md" \
+    "$refs/finops-itam.md" "$refs/greenops-cloud-carbon.md" \
+    "$refs/finops-kubernetes.md" "$refs/finops-waste-detection-playbooks.md"
+  cat_required "$outdir/finops-discipline.md" \
+    "$refs/finops-anomaly-management.md" "$refs/finops-allocation-showback.md" \
+    "$refs/finops-chargeback.md" "$refs/finops-onboarding-workloads.md"
+  cat_required "$outdir/methodology.md" \
+    "$refs/optimnow-methodology.md"
 }
 
 install_gemini_cli() {

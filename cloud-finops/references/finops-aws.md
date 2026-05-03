@@ -1217,7 +1217,7 @@ Some Lambda functions perform synchronous calls to other services, APIs, or inte
 **Idle Ecs Container Instances Due To Asg Minimum Capacity**
 Service: AWS ECS | Type: Inefficient Configuration
 
-When ECS clusters are configured with an Auto Scaling Group that maintains a minimum number of EC2 instances (e.g., min = 1 or higher), the instances remain active even when there are no tasks scheduled. This leads to idle compute capacity and unnecessary EC2 charges.Instead, ECS Capacity Providers support target tracking scaling policies that can scale the ASG to zero when idle and automatically increase capacity when new tasks or services are scheduled.
+When ECS clusters are configured with an Auto Scaling Group that maintains a minimum number of EC2 instances (e.g., min = 1 or higher), the instances remain active even when there are no tasks scheduled. This leads to idle compute capacity and unnecessary EC2 charges. Instead, ECS Capacity Providers support target tracking scaling policies that can scale the ASG to zero when idle and automatically increase capacity when new tasks or services are scheduled.
 
 - Configure an ECS Capacity Provider for the cluster and attach a target tracking scaling policy
 - Set the ASG minimum capacity to 0 to allow scale-down during idle periods
@@ -1271,7 +1271,7 @@ When the EC2 instance types used for EKS node groups have a memory-to-CPU ratio 
 **Inefficient Workflow Design In Aws Step Functions**
 Service: AWS Step Functions | Type: Misconfiguration
 
-Improper design choices in AWS Step Functions can lead to unnecessary charges. For example: * Using Standard Workflows for short-lived, high-frequency executions leads to excessive per-transition charges.
+Improper design choices in AWS Step Functions can lead to unnecessary charges. For example, using Standard Workflows for short-lived, high-frequency executions leads to excessive per-transition charges, while complex workflows with many state transitions multiply per-transition cost across the lifetime of the application.
 
 - Choose Express workflows for short-lived, high-volume executions
 - Use Standard workflows for long-running, infrequent executions
@@ -2223,7 +2223,7 @@ Many workloads default to using Redis or Memcached without evaluating whether a 
 **Non Graviton Elasticache Node On Eligible Workload**
 Service: AWS ElastiCache | Type: Suboptimal Instance Family Selection
 
-Many Redis and Memcached clusters still use legacy x86-based node types (e.g., cache.r5, cache.m5) even though Graviton-based alternatives are available. In-memory workloads tend to be highly compatible with Graviton due to their simplicity and reliance on standard CPU and memory usage patterns.Unless constrained by architecture-specific extensions or strict compliance requirements, most ElastiCache clusters can be transitioned with no application-level changes.
+Many Redis and Memcached clusters still use legacy x86-based node types (e.g., cache.r5, cache.m5) even though Graviton-based alternatives are available. In-memory workloads tend to be highly compatible with Graviton due to their simplicity and reliance on standard CPU and memory usage patterns. Unless constrained by architecture-specific extensions or strict compliance requirements, most ElastiCache clusters can be transitioned with no application-level changes.
 
 - Switch node types to cache.r6g, cache.m6g, or cache.t4g equivalents
 - Update provisioning logic to default to Graviton families for new clusters
@@ -2232,7 +2232,7 @@ Many Redis and Memcached clusters still use legacy x86-based node types (e.g., c
 **Non Graviton Rds Instance On Eligible Workload**
 Service: AWS RDS | Type: Suboptimal Instance Family Selection
 
-Many RDS workloads continue to run on older x86 instance types (e.g., db.m5, db.r5) even though compatible Graviton-based options (e.g., db.m6g, db.r6g) are widely available. These newer families deliver improved performance per vCPU and lower hourly costs, yet are often not adopted due to legacy defaults, inertia, or lack of awareness.When workloads are not tightly bound to architecture-specific extensions (e.g., x86-specific binaries or drivers), switching to Graviton typically requires no application changes and results in immediate savings.
+Many RDS workloads continue to run on older x86 instance types (e.g., db.m5, db.r5) even though compatible Graviton-based options (e.g., db.m6g, db.r6g) are widely available. These newer families deliver improved performance per vCPU and lower hourly costs, yet are often not adopted due to legacy defaults, inertia, or lack of awareness. When workloads are not tightly bound to architecture-specific extensions (e.g., x86-specific binaries or drivers), switching to Graviton typically requires no application changes and results in immediate savings.
 
 - Evaluate performance requirements and test Graviton-backed RDS instances in staging
 - Modify instance class to a db.*g Graviton-based equivalent (e.g., db.r6g.large)
@@ -2536,7 +2536,7 @@ Spot Instances are designed to be short-lived, with frequent interruptions and r
 **Duplicate Or Overlapping Aws Cloudtrail Trails**
 Service: AWS CloudTrail | Type: Redundant Configuration
 
-AWS CloudTrail enables event logging across AWS services, but when multiple trails are configured to log overlapping events  - especially data events  - it can result in redundant charges and unnecessary storage or ingestion costs. This commonly occurs in decentralized environments where teams create trails independently, unaware of existing coverage or shared logging destinations.Each trail that records data events contributes to billing on a per-event basis, even if the same activity is logged by multiple trails.
+AWS CloudTrail enables event logging across AWS services, but when multiple trails are configured to log overlapping events - especially data events - it can result in redundant charges and unnecessary storage or ingestion costs. This commonly occurs in decentralised environments where teams create trails independently, unaware of existing coverage or shared logging destinations. Each trail that records data events contributes to billing on a per-event basis, even if the same activity is logged by multiple trails.
 
 - Delete or disable redundant trails that provide no unique audit or compliance value
 - Consolidate overlapping trails into a single unified configuration where feasible

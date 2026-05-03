@@ -458,7 +458,17 @@ Highly compressible datasets, such as those with repeated string fields, nested 
 **Excessive Data Scanned Due To Unpartitioned Tables In Bigquery**
 Service: GCP BigQuery | Type: Suboptimal Configuration
 
-If a table is not partitioned by a relevant column (typically a timestamp), every query scans the entire dataset, even if filtering by date. This leads to: * High costs per query * Long execution times * Inefficient use of resources when querying recent or small subsets of data This inefficiency is especially common in: * Event or log data stored in raw, unpartitioned form Historical data migrations without schema optimization * Workloads developed without awareness of BigQuery’s scanning model.
+If a table is not partitioned by a relevant column (typically a timestamp), every query scans the entire dataset, even if filtering by date. This leads to:
+
+- High costs per query
+- Long execution times
+- Inefficient use of resources when querying recent or small subsets of data
+
+This inefficiency is especially common in:
+
+- Event or log data stored in raw, unpartitioned form
+- Historical data migrations without schema optimisation
+- Workloads developed without awareness of BigQuery's scanning model
 
 - Enable time-based partitioning on large fact or event tables
 - Retrofit existing tables with ingestion- or column-based partitioning
