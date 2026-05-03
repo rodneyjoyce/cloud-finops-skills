@@ -1,3 +1,14 @@
+---
+name: finops-aws
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Rate Optimization"
+fcp_capabilities_secondary: ["Workload Optimization", "Data Ingestion"]
+fcp_phases: ["Optimize", "Operate"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Finance", "Procurement"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps on AWS
 
 > AWS-specific guidance covering cost management tools, commitment discounts, compute

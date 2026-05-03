@@ -1,3 +1,14 @@
+---
+name: finops-framework
+fcp_domain: "Manage the FinOps Practice"
+fcp_capability: "FinOps Practice Operations"
+fcp_capabilities_secondary: ["FinOps Assessment"]
+fcp_phases: ["Inform", "Optimize", "Operate"]
+fcp_personas_primary: ["FinOps Practitioner"]
+fcp_personas_collaborating: ["Engineering", "Finance", "Product", "Procurement", "Leadership"]
+fcp_maturity_entry: "Crawl"
+---
+
 # FinOps Framework Reference
 
 > Source: FinOps Foundation (finops.org/framework). The structure documented below is the

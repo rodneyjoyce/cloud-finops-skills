@@ -1,3 +1,14 @@
+---
+name: finops-ai-self-hosted-vs-managed
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Architecting for Cloud"
+fcp_capabilities_secondary: ["Workload Optimization", "Rate Optimization"]
+fcp_phases: ["Inform", "Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Product", "Leadership", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # AI inference: self-hosted vs managed APIs - a FinOps perspective
 
 > FinOps decision framework for AI inference: self-hosted vLLM/SGLang/llama.cpp on rented or

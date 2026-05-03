@@ -1,3 +1,14 @@
+---
+name: finops-itam
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Licensing & SaaS"
+fcp_capabilities_secondary: ["Intersecting Disciplines"]
+fcp_phases: ["Optimize", "Operate"]
+fcp_personas_primary: ["FinOps Practitioner", "Procurement"]
+fcp_personas_collaborating: ["Engineering", "Finance", "Leadership"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps and ITAM - Collaborating Across the Technology Estate
 
 > Where FinOps and ITAM intersect: shared governance, marketplace channel strategy,

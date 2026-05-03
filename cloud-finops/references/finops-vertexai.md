@@ -1,3 +1,14 @@
+---
+name: finops-vertexai
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Rate Optimization"
+fcp_capabilities_secondary: ["Workload Optimization"]
+fcp_phases: ["Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Product", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps on GCP Vertex AI
 
 > GCP Vertex AI-specific guidance covering the billing model, model pricing, provisioned
