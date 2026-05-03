@@ -29,7 +29,11 @@ curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/ins
 ```
 
 Supported tools: `claude-code`, `claude-projects`, `cursor`, `windsurf`, `chatgpt`,
-`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`.
+`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`, `mcp`.
+
+The `mcp` target is special: it does not copy files, it prints the install hint and
+the per-client MCP config snippets. See the [MCP server](#mcp-server-cross-tool) section
+below.
 
 ---
 
@@ -150,8 +154,8 @@ Copies to `~/.gemini/skills/cloud-finops/`.
 Writes `<project>/AGENTS.md` (or `AGENTS-cloud-finops.md` if `AGENTS.md` already exists,
 to avoid clobbering). Codex CLI reads `AGENTS.md` as project-level context.
 
-This is the interim path; an MCP server (planned) will be the cleaner cross-agent
-distribution mechanism.
+For richer retrieval (per-reference fetch + faceted query), pair this with the MCP
+server below.
 
 ### Aider
 
@@ -185,6 +189,76 @@ the way Claude / Cursor do. Use as a lightweight context hint, not a full skill 
 
 Copies the skill to `<project>/.kiro/powers/cloud-finops/`. Kiro uses `POWER.md` as the
 entry point.
+
+### MCP server (cross-tool)
+
+```bash
+./install.sh --tool mcp
+```
+
+The `mcp` target prints install hint + per-client config snippets. It does not run
+`pip` for you. The MCP server is a separate Python package (`cloud-finops-mcp`) that
+exposes the 28 references as queryable tools - useful for agents that need search-style
+retrieval rather than full-context injection.
+
+**Install the server:**
+
+```bash
+pip install cloud-finops-mcp
+# or, no install:
+uvx cloud-finops-mcp
+```
+
+**Three tools (all read-only):**
+
+- `list_references()` - 28 references with their FCP metadata
+- `get_reference(name)` - full markdown body of one reference
+- `find_references(domain?, capability?, phase?, persona?, maturity?)` - faceted query
+  over the FinOps Capability/Phase frontmatter
+
+**Configure your client** by adding the appropriate snippet to its MCP config file:
+
+| Client | File | Snippet |
+|---|---|---|
+| Claude Code | `.mcp.json` (project) or `~/.claude/mcp.json` (user) | JSON below |
+| Cursor | `~/.cursor/mcp.json` | JSON below |
+| Codex CLI | `~/.codex/config.toml` | TOML below |
+| Windsurf | `~/.windsurf/mcp.json` | JSON below |
+| Cline / other MCP clients | client-specific | use the JSON shape |
+
+**JSON snippet** (Claude Code, Cursor, Windsurf, generic):
+
+```json
+{
+  "mcpServers": {
+    "cloud-finops": {
+      "command": "cloud-finops-mcp"
+    }
+  }
+}
+```
+
+**TOML snippet** (Codex CLI):
+
+```toml
+[mcp_servers.cloud-finops]
+command = "cloud-finops-mcp"
+```
+
+Restart your client. Verify in Claude Code with `/mcp`, in Codex CLI with
+`codex mcp list`. In Cursor and Windsurf the server appears in the MCP panel.
+
+**When to use the MCP server vs the file-based install:**
+
+- File install (rules, AGENTS.md, .mdc) - the skill is loaded as static context for
+  every chat. Best for tools that read instruction files at startup.
+- MCP server - tools fetch on demand. Best for big-codebase sessions where context
+  budget is tight, and for queries that benefit from FCP-faceted filtering ("give me
+  the Walk-stage Rate Optimization references aimed at Engineering").
+
+The two paths are complementary - you can install both.
+
+Source: https://github.com/OptimNow/cloud-finops-skills/tree/main/mcp_server
 
 ---
 

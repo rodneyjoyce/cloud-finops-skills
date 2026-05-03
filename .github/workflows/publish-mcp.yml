@@ -1,0 +1,94 @@
+name: Publish cloud-finops-mcp to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Trusted publishing via OIDC. No PyPI API token in repo secrets.
+# One-time setup: in PyPI project settings for "cloud-finops-mcp", add this
+# repo (OptimNow/cloud-finops-skills) as a trusted publisher with workflow
+# filename "publish-mcp.yml" and environment "pypi".
+
+permissions:
+  contents: read
+  id-token: write  # required for PyPI trusted publishing (OIDC)
+
+jobs:
+  build:
+    name: Build wheel + sdist
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Building cloud-finops-mcp ${VERSION}"
+
+      - name: Pin pyproject version to tag
+        working-directory: mcp_server
+        run: |
+          # Replace the pyproject version line with the git tag (minus the leading 'v')
+          # so wheel filename and PyPI metadata always match the release.
+          python - <<'PY'
+          import os, pathlib, re
+          version = os.environ["VERSION"]
+          path = pathlib.Path("pyproject.toml")
+          text = path.read_text(encoding="utf-8")
+          new = re.sub(r'^version = ".*"', f'version = "{version}"', text, count=1, flags=re.M)
+          path.write_text(new, encoding="utf-8")
+          print(f"pyproject.toml version pinned to {version}")
+          PY
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+
+      - name: Sync references into bundled data/
+        working-directory: mcp_server
+        run: python scripts/sync_references.py
+
+      - name: Install build tooling
+        run: python -m pip install --upgrade pip build
+
+      - name: Build sdist + wheel
+        working-directory: mcp_server
+        run: python -m build
+
+      - name: Inspect built artefacts
+        run: ls -lh mcp_server/dist/
+
+      - name: Upload artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pypi-dist
+          path: mcp_server/dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/cloud-finops-mcp
+    steps:
+      - name: Download artefacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pypi-dist
+          path: dist/
+
+      - name: Publish via trusted publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

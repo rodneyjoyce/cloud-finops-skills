@@ -13,7 +13,12 @@
 #   ./install.sh --help                Show this help
 #
 # Tools: claude-code, claude-projects, cursor, windsurf, chatgpt, gemini,
-#        gemini-cli, codex, aider, copilot, kiro
+#        gemini-cli, codex, aider, copilot, kiro, mcp
+#
+# The "mcp" target is special: it does NOT install Python packages. It prints
+# the install hint (`pip install cloud-finops-mcp`) plus per-client config
+# snippets so you can wire any MCP-aware tool (Claude Code, Cursor, Codex,
+# Windsurf, Cline, etc.) at the cloud-finops MCP server.
 #
 # This script only performs local file copies and writes. No network calls beyond
 # git clone (when run via curl), no sudo, no eval. macOS / Linux / WSL.
@@ -39,7 +44,7 @@ dim()   { printf "${C_DIM}%s${C_RESET}\n" "$*"; }
 # ---- constants ----
 REPO_URL="https://github.com/OptimNow/cloud-finops-skills.git"
 SKILL_NAME="cloud-finops"
-ALL_TOOLS=(claude-code claude-projects cursor windsurf chatgpt gemini gemini-cli codex aider copilot kiro)
+ALL_TOOLS=(claude-code claude-projects cursor windsurf chatgpt gemini gemini-cli codex aider copilot kiro mcp)
 
 # ---- state ----
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || pwd)"
@@ -56,7 +61,7 @@ trap cleanup EXIT
 # ---- helpers ----
 
 usage() {
-  sed -n '3,18p' "$0" | sed 's/^# \?//'
+  sed -n '3,21p' "$0" | sed 's/^# \?//'
   exit 0
 }
 
@@ -137,6 +142,8 @@ detect_codex()           { command -v codex >/dev/null 2>&1 || [[ -d ".codex" ||
 detect_aider()           { command -v aider >/dev/null 2>&1 || [[ -f "CONVENTIONS.md" ]]; }
 detect_copilot()         { command -v code >/dev/null 2>&1 || [[ -d ".github" ]]; }
 detect_kiro()            { command -v kiro >/dev/null 2>&1 || [[ -d ".kiro" ]]; }
+# MCP target is always opt-in via --tool mcp; auto-detection is intentionally off.
+detect_mcp()             { return 1; }
 
 is_detected() {
   case "$1" in
@@ -151,6 +158,7 @@ is_detected() {
     aider)           detect_aider ;;
     copilot)         detect_copilot ;;
     kiro)            detect_kiro ;;
+    mcp)             detect_mcp ;;
     *)               return 1 ;;
   esac
 }
@@ -515,6 +523,58 @@ install_kiro() {
   dim "  Kiro reads POWER.md as the entry point."
 }
 
+install_mcp() {
+  # Print install hint + per-client config snippets. We intentionally do NOT
+  # run pip from a shell installer.
+  printf "${C_BOLD}Cloud FinOps MCP server${C_RESET}\n"
+  dim "  Adds three queryable tools (list_references, get_reference, find_references)"
+  dim "  to any MCP-aware client. Faceted filtering by FinOps Capability/Phase metadata."
+  printf "\n"
+  ok "Step 1 - install the server (Python 3.10+):"
+  printf "    pip install cloud-finops-mcp\n"
+  printf "    ${C_DIM}# or, no install: ${C_RESET}uvx cloud-finops-mcp\n"
+  printf "\n"
+  ok "Step 2 - add to your MCP client config:"
+  printf "\n"
+  printf "  ${C_BOLD}Claude Code${C_RESET}  (.mcp.json at project root, or ~/.claude/mcp.json):\n"
+  cat <<'EOF'
+    {
+      "mcpServers": {
+        "cloud-finops": { "command": "cloud-finops-mcp" }
+      }
+    }
+EOF
+  printf "\n  ${C_BOLD}Cursor${C_RESET}  (~/.cursor/mcp.json):\n"
+  cat <<'EOF'
+    {
+      "mcpServers": {
+        "cloud-finops": { "command": "cloud-finops-mcp" }
+      }
+    }
+EOF
+  printf "\n  ${C_BOLD}Codex CLI${C_RESET}  (~/.codex/config.toml):\n"
+  cat <<'EOF'
+    [mcp_servers.cloud-finops]
+    command = "cloud-finops-mcp"
+EOF
+  printf "\n  ${C_BOLD}Windsurf${C_RESET}  (~/.windsurf/mcp.json):\n"
+  cat <<'EOF'
+    {
+      "mcpServers": {
+        "cloud-finops": { "command": "cloud-finops-mcp" }
+      }
+    }
+EOF
+  printf "\n"
+  ok "Step 3 - restart your client. Verify:"
+  dim "    Claude Code: /mcp"
+  dim "    Cursor: chat panel will list cloud-finops as an available MCP"
+  dim "    Codex CLI: codex mcp list"
+  printf "\n"
+  dim "  PyPI:    https://pypi.org/project/cloud-finops-mcp/"
+  dim "  Source:  https://github.com/OptimNow/cloud-finops-skills/tree/main/mcp_server"
+}
+
 install_tool() {
   case "$1" in
     claude-code)     install_claude_code ;;
@@ -528,6 +588,7 @@ install_tool() {
     aider)           install_aider ;;
     copilot)         install_copilot ;;
     kiro)            install_kiro ;;
+    mcp)             install_mcp ;;
     *)               err "Unknown tool: $1"; return 1 ;;
   esac
 }

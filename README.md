@@ -292,8 +292,10 @@ provider-specific behaviour.
 ```
 cloud-finops-skills/
 ├── README.md                                   ← This file
-├── INSTALLATION.md                             ← Setup instructions
+├── INSTALLATION.md                             ← Setup instructions (incl. MCP server)
 ├── LICENSE.md                                  ← CC BY-SA 4.0
+├── install.sh                                  ← Cross-tool installer (12 targets)
+├── mcp_server/                                 ← cloud-finops-mcp PyPI package
 └── cloud-finops/                               ← Install this folder
     ├── SKILL.md                                ← Entry point + domain router (Claude Code, generic agents)
     ├── POWER.md                                ← Entry point (Kiro IDE)
@@ -337,8 +339,9 @@ domain-specific content is shared.
 ## Installation
 
 The skill installs into 11 different tools via a single bash installer that converts
-the canonical Claude / Agent-Skills format into each target tool's expected shape.
-See **[INSTALLATION.md](./INSTALLATION.md)** for the full per-tool instructions.
+the canonical Claude / Agent-Skills format into each target tool's expected shape, plus
+a separately published MCP server (`cloud-finops-mcp`) for tool-style retrieval. See
+**[INSTALLATION.md](./INSTALLATION.md)** for the full per-tool instructions.
 
 ### One-liner (auto-detect)
 
@@ -356,8 +359,23 @@ curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/ins
 ```
 
 Supported tools: `claude-code`, `claude-projects`, `cursor`, `windsurf`, `chatgpt`,
-`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`. Run `./install.sh --list`
-to see them all.
+`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`, `mcp`. Run
+`./install.sh --list` to see them all.
+
+### MCP server (cross-tool, search-style retrieval)
+
+For agents that want tool-style retrieval rather than full-context injection:
+
+```bash
+pip install cloud-finops-mcp
+./install.sh --tool mcp     # prints config snippets for every MCP-aware client
+```
+
+Three tools: `list_references`, `get_reference`, `find_references` (faceted query over
+the FinOps Capability/Phase frontmatter). Wires into Claude Code, Cursor, Codex CLI,
+Windsurf, Cline, and any other MCP-aware client. See
+[mcp_server/](./mcp_server/README.md) and the
+[INSTALLATION.md MCP section](./INSTALLATION.md#mcp-server-cross-tool).
 
 ### Claude Code plugin (auto-updating alternative)
 

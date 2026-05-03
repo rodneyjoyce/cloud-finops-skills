@@ -22,6 +22,16 @@ cloud-finops/references/.backups/
 # Distribution archive
 cloud-finops.zip
 
+# Python build artefacts (mcp_server/)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+mcp_server/build/
+mcp_server/dist/
+mcp_server/.venv/
+
 # LinkedIn post drafts
 linkedin-post-*.md
 
