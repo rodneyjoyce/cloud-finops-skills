@@ -101,47 +101,50 @@ The bi-monthly pipeline `applier/` truncated 8 reference files across two runs:
   by commit dfab33b) and introduced the trailing-`> Sources` truncation in
   finops-itam.md and finops-sam.md
 - "Content update - 1 May 2026" (commit 3e64f59) made 130 insertions / 5566
-  deletions across 6 files - aws, azure, gcp, framework, ai-dev-tools, for-ai -
+  deletions across 6 files (aws, azure, gcp, framework, ai-dev-tools, for-ai)
   in what was supposed to be an additive content update
 
 The recovery (May 2026) restored each file from a pre-truncation commit and
 re-injected the few real additions identified in the diffs.
 
-**What we learned:**
-- LLM-generated diffs on long files (>1500 lines) can hallucinate truncation,
-  produce diffs whose "after" state is shorter than the "before"
-- A "Content update" that removes thousands of lines is a regression by
-  construction, not a content choice. Aggregate stats (lines_added vs
-  lines_removed) catch this faster than line-by-line review
-- Without a footer-presence check, a truncated file looks valid in a `git diff`
-  review (the diff stops where the file stops) - the only signal is the missing
-  footer at the end
-- The previous recovery (PR #8 -> commit dfab33b) fixed the symptom without
-  fixing the pipeline, so the same failure mode recurred 16 days later
+**Why it happened.** The applier prompt instructed the LLM to "preserve the existing
+file structure" and "preserve the CC BY-SA 4.0 footer line exactly as it is". On long
+files (1500+ lines) the LLM ignored these instructions roughly 5% of the time -
+producing diffs whose "after" state was hundreds or thousands of lines shorter than
+"before". The instructions were prompts, not enforced guarantees.
 
-**Guard rails added:**
-- `applier/` rejects any diff whose net change is < -20% of the file's line count
-- `applier/` post-apply check requires the OptimNow footer line to be present;
-  fail the commit otherwise
-- `applier/` snapshots every reference file to `cloud-finops/references/.backups/`
-  with a timestamp before each apply run
-- The pipeline is frozen (`pipeline/run_apply.py.FROZEN`) until these guard rails
-  are validated against a dry run on a sample of historical updates
+**Why it was not caught.** The previous recovery (PR #8 -> commit dfab33b) fixed
+symptoms without fixing the pipeline, so the same failure mode recurred 16 days later.
+A truncated file looks valid in `git diff` review (the diff stops where the file stops);
+the only signal was the missing footer at the end, which no automated check verified.
 
-**Documentation drift correction:**
-The same recovery surfaced ~10 spots where doc had not kept pace with reference
-growth (AGENTS.md and llms.txt listed only 17 references when 28 existed; install.sh
-ChatGPT/Gemini routing missed the 6-7 newest domains; "6 setup options" appeared
-in 4 files when INSTALLATION.md had moved to 11 tools). The PR-checklist in this
-file now requires updating AGENTS.md, llms.txt, and the install.sh per-tool
-routing whenever a reference is added.
+**Guard rails added (`pipeline/applier/file_updater.py`):**
+- Before each apply, snapshot the file to `cloud-finops/references/.backups/` with
+  a timestamped name
+- After each apply, run `validate_post_apply`:
+  - **Deletion threshold**: reject any update whose net change is < -20% of the
+    original line count (when original > 100 lines)
+  - **Footer presence**: require the last 300 chars to contain both "OptimNow"
+    and "CC BY-SA"
+  - **Double-HR check**: reject if "---\n\n---" appears in the last 500 chars
+    (artefact of an emptied Sources block)
+- On any guard rail failure, automatically restore from the backup
+- Run-level fail-safe: if more than 2 files fail validation in a single run,
+  abort the entire run before committing
+
+**Documentation drift correction.** The same recovery surfaced ~10 spots where doc
+had not kept pace with reference growth (AGENTS.md and llms.txt listed only 17
+references when 28 existed; install.sh ChatGPT/Gemini routing missed the 6-7 newest
+domains; "6 setup options" appeared in 4 files when INSTALLATION.md had moved to
+11 tools). The PR-checklist in this file now requires updating AGENTS.md, llms.txt,
+and the install.sh per-tool routing whenever a reference is added.
 
 ### When in doubt, validate the baseline before comparing
 
-When asked to compare this skill to another repo, an agent that compares against
-the truncated state will conclude the other repo is more comprehensive than it
-really is. Always check that key reference files end with the OptimNow footer
-(and not mid-sentence) before drawing any coverage comparison.
+When asked to compare this skill to another repo, an agent that compares against the
+truncated state will conclude the other repo is more comprehensive than it really is.
+Always check that key reference files end with the OptimNow footer (and not
+mid-sentence) before drawing any coverage comparison.
 
 ---
 
