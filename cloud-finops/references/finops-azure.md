@@ -19,8 +19,8 @@ fcp_maturity_entry: "Walk"
 > cost control, backup and snapshot management, storage tiering and lifecycle, and
 > networking cost.
 >
-> Distilled from the [Azure FinOps Master](https://github.com/yourorg/azure-finops-master)
-> course (7 sessions + case studies).
+> Distilled from OptimNow Azure FinOps engagement experience and primary Microsoft
+> sources (Azure Pricing pages, Cost Management documentation, FinOps Toolkit).
 
 ---
 
