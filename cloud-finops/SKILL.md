@@ -8,9 +8,10 @@ description: >
   (SAM, licence optimisation, SMPs, shadow IT), AI coding tools (Cursor, Claude Code,
   Copilot, Windsurf, Codex), ITAM, data platforms (Databricks allocation and governance with
   DBCU commitments, Microsoft Fabric capacity FinOps with F-SKUs, CU smoothing, reservations,
-  pause/resume, Pro-to-Fabric migration governance), Snowflake, OCI, and GreenOps. Use for any
-  query about technology cost, commitment portfolio management, rightsizing, cost allocation,
-  SaaS sprawl, AI dev tool spend, or connecting spend to business value. Built by OptimNow.
+  pause/resume, Pro-to-Fabric migration governance), Snowflake, OCI, and GreenOps (AWS
+  Sustainability Console, CSRD engagement framing). Use for any query about technology cost,
+  commitment portfolio management, rightsizing, cost allocation, SaaS sprawl, AI dev tool spend,
+  or connecting spend to business value. Built by OptimNow.
 ---
 
 # FinOps - Expert Guidance
