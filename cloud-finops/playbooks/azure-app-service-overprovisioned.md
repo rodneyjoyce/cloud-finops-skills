@@ -62,13 +62,20 @@ AzureMetrics
 ## Fix
 
 1. **Right-size SKU first.** Compare the workload's actual feature use
-   against the SKU's feature set:
-   - P1v3 -> S1 typically saves $60-90/month per instance, but loses
-     Premium-only features (deployment slots count, VNet integration,
-     larger autoscale ceiling). Validate the app does not depend on any.
-   - P1v3 -> P0v3 stays in Premium tier (preserves all Premium features)
+   against the SKU's feature set. The big tier-jump trade-offs are:
+   - P1v3 -> S1 typically saves $60-90/month per instance. Standard
+     keeps deployment slots (5 vs Premium v3's 20), keeps regional VNet
+     integration, keeps custom domains and SSL, keeps daily backups.
+     What it loses: the larger autoscale ceiling (Standard caps at 10
+     instances vs Premium v3 at 30), private endpoint support on the
+     plan itself, the v3 generation's per-vCPU performance gain,
+     zone-redundant deployments, and the higher memory ratio. Validate
+     against the app's real ceiling needs and security posture, not
+     against an assumed Premium-only feature list.
+   - P1v3 -> P0v3 stays in Premium v3 tier (preserves all Premium v3
+     features including the higher autoscale ceiling and zone redundancy)
      and saves roughly $70/month per instance via halving the vCPU /
-     memory footprint - the right move when the app needs Premium
+     memory footprint - the right move when the app needs Premium v3
      features but not the headroom.
    - P1v3 -> P1v2 (older Premium generation) is rarely the right move
      because v3 is faster per-vCPU and the per-month delta is small.
