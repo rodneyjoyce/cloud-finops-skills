@@ -14,9 +14,12 @@ Azure App Service plans are billed by SKU (P1v3, P2v3, etc.) and instance
 count, regardless of how many web apps actually run on them. Teams
 default to **Premium v3** plans for production apps and never revisit -
 even when the app handles low traffic that **Standard** or **Basic**
-would serve fine. The cost gap is meaningful: a P1v3 instance is ~$70-90
-/month vs ~$73/month for S1, but the auto-scale pattern often runs P1v3
-at 4 instances when 2 would suffice.
+would serve fine. As an anchor (verify against the current Azure
+pricing page in your region before sizing): in US East, a P1v3
+instance is roughly $130-160/month (2 vCPUs, 8 GB RAM) versus roughly
+$70/month for S1 (1 vCPU, 1.75 GB RAM). The two are not feature-
+equivalent, but for many low-traffic workloads S1 fits, so the per-
+instance gap of $60-90/month compounds across the auto-scale fleet.
 
 ## Symptoms
 
@@ -58,8 +61,17 @@ AzureMetrics
 
 ## Fix
 
-1. **Right-size SKU first** (P1v3 -> S1 saves ~$60/month/instance and
-   most apps don't need the Premium-only features).
+1. **Right-size SKU first.** Compare the workload's actual feature use
+   against the SKU's feature set:
+   - P1v3 -> S1 typically saves $60-90/month per instance, but loses
+     Premium-only features (deployment slots count, VNet integration,
+     larger autoscale ceiling). Validate the app does not depend on any.
+   - P1v3 -> P0v3 stays in Premium tier (preserves all Premium features)
+     and saves roughly $70/month per instance via halving the vCPU /
+     memory footprint - the right move when the app needs Premium
+     features but not the headroom.
+   - P1v3 -> P1v2 (older Premium generation) is rarely the right move
+     because v3 is faster per-vCPU and the per-month delta is small.
 2. **Reduce instance count to match observed p95 + safety margin**. Use
    **scheduled autoscale** to keep production at 2 instances during
    peak hours and 1 off-hours rather than a flat 4.

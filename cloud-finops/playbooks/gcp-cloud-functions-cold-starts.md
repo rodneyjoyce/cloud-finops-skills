@@ -65,9 +65,21 @@ gcloud monitoring metrics list --filter="metric.type:cloudfunctions.googleapis.c
 2. **Reduce function size** by minimising dependencies and optimising
    startup code. Each MB of cold-start initialisation translates to
    billed time AND user-visible latency.
-3. **Avoid VPC connectors** unless absolutely necessary. Use **Private
-   Google Access** when reaching internal services that don't need the
-   full VPC connector stack.
+3. **Right-size your private-egress strategy**. VPC connector cold-start
+   overhead is real, but the alternatives differ in scope:
+   - **Private Google Access** covers only Google APIs and managed
+     services reachable through `*.googleapis.com` / `*.pkg.dev`
+     endpoints. It does NOT reach internal RFC1918 resources (Memorystore,
+     internal VMs, Cloud SQL via private IP, internal load balancers).
+     Use it when the function only needs to talk to BigQuery, GCS, Pub/Sub,
+     Secret Manager, or other Google-API-fronted services.
+   - **Direct VPC egress** (Cloud Run / Cloud Run Functions 2nd gen) and
+     **Serverless VPC Access connectors** (1st gen) ARE required for
+     RFC1918 resources. Direct VPC egress avoids the connector hourly and
+     is the modern path on 2nd gen runtimes.
+   - VPC connectors are still the right answer for 1st gen functions that
+     need internal-IP reachability; what to optimise then is connector
+     instance count and size, not removing the connector.
 4. **Migrate to Cloud Run for sustained workloads**. Cloud Run has
    better cold-start economics for workloads invoked more than ~10
    times/min, and offers `min-instances` with finer control.
@@ -79,9 +91,14 @@ gcloud monitoring metrics list --filter="metric.type:cloudfunctions.googleapis.c
 - Setting `min-instances` blindly on all functions. The whole point of
   Cloud Functions is scale-to-zero economics; if you keep instances
   warm everywhere, Cloud Run is a better runtime for that workload.
-- Adding VPC connectors as a default. Many functions don't need them -
-  Private Google Access reaches BigQuery, GCS, and most managed services
-  without the per-connector hourly charge.
+- Adding VPC connectors as a default for Google-API-only access. If the
+  function only talks to BigQuery, GCS, Pub/Sub, Secret Manager and other
+  Google-API endpoints, Private Google Access reaches them without the
+  per-connector hourly charge.
+- Replacing a VPC connector with Private Google Access when the function
+  actually talks to internal RFC1918 resources (Memorystore, internal
+  VMs, Cloud SQL via private IP). The function will start failing
+  silently because Private Google Access does not reach those.
 
 ## See also
 

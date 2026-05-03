@@ -59,8 +59,17 @@ For real-time validation, the canonical CloudWatch metrics are
 3. Delete the NAT Gateway. Release the associated Elastic IP if no other
    resource needs it (otherwise it accrues its own $3.60/month idle charge).
 4. If a residual workload still needs occasional internet egress, evaluate
-   whether **VPC Endpoints** (S3, DynamoDB, common AWS services) can
-   replace the NAT entirely - VPC Endpoints have no hourly charge.
+   whether **VPC Endpoints** can replace the NAT entirely. Two endpoint types
+   with very different cost profiles:
+   - **Gateway endpoints** (S3, DynamoDB only): no hourly charge, no data
+     processing fee. Always cheaper than routing the same traffic through a
+     NAT Gateway.
+   - **Interface endpoints / PrivateLink** (most other AWS services and
+     third-party SaaS): hourly charge per endpoint per AZ (~$0.01/hr =
+     ~$7.30/month/AZ) plus a data-processing fee per GB. For
+     low-traffic services across multiple AZs, an interface endpoint can
+     end up costing more than the NAT it replaced. Compare endpoint cost
+     against the NAT's data-processing volume before swapping.
 
 ## Anti-pattern
 

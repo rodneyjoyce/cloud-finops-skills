@@ -86,7 +86,10 @@ strip_frontmatter() {
   awk 'BEGIN{f=0} /^---$/{f++; if(f<=2) next} f>=2{print}' "$1"
 }
 
-# Concatenated body: SKILL.md (no frontmatter) + every reference file
+# Concatenated body: SKILL.md (no frontmatter) + every reference file +
+# every playbook. SKILL.md routes named waste patterns to playbooks/<slug>.md,
+# so the playbooks must be inlined too - otherwise the routing contract points
+# the model at files that are not present in the installed artefact.
 write_concat_body() {
   strip_frontmatter "$SRC_DIR/cloud-finops/SKILL.md"
   echo
@@ -102,6 +105,19 @@ write_concat_body() {
     echo "---"
     echo
   done
+  if [[ -d "$SRC_DIR/cloud-finops/playbooks" ]]; then
+    echo
+    echo "## Playbooks"
+    echo
+    for pb in "$SRC_DIR/cloud-finops/playbooks"/*.md; do
+      echo "### playbooks/$(basename "$pb")"
+      echo
+      cat "$pb"
+      echo
+      echo "---"
+      echo
+    done
+  fi
 }
 
 # Idempotent file write with dry-run support
