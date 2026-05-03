@@ -111,6 +111,20 @@ keywords:
   - shared services allocation
   - invoiceid reconciliation
   - unallocated spend
+  - chargeback
+  - soft chargeback
+  - hard chargeback
+  - financial accountability
+  - erp readiness
+  - cfo sponsorship
+  - inter-bu p&l
+  - transfer pricing
+  - intercompany cloud recharge
+  - cross-border tax
+  - pillar 2 minimum tax
+  - sox chargeback controls
+  - methodology dispute
+  - chargeback revolt
 ---
 
 # Cloud FinOps - Expert Guidance
@@ -163,6 +177,7 @@ matching the query.
 | ITAM, IT asset management, BYOL, marketplace channel governance, licence compliance, vendor negotiation, FinOps-ITAM collaboration, entitlement management, consumption-based SaaS overages | `references/finops-itam.md` |
 | Cost anomaly management, anomaly detection, masked anomalies, layered detection, threshold tuning, AWS Cost Anomaly Detection config, Azure anomaly detection, GCP budget anomaly alerts, new-region detection, security integration | `references/finops-anomaly-management.md` |
 | Cost allocation methodology, showback, EffectiveCost vs BilledCost (FOCUS), amortised vs unblended (AWS legacy), blended-cost trap, defensible allocation keys, shared-services allocation (network, observability, security, ingress), InvoiceId reconciliation, unallocated spend signal, showback report design and routing | `references/finops-allocation-showback.md` |
+| Chargeback, soft chargeback, hard chargeback, financial accountability, Finance and accounting prerequisites for chargeback, ERP readiness (SAP CO, Oracle, Workday, NetSuite), inter-BU P&L impact, CFO sponsorship, transfer pricing for intercompany cloud recharge, cross-border tax (VAT, withholding, permanent establishment, Pillar 2, GILTI / FDII / BEAT), SOX-equivalent controls, methodology dispute process, chargeback-revolt anti-pattern | `references/finops-chargeback.md` |
 | Multi-domain query | Load all relevant references, synthesise |
 
 ### Reasoning sequence (apply to every response)
