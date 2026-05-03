@@ -163,6 +163,75 @@ GitHub issues, which track in-flight work.
   GCP providers, update the operational tooling section to reflect the broader coverage and
   remove the "for Azure and GCP, see in-cloud catalogues" caveat.
 
+- **OptimNow doctrine layer.** Today the reasoning lens lives inside
+  `optimnow-methodology.md` (visibility before optimisation, diagnose before prescribing,
+  connect cost to value, recommend progressively). The intent is to grow this into a
+  named doctrine that takes opinionated, opposable positions vs the FinOps Foundation
+  framework rather than restating it. Theses to develop, each as its own short doctrine
+  file in a future `cloud-finops/doctrine/` directory:
+
+  - **Business value before maturity.** Every recommendation must answer "what business
+    outcome does this protect or unlock?" Cost reduction without a value lens is a leak.
+  - **Maturity is contextual, not aspirational.** Verticals where cloud is not a revenue
+    generator (industrial, public sector, regulated services) do not need to reach Run.
+    Crawl + selective Walk is the right state when cloud is a cost centre. Verticals where
+    cloud IS the product (SaaS, AI-native, marketplaces) need Run because cloud efficiency
+    directly drives gross margin and pricing. Pushing every org toward Run is malpractice.
+  - **Recommend progressively, not heroically.** Quick wins that prove the discipline
+    earn the right to do structural work. Skipping the quick wins to go straight to
+    chargeback or commitment automation creates credibility-burning failures.
+  - **WasteLine and an agentic operating model.** FinOps must be agentic - signal-based
+    detection (WasteLine), AI-driven recommendation, automation-with-human-confirm. The
+    previous era's monthly-spreadsheet-review FinOps does not scale to AI-era spend
+    velocity. The operating model has to assume agents in the loop, not periodic human
+    audits.
+  - **Critical reading of vendor sustainability and FinOps claims.** Especially the claims
+    of vendors that fund the FinOps Foundation through dues and sponsorship. Their
+    incentives are not aligned with practitioner truth-telling. The doctrine should
+    teach a critical-read posture by default and flag vendor-funded claims explicitly.
+  - **There is nothing cultural about FinOps - the "FinOps culture" frame is a
+    non-sequitur.** FinOps is an operating discipline (allocation, anomaly, commitment,
+    rightsizing, governance). Calling it a "culture" is what allows organisations to
+    avoid measurable outcomes. In the agentic era this matters even more - culture
+    cannot be encoded into agents, but discipline can. The doctrine should oppose the
+    FF-central "culture" framing and replace it with explicit operating-discipline
+    metrics.
+  - **Provider-mechanics-first, FOCUS-aware, vendor-claim-skeptical.** As distinguished
+    from a "FOCUS-first" posture (which is a restatement of FF positioning, not a
+    practitioner stance). FOCUS is a useful normalisation layer; native columns
+    (CUR `unblended_cost`, Azure `costInBillingCurrency`, BigQuery `cost_at_list`) reveal
+    biases that FOCUS can hide. Document both, name the trade-off, prefer the lens that
+    answers the question.
+
+  When this lands, also remove the "Where this differs from the FinOps Foundation"
+  framing from `optimnow-methodology.md` and replace it with a pointer to the doctrine
+  layer.
+
+- **Playbooks directory** (`cloud-finops/playbooks/`). Extract the named-pattern
+  catalogues currently embedded in `finops-aws.md` (48 patterns), `finops-azure.md`
+  (48 patterns), `finops-gcp.md` (26 patterns), and the seven-category taxonomy in
+  `finops-waste-detection-playbooks.md` into individual playbook files (~2-3KB each).
+  Format per playbook: symptoms / detection (CUR / KQL / BigQuery SQL) / fix /
+  anti-pattern / sources. The reference files keep the patterns as in-context narrative
+  for linear reading; the `playbooks/` directory exposes them as RAG-friendly chunks
+  for ChatGPT / Gemini / generic LLM retrieval. Routing rule to add to SKILL.md and
+  POWER.md: "named waste pattern X -> `playbooks/X.md`". Drift risk to manage: changes
+  to a pattern must be applied in both places, or the reference file should be updated
+  to reference the playbook by `[file](path)` instead of duplicating the content.
+
+- **FCP coverage matrix tooling.** Adapt the approach from Cletrics' `fcp-coverage.sh`:
+  a small bash script that parses `fcp_domain` / `fcp_capability` /
+  `fcp_capabilities_secondary` from every reference frontmatter and emits a top-level
+  `fcp-coverage.md` table mapping the 22 FCP capabilities to the references that cover
+  them. Adds three benefits: (1) honesty signal vis-a-vis the framework - the matrix
+  computes coverage from the actual repo, not from claims; (2) PR check - new
+  references with a non-canonical capability or a missing frontmatter trip the script;
+  (3) Roadmap-driven view - the matrix shows which capabilities are deferred (currently
+  Forecasting, Unit Economics, Practice Operations, Education & Enablement, Tools &
+  Services) so the gap is auto-rendered, not buried in this Roadmap section. Trigger to
+  build: any time after the doctrine layer ships (the script needs the FCP frontmatter
+  convention to be settled, which it now is).
+
 ### Depth passes (extend existing files when bandwidth allows)
 
 - **Extend GreenOps depth to Azure and GCP.** The May 2026 GreenOps pass added AWS-specific
