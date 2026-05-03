@@ -110,7 +110,13 @@ write_concat_body() {
     echo "## Playbooks"
     echo
     for pb in "$SRC_DIR/cloud-finops/playbooks"/*.md; do
-      echo "### playbooks/$(basename "$pb")"
+      local pb_name
+      pb_name=$(basename "$pb")
+      # Skip the directory's own README - it documents the format /
+      # convention for human contributors, not a runbook the model
+      # should retrieve as a pattern.
+      [[ "$pb_name" == "README.md" ]] && continue
+      echo "### playbooks/$pb_name"
       echo
       cat "$pb"
       echo
@@ -326,6 +332,18 @@ install_chatgpt() {
         cp "$ref" "$knowledge_dir/$name"
       fi
     done
+    # Playbooks: SKILL.md routes named-pattern queries to playbooks/<slug>.md,
+    # so each playbook must be uploadable as a knowledge file too. Prefix
+    # the filename so they group together in the GPT Knowledge UI and don't
+    # collide with reference filenames.
+    if [[ -d "$SRC_DIR/cloud-finops/playbooks" ]]; then
+      for pb in "$SRC_DIR/cloud-finops/playbooks"/*.md; do
+        local pb_name
+        pb_name=$(basename "$pb")
+        [[ "$pb_name" == "README.md" ]] && continue
+        cp "$pb" "$knowledge_dir/playbook-$pb_name"
+      done
+    fi
   fi
 
   local file_count
@@ -338,7 +356,7 @@ install_chatgpt() {
   fi
   if [[ $file_count -gt 20 ]]; then
     warn "ChatGPT historically capped Custom GPT Knowledge at 20 files. Current build is $file_count files."
-    dim "  If your upload is rejected, re-run with --grouped to produce a 9-file"
+    dim "  If your upload is rejected, re-run with --grouped to produce a smaller"
     dim "  bundled build (same content, fewer files): ./install.sh --tool chatgpt --grouped"
   fi
   dim "  Manual upload steps:"
@@ -346,10 +364,11 @@ install_chatgpt() {
   dim "    2. Paste $instructions_path into the Instructions field"
   dim "    3. Upload all files from $knowledge_dir/ to Knowledge"
   if [[ -z "$GROUPED" ]]; then
-    dim "    4. Note: methodology is merged into finops-for-ai.md to keep file count down"
+    dim "    4. Note: methodology is merged into finops-for-ai.md to keep file count down."
+    dim "       Playbook files are prefixed playbook-* so they sort together in the GPT UI."
   else
-    dim "    4. Grouped mode: 9 thematic files (aws, azure, gcp, ai, data-platforms,"
-    dim "       oci, cross-cutting, finops-discipline, methodology)"
+    dim "    4. Grouped mode: 10 thematic files (aws, azure, gcp, ai, data-platforms,"
+    dim "       oci, cross-cutting, finops-discipline, playbooks, methodology)"
   fi
 }
 
@@ -394,8 +413,10 @@ Use these knowledge files for the following query types:
 | Onboarding workloads, migration-time cost hygiene, intake gate, 60-90 day forecast-then-commit rule, double-bubble cost, M&A integration | finops-onboarding-workloads.md |
 | Kubernetes FinOps (EKS / GKE / AKS), OpenCost / Kubecost, FOCUS-emitting K8s allocation, container rightsizing, Karpenter, Spot diversification | finops-kubernetes.md |
 | Waste detection playbooks, seven-category waste taxonomy, two-signal classification, WasteLine appliance | finops-waste-detection-playbooks.md |
+| Named waste pattern (zombie NAT, snapshot sprawl, idle ELB, cross-AZ egress, oversized RDS, orphan EBS, orphan Azure disks, App Service overprovisioning, Log Analytics ingestion sprawl, idle Azure SQL, idle GKE Autopilot, orphan Persistent Disks, Cloud Functions cold starts, schedule blindness, untagged spend drift) | playbook-<slug>.md (e.g. playbook-aws-zombie-nat-gateway.md) |
 
-For multi-domain queries, retrieve all relevant files and synthesise.
+For multi-domain queries, retrieve all relevant files and synthesise. For named
+waste patterns, retrieve the matching `playbook-<slug>.md` knowledge file.
 
 ## Reasoning sequence
 
@@ -449,9 +470,12 @@ Use these knowledge files for the following query types:
 | OCI (Cost Reports, FOCUS, cost-tracking tags, Universal Credits) | oci.md |
 | FinOps Framework (4 domains 2024 + Executive Strategy Alignment 2026), tagging, SaaS management, ITAM, GreenOps, Kubernetes FinOps, waste detection playbooks | cross-cutting.md |
 | Anomaly management, allocation and showback, chargeback (incl. Finance / accounting prerequisites), onboarding workloads (migration-time cost hygiene + M&A) | finops-discipline.md |
+| Named waste pattern (zombie NAT, snapshot sprawl, idle ELB, cross-AZ egress, oversized RDS, orphan EBS, orphan Azure disks, App Service overprovisioning, Log Analytics ingestion sprawl, idle Azure SQL, idle GKE Autopilot, orphan Persistent Disks, Cloud Functions cold starts, schedule blindness, untagged spend drift) | playbooks.md |
 | Reasoning methodology lens (diagnose before prescribing, connect cost to value, recommend progressively) | methodology.md |
 
-For multi-domain queries, retrieve all relevant grouped files and synthesise.
+For multi-domain queries, retrieve all relevant grouped files and synthesise. For
+named waste patterns, look up the matching `## playbook: <slug>` section inside
+`playbooks.md`.
 
 ## Reasoning sequence
 
@@ -556,6 +580,35 @@ build_gemini_grouped_knowledge() {
     "$refs/finops-chargeback.md" "$refs/finops-onboarding-workloads.md"
   cat_required "$outdir/methodology.md" \
     "$refs/optimnow-methodology.md"
+
+  # Playbooks bundle: SKILL.md routes named-pattern queries to
+  # playbooks/<slug>.md, so the grouped artefact must include the
+  # playbook content too. Bundled into a single playbooks.md to keep
+  # the grouped layout's 1-bundle-per-domain shape.
+  local playbooks="$SRC_DIR/cloud-finops/playbooks"
+  if [[ -d "$playbooks" ]]; then
+    {
+      echo "# Cloud FinOps Playbooks Bundle"
+      echo
+      echo "Each section below is a self-contained named-pattern runbook."
+      echo "When SKILL.md routes a 'named waste pattern X' query to"
+      echo "\`playbooks/<slug>.md\`, look up the section here whose title"
+      echo "matches the slug."
+      echo
+      for pb in "$playbooks"/*.md; do
+        local pb_name
+        pb_name=$(basename "$pb")
+        # README.md is the format / contributor guide, not a runbook
+        [[ "$pb_name" == "README.md" ]] && continue
+        echo "---"
+        echo
+        echo "## playbook: ${pb_name%.md}"
+        echo
+        cat "$pb"
+        echo
+      done
+    } > "$outdir/playbooks.md"
+  fi
 }
 
 install_gemini_cli() {
