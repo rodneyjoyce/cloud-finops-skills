@@ -147,6 +147,16 @@ The skill provides accurate, framework-aligned guidance across the following dom
   node cost as Platform team overhead rather than redistributed across
   application teams. Provider-specific node mechanics live in the per-cloud
   files
+- **Waste detection playbooks** - OptimNow's seven-category waste taxonomy
+  (orphaned, idle, overprovisioned, commitment mismatches, schedule
+  blindness, modernization opportunities, AI/ML inefficiency) covering
+  the detection patterns, two-signal classification rule, three-tier
+  confidence model (obvious / likely / possible), and realised-vs-potential
+  savings discipline. Operationally backed by the OptimNow WasteLine
+  appliance for AWS (49 deterministic detection rules, read-only, with
+  proposal-only remediation artifacts); for Azure and GCP, points to the
+  in-cloud pattern catalogues. Crawl/Walk/Run progression from manual
+  quarterly hunt to continuous Fargate-scheduled detection
 
 All guidance is framed through OptimNow's methodology: connecting cost to business value,
 diagnosing before prescribing, and recommending actions matched to organisational maturity.
@@ -314,7 +324,8 @@ cloud-finops-skills/
         ├── finops-allocation-showback.md       ← Cost allocation methodology + showback
         ├── finops-chargeback.md                ← Chargeback maturity ladder + Finance/accounting prerequisites
         ├── finops-onboarding-workloads.md      ← Migration-time cost hygiene + M&A integration
-        └── finops-kubernetes.md                ← Kubernetes cross-cluster discipline (EKS/GKE/AKS)
+        ├── finops-kubernetes.md                ← Kubernetes cross-cluster discipline (EKS/GKE/AKS)
+        └── finops-waste-detection-playbooks.md ← Seven-category waste taxonomy + WasteLine
 ```
 
 The `SKILL.md` file is the entry point for Claude Code and generic agents. `POWER.md` is
