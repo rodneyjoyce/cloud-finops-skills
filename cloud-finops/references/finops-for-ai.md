@@ -180,6 +180,11 @@ reducing waste and improving allocation accuracy.
 | Cost attribution | OpenCost or Kubecost |
 | GPU partitioning | NVIDIA MIG + GPU Operator |
 
+> The mechanics above cover **how to attribute** self-hosted GPU cost once the decision to
+> self-host is already made. For the decision itself - "should we self-host vs use a managed
+> API?" - see `finops-ai-self-hosted-vs-managed.md`, which covers the hidden cost surface,
+> the ML-Ops maturity rubric, and the hybrid routing pattern.
+
 **Observability cost feedback loop:**
 Token-level logging for every AI request generates large log volumes. Cloud observability
 platforms charge by the GB for ingestion and retention. A production AI system with full

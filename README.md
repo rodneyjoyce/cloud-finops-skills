@@ -64,6 +64,10 @@ The skill provides accurate, framework-aligned guidance across the following dom
   funding, practice operations, cross-functional governance for AI investments
 - **GenAI capacity planning** - provisioned vs shared capacity, traffic shape analysis,
   spillover mechanics, throughput units, cross-provider comparison
+- **Self-hosted vs managed AI inference** - decision framework for "should we self-host our
+  LLM?" with per-token vs per-hour billing comparison, hidden cost surface (operational,
+  reliability, compliance, talent FTEs), 5-criteria ML-Ops maturity rubric, hybrid routing
+  patterns (LiteLLM, Portkey), eight client diagnostic questions, six common anti-patterns
 - **Anthropic billing** - Claude model pricing, Fast mode, long-context cliffs,
   prompt caching, Batch API, governance controls
 - **AWS Bedrock** - model pricing, provisioned throughput, batch inference, cost allocation
@@ -156,6 +160,13 @@ provider-specific behaviour.
 - "What's the difference between spillover on Azure vs building failover logic on Bedrock?"
 - "How do I calculate the break-even utilisation rate for provisioned throughput?"
 
+### Self-hosted vs managed AI inference
+
+- "Should we self-host Llama 4 on rented H100s instead of paying Anthropic per token?"
+- "What hidden costs do TCO calculators miss when comparing vLLM on rented GPUs to managed APIs?"
+- "Are we mature enough to run our own inference stack? What does that maturity actually require?"
+- "How do we design a hybrid stack: self-hosted Qwen3.6 for high-volume RAG, Claude Opus for frontier reasoning?"
+
 ### Anthropic billing
 
 - "We're running Claude Sonnet on both AWS Bedrock and the direct Anthropic API. Our monthly bill jumped from $12K to $38K after a developer enabled Fast mode in Claude Code. How do I get this under control and prevent it from happening again?"
@@ -232,6 +243,7 @@ cloud-finops-skills/
         ├── finops-for-ai.md                    ← AI cost management
         ├── finops-ai-value-management.md       ← AI investment governance
         ├── finops-genai-capacity.md            ← GenAI capacity models (cross-provider)
+        ├── finops-ai-self-hosted-vs-managed.md ← Self-hosted vs managed AI inference decision
         ├── finops-anthropic.md                 ← Anthropic billing + governance
         ├── finops-aws.md                       ← AWS-specific FinOps
         ├── finops-bedrock.md                   ← AWS Bedrock billing

@@ -3,7 +3,8 @@ name: cloud-finops
 displayName: "Cloud FinOps by OptimNow"
 description: >
   Expert FinOps guidance covering cloud, AI, and SaaS technology spend. Includes AI cost
-  management, GenAI capacity planning, Anthropic billing, AWS (EC2, Bedrock, Savings Plans,
+  management, GenAI capacity planning, self-hosted vs managed AI inference decisioning,
+  Anthropic billing, AWS (EC2, Bedrock, Savings Plans,
   CUR, commitment strategy), Azure (reservations, Savings Plans, AHB, OpenAI PTUs, portfolio
   liquidity), GCP (Vertex AI, Compute Engine, BigQuery), tagging governance, SaaS management
   (SAM, licence optimisation, SMPs, shadow IT), AI coding tools (Cursor, Claude Code,
@@ -40,6 +41,16 @@ keywords:
   - claude pricing
   - genai capacity
   - provisioned throughput
+  - self-hosted llm
+  - self-hosted inference
+  - build vs buy llm
+  - vllm
+  - sglang
+  - llama.cpp
+  - gpu rental
+  - runpod
+  - coreweave
+  - hybrid inference routing
   - finops framework
   - cloud waste
   - cost explorer
@@ -116,6 +127,7 @@ matching the query.
 | AI costs, LLM inference, token economics, agentic cost patterns, AI ROI, AI cost allocation, GPU cost attribution, RAG harness costs | `references/finops-for-ai.md` |
 | AI investment governance, AI Investment Council, stage gates, incremental funding, AI value management, AI practice operations | `references/finops-ai-value-management.md` |
 | GenAI capacity planning, provisioned vs shared capacity, traffic shape, spillover, throughput units | `references/finops-genai-capacity.md` |
+| Self-hosted vs managed AI inference, build vs buy LLM, vLLM, SGLang, llama.cpp, GPU rental, RunPod, CoreWeave, Lambda, hidden cost surface, ML-Ops maturity rubric, hybrid routing (LiteLLM, Portkey) | `references/finops-ai-self-hosted-vs-managed.md` |
 | AWS billing, EC2 rightsizing, RIs, Savings Plans, commitment strategy, portfolio liquidity, phased purchasing, CUR, Data Exports for FOCUS 1.2, Cost Explorer hourly granularity, EDP negotiation, RDS cost management, database commitments, SageMaker AI Savings Plan, Database Savings Plan | `references/finops-aws.md` |
 | AWS Bedrock billing, Bedrock provisioned throughput, model unit pricing, Bedrock batch inference, Application Inference Profiles, Bedrock Projects, prompt caching, IAM Principal Cost Allocation | `references/finops-bedrock.md` |
 | Azure cost management, reservations, Savings Plans, Azure Hybrid Benefit, AHB, commitment strategy, portfolio liquidity, phased purchasing, sizing methodology, MACC, Azure Advisor, compute rightsizing, AKS optimisation, Azure Linux retirement, Node Auto Provisioning, NAP, database optimisation (Azure SQL, Postgres/MySQL, Cosmos), Log Analytics cost control, backup and snapshot management, storage tiering and lifecycle, networking cost, tagging and Azure Policy governance, FOCUS exports, EA-to-MCA transition, MCA contractual mechanics, billing hierarchy, ISF CSV deprecation | `references/finops-azure.md` |
