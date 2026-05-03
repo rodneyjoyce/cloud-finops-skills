@@ -6,7 +6,9 @@
 > and Azure OpenAI Service provisioned capacity models.
 >
 > Applies to hyperscaler-managed inference services. Does not cover custom model training
-> (SageMaker, Azure ML) or self-hosted serving infrastructure.
+> (SageMaker, Azure ML). For self-hosted serving infrastructure (vLLM/SGLang on rented or
+> owned GPUs) and the self-hosted-vs-managed decision framework, see
+> `finops-ai-self-hosted-vs-managed.md`.
 >
 > Distilled from: "Navigating GenAI Capacity Options"  - FinOps Foundation GenAI Working Group, 2025/2026.
 
