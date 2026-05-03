@@ -54,6 +54,7 @@ matching the query.
 | SaaS management, licence optimisation, shadow IT, SaaS sprawl, renewal governance, SMP, SAM | `references/finops-sam.md` |
 | ITAM, IT asset management, BYOL, marketplace channel governance, licence compliance, vendor negotiation, FinOps-ITAM collaboration, entitlement management, consumption-based SaaS overages | `references/finops-itam.md` |
 | Cost anomaly management, anomaly detection, masked anomalies, layered detection, threshold tuning, AWS Cost Anomaly Detection config, Azure anomaly detection, GCP budget anomaly alerts, new-region detection, security integration | `references/finops-anomaly-management.md` |
+| Cost allocation methodology, showback, EffectiveCost vs BilledCost (FOCUS), amortised vs unblended (AWS legacy), blended-cost trap, defensible allocation keys, shared-services allocation (network, observability, security, ingress), InvoiceId reconciliation, unallocated spend signal, showback report design and routing | `references/finops-allocation-showback.md` |
 | Multi-domain query | Load all relevant references, synthesize |
 
 ### Reasoning sequence (apply to every response)
@@ -146,7 +147,8 @@ premature - they risk committing to waste.
 | `finops-sam.md` | SaaS asset management: discovery, licence optimisation, renewal governance, SMPs, shadow IT, AI transition | ~210 |
 | `finops-itam.md` | FinOps-ITAM collaboration: BYOL mechanics, marketplace channel governance, vendor co-management, consumption monitoring, joint operating model | ~320 |
 | `greenops-cloud-carbon.md` | GreenOps: carbon measurement, carbon-aware workloads, region selection, GHG Protocol | ~330 |
-| `finops-anomaly-management.md` | Cost anomaly management as a standalone Inform-phase capability: native tooling per cloud (AWS Cost Anomaly Detection, Azure Cost Management, GCP Budgets), threshold philosophy (absolute dollars + percentage), layered detection across service / region / account / tag, the masked-anomaly failure mode, new-region detection, Security integration, Crawl/Walk/Run progression | ~270 |
+| `finops-anomaly-management.md` | Cost anomaly management as a standalone Inform-phase capability: native tooling per cloud (AWS Cost Anomaly Detection, Azure Cost Management, GCP Budgets), threshold philosophy (absolute dollars + percentage), layered detection across service / region / account / tag, the masked-anomaly failure mode, new-region detection, Security integration, Crawl/Walk/Run progression | ~325 |
+| `finops-allocation-showback.md` | Cost allocation and showback. FOCUS cost columns (EffectiveCost vs BilledCost) with AWS legacy mapping (amortised / unblended) and blended-cost trap warning. Defensible allocation keys table, shared-services hard cases (network, observability, security, ingress), InvoiceId reconciliation, unallocated > 10% as tagging signal, showback report design and routing, data-quality dispute process, Crawl/Walk/Run progression | ~310 |
 
 ---
 

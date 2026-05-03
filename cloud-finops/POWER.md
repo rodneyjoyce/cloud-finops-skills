@@ -101,6 +101,16 @@ keywords:
   - layered detection
   - threshold tuning
   - new-region detection
+  - cost allocation
+  - showback
+  - allocation methodology
+  - effectivecost
+  - amortised vs unblended
+  - blended cost trap
+  - defensible allocation keys
+  - shared services allocation
+  - invoiceid reconciliation
+  - unallocated spend
 ---
 
 # Cloud FinOps - Expert Guidance
@@ -152,6 +162,7 @@ matching the query.
 | SaaS management, licence optimisation, shadow IT, SaaS sprawl, renewal governance, SMP, SAM | `references/finops-sam.md` |
 | ITAM, IT asset management, BYOL, marketplace channel governance, licence compliance, vendor negotiation, FinOps-ITAM collaboration, entitlement management, consumption-based SaaS overages | `references/finops-itam.md` |
 | Cost anomaly management, anomaly detection, masked anomalies, layered detection, threshold tuning, AWS Cost Anomaly Detection config, Azure anomaly detection, GCP budget anomaly alerts, new-region detection, security integration | `references/finops-anomaly-management.md` |
+| Cost allocation methodology, showback, EffectiveCost vs BilledCost (FOCUS), amortised vs unblended (AWS legacy), blended-cost trap, defensible allocation keys, shared-services allocation (network, observability, security, ingress), InvoiceId reconciliation, unallocated spend signal, showback report design and routing | `references/finops-allocation-showback.md` |
 | Multi-domain query | Load all relevant references, synthesise |
 
 ### Reasoning sequence (apply to every response)
