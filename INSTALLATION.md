@@ -26,6 +26,13 @@ and cleans up. Works on Mac, Linux, and WSL.
 
 ## Option 2: Manual install (Claude Code)
 
+> **For most Claude Code users**, the plugin marketplace path documented in
+> [README.md](./README.md#quick-install-claude-code-plugin) is simpler and supports
+> auto-updates. Those `/plugin ...` commands are typed at the **Claude Code prompt**
+> (the chat input after running `claude`), not in a shell. Use the manual clone below
+> only when you want full control over where the skill files live or when you cannot
+> use the plugin marketplace.
+
 ```bash
 # Clone the repository
 git clone https://github.com/OptimNow/cloud-finops-skills.git
