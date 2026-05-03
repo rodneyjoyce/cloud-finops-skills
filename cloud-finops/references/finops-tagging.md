@@ -1,3 +1,14 @@
+---
+name: finops-tagging
+fcp_domain: "Understand Usage & Cost"
+fcp_capability: "Allocation"
+fcp_capabilities_secondary: ["Policy & Governance"]
+fcp_phases: ["Inform", "Operate"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Security", "Finance"]
+fcp_maturity_entry: "Crawl"
+---
+
 # FinOps Tagging and Naming Governance
 
 > Tagging is the foundation of cost allocation, accountability, and automation.

@@ -1,3 +1,14 @@
+---
+name: finops-bedrock
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Workload Optimization"
+fcp_capabilities_secondary: ["Rate Optimization"]
+fcp_phases: ["Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Product", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps on AWS Bedrock
 
 > AWS Bedrock-specific guidance covering the billing model, model pricing, provisioned

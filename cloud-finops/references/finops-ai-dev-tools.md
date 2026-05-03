@@ -1,3 +1,14 @@
+---
+name: finops-ai-dev-tools
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Workload Optimization"
+fcp_capabilities_secondary: ["Allocation", "Licensing & SaaS"]
+fcp_phases: ["Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Procurement", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps for AI Coding Tools
 
 > Cost governance for AI-assisted development tools - covering seat-based IDE assistants

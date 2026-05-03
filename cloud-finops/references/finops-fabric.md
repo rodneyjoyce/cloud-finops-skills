@@ -1,3 +1,14 @@
+---
+name: finops-fabric
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Rate Optimization"
+fcp_capabilities_secondary: ["Workload Optimization", "Onboarding Workloads"]
+fcp_phases: ["Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Product", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps on Microsoft Fabric
 
 > Microsoft Fabric capacity FinOps: F-SKU model, Capacity Units (CU) and the 24-hour

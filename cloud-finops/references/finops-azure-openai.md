@@ -1,3 +1,14 @@
+---
+name: finops-azure-openai
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Rate Optimization"
+fcp_capabilities_secondary: ["Workload Optimization"]
+fcp_phases: ["Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Product", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps on Azure OpenAI Service
 
 > Azure OpenAI Service-specific guidance covering the billing model, PTU (Provisioned

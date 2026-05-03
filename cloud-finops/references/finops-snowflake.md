@@ -1,3 +1,14 @@
+---
+name: finops-snowflake
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Workload Optimization"
+fcp_capabilities_secondary: ["Rate Optimization"]
+fcp_phases: ["Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Product", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps on Snowflake
 
 > Snowflake-specific optimization patterns covering warehouse sizing, query efficiency, storage, and governance. 13 inefficiency patterns for diagnosing waste and building optimization roadmaps.

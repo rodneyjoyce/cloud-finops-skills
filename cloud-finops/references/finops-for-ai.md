@@ -1,3 +1,14 @@
+---
+name: finops-for-ai
+fcp_domain: "Quantify Business Value"
+fcp_capability: "Unit Economics"
+fcp_capabilities_secondary: ["Workload Optimization", "Allocation"]
+fcp_phases: ["Inform", "Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering", "Product"]
+fcp_personas_collaborating: ["Finance", "Leadership"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps for AI
 
 > AI workloads do not behave like infrastructure workloads. The tools, processes, and

@@ -1,3 +1,14 @@
+---
+name: finops-ai-value-management
+fcp_domain: "Quantify Business Value"
+fcp_capability: "Planning & Estimating"
+fcp_capabilities_secondary: ["Forecasting", "FinOps Practice Operations"]
+fcp_phases: ["Inform", "Operate"]
+fcp_personas_primary: ["FinOps Practitioner", "Leadership"]
+fcp_personas_collaborating: ["Engineering", "Product", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps for AI: Managing Value and Practice Operations
 
 > Guidance on how FinOps practices should evolve to manage AI investments at scale.

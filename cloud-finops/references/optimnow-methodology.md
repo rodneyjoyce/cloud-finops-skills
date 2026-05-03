@@ -1,3 +1,13 @@
+---
+name: optimnow-methodology
+fcp_domain: "Manage the FinOps Practice"
+fcp_capability: "FinOps Practice Operations"
+fcp_phases: ["Inform", "Optimize", "Operate"]
+fcp_personas_primary: ["FinOps Practitioner"]
+fcp_personas_collaborating: ["Engineering", "Finance", "Leadership"]
+fcp_maturity_entry: "Crawl"
+---
+
 # OptimNow Methodology
 
 > This file defines how OptimNow approaches customer problems. It is a reasoning lens,

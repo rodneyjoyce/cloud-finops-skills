@@ -1,3 +1,14 @@
+---
+name: finops-genai-capacity
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Rate Optimization"
+fcp_capabilities_secondary: ["Workload Optimization", "Architecting for Cloud"]
+fcp_phases: ["Optimize"]
+fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
+fcp_personas_collaborating: ["Product", "Finance"]
+fcp_maturity_entry: "Walk"
+---
+
 # FinOps for GenAI: Capacity Models
 
 > Cross-provider reference covering provisioned vs shared (pay-as-you-go) capacity for
