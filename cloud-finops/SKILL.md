@@ -101,10 +101,10 @@ continuously as their technology usage evolves.
 - Rightsizing and waste elimination are running continuously
 - Unit economics are tracked
 
-**Operate** - operationalize through governance and automation
+**Operate** - operationalise through governance and automation
 - FinOps is embedded in engineering and finance workflows
 - Policies are enforced through automation, not manual review
-- Accountability is distributed, not centralized
+- Accountability is distributed, not centralised
 
 ---
 

@@ -331,4 +331,9 @@ not with an automated governance platform.
 
 ---
 
-> Sources
+> Sources: FinOps Foundation (FinOps for SaaS scope and ITAM-FinOps collaboration framing),
+> State of FinOps 2026 (6th edition, February 2026), Gartner MQ for Cloud Financial
+> Management Tools (July 2024), vendor entitlement management documentation (Microsoft,
+> Oracle, SAP), Flexera 2025 State of Cloud Report.
+
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

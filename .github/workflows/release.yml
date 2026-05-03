@@ -22,7 +22,10 @@ jobs:
           cd "${GITHUB_WORKSPACE}"
           # Exclude local-only directories that may exist in worktrees
           # (e.g. .claude/settings.local.json from Claude Code worktrees)
-          zip -r "${ZIP_NAME}" cloud-finops -x 'cloud-finops/.claude/*'
+          zip -r "${ZIP_NAME}" cloud-finops \
+            -x 'cloud-finops/.claude/*' \
+            -x 'cloud-finops/**/.backups/*' \
+            -x 'cloud-finops/.git/*'
           ls -lh "${ZIP_NAME}"
           unzip -l "${ZIP_NAME}" | head -5  # log the first few entries to verify forward-slash paths
           echo "ZIP_NAME=${ZIP_NAME}" >> "$GITHUB_ENV"
@@ -39,4 +42,4 @@ jobs:
 
             The attached `cloud-finops-${{ github.ref_name }}.zip` is the skill bundle for upload into Claude Desktop / claude.ai (Settings → Skills → Upload).
 
-            For Claude Code users, see [INSTALLATION.md](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md) for the six setup options including the model-agnostic response contract.
+            For Claude Code users (and 10 other tools), see [INSTALLATION.md](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md) for the cross-tool installer and the model-agnostic response contract.

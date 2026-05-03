@@ -16,7 +16,7 @@ fcp_maturity_entry: "Walk"
 > vs provisioned capacity trade-offs, model selection economics, cross-region inference,
 > and cost visibility within AWS Cost Explorer.
 >
-> Distilled from: "Navigating GenAI Capacity Options"  - FinOps Foundation GenAI Working Group, 2025/2026.
+> Distilled from: "Navigating GenAI Capacity Options" - FinOps Foundation GenAI Working Group, 2025/2026.
 > See also: `finops-genai-capacity.md` for cross-provider capacity concepts.
 
 ---
@@ -85,7 +85,7 @@ on token rates. Use for:
 
 On AWS Bedrock, provisioned throughput is purchased as **model-specific units** for a
 fixed term (1 month or 6 months). Each unit provides a defined number of model units
-(MUs)  - a measure of throughput capacity for that specific model.
+(MUs) - a measure of throughput capacity for that specific model.
 
 ### Key characteristics
 
@@ -105,7 +105,7 @@ fixed term (1 month or 6 months). Each unit provides a defined number of model u
 | Latency-sensitive, user-facing application | Justified for TTFT/OTPS improvement |
 | Data privacy requirement | Provisioned endpoints exclude data from training |
 | Bursty or unpredictable traffic | On-demand or hybrid with manual failover logic |
-| Workload likely to switch models within 6 months | Avoid  - model lock is a real risk |
+| Workload likely to switch models within 6 months | Avoid - model lock is a real risk |
 
 ### Provisioned throughput governance checklist
 
@@ -113,9 +113,9 @@ fixed term (1 month or 6 months). Each unit provides a defined number of model u
 - [ ] Load-test to validate vendor TPM estimate against your actual input/output token mix
 - [ ] Calculate break-even utilization (provisioned unit cost ÷ on-demand equivalent)
 - [ ] Build failover logic to on-demand for overflow traffic (spillover is not built in)
-- [ ] Set utilization alerts  - target >80% to justify the reservation
+- [ ] Set utilization alerts - target >80% to justify the reservation
 - [ ] Assess model roadmap: is a better model likely within your commitment term?
-- [ ] Apply existing AWS enterprise discounts  - verify they apply to Bedrock reservations
+- [ ] Apply existing AWS enterprise discounts - verify they apply to Bedrock reservations
 
 ---
 
@@ -176,11 +176,11 @@ propagates tags applied to that principal into the Cost and Usage Report and Cos
 - **CUR size grows significantly.** Row count multiplies roughly by the number of distinct
   calling principals per model per day. Budget for larger S3 storage, longer Athena scans,
   and potentially higher query cost on CUR
-- Tags only become visible after the principal has made at least one API call  - new roles
+- Tags only become visible after the principal has made at least one API call - new roles
   will not appear in cost allocation UI until used
 - Follow standard tag hygiene: avoid high-cardinality values (session IDs, timestamps,
   GUIDs) as they inflate CUR without analytical value
-- The feature gives visibility, not chargeback automation  - downstream showback or
+- The feature gives visibility, not chargeback automation - downstream showback or
   chargeback still needs to be built on top of the CUR
 
 **When to use it vs. account separation:**
@@ -190,7 +190,7 @@ propagates tags applied to that principal into the Cost and Usage Report and Cos
 | Multiple teams share one account and need per-team Bedrock attribution | IAM Principal Cost Allocation |
 | Teams need independent budgets, IAM boundaries, and quota ceilings | Separate accounts |
 | Per-user chargeback inside a team (e.g. internal AI sandbox) | IAM Principal Cost Allocation on user tags |
-| Per-feature attribution inside a single application | Still needs SDK/proxy wrapper  - IAM principal is too coarse |
+| Per-feature attribution inside a single application | Still needs SDK/proxy wrapper - IAM principal is too coarse |
 
 **Feature-level attribution (still relevant):** IAM principals identify *who* called the
 API, not *which feature*. For per-feature unit economics inside one application, keep
@@ -349,15 +349,13 @@ Candidates: document enrichment, bulk classification, evaluation pipelines, repo
 ## Governance checklist
 
 - [ ] Enable Cost Explorer for Bedrock and set up daily cost anomaly alerts
-- [ ] Define model selection policy  - default to lower-cost tiers unless justified
+- [ ] Define model selection policy - default to lower-cost tiers unless justified
 - [ ] Instrument applications with token counts per request (input + output)
 - [ ] Separate accounts or use tags for team/product cost attribution
 - [ ] Review provisioned throughput utilization monthly
-- [ ] Establish a model review cadence  - AWS Bedrock model catalog changes frequently
+- [ ] Establish a model review cadence - AWS Bedrock model catalog changes frequently
 - [ ] Document which workloads use provisioned vs on-demand capacity and why
 
 ---
 
----
-
-> *Cloud FinOps Skill by [OptimNow](https://optimnow.io)  - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
