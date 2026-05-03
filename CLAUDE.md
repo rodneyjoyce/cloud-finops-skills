@@ -78,6 +78,27 @@ reference file. See `pipeline/README.md` for the full workflow.
 
 ---
 
+## Pending follow-ups
+
+- **Extend GreenOps depth to Azure and GCP.** The May 2026 GreenOps pass added AWS-specific
+  depth to `references/greenops-cloud-carbon.md` (Sustainability Console v2 with Methodology v3
+  alignment, the unused-capacity ventilation trap, critical reading of AWS sustainability claims,
+  AWS region intensity anchors with the 15x gap, hardware/storage anchors, Well-Architected
+  Sustainability Pillar SUS01-SUS06 with critical-read notes). The next pass should bring the
+  same depth to Azure and GCP:
+  - **Azure**: Emissions Impact Dashboard refresh (current methodology version, scope coverage,
+    location-based vs market-based handling), Azure region intensity anchors with concrete
+    numbers, Azure-specific hardware anchors (Cobalt 100, Ampere Altra, Spot equivalents), and
+    Azure Well-Architected sustainability guidance critical reading.
+  - **GCP**: Carbon Footprint refresh (granularity, scope coverage, location-based vs
+    market-based view), GCP region intensity anchors, GCP-specific hardware anchors (Axion, Tau
+    T2A, Spot/preemptible equivalents).
+  - Keep the engagement-framing section vendor-agnostic - it does not need to be duplicated
+    per provider. The trade-off tables, four-quadrant cost-vs-carbon framework, and CSRD
+    stakeholder roles already apply across all three providers.
+
+---
+
 ## Model compatibility
 
 The skill files are plain markdown - any LLM can read them. What differs across models
