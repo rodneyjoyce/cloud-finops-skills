@@ -103,6 +103,14 @@ The skill provides accurate, framework-aligned guidance across the following dom
   philosophy (absolute dollars plus percentage), layered detection across service,
   region, account, and tag scopes, the masked-anomaly failure mode, new-region
   detection, integration with Security
+- **Allocation and showback** - cost allocation methodology and the showback
+  delivery model that earns the upgrade to chargeback. FOCUS cost columns
+  (`EffectiveCost` vs `BilledCost`) with explicit AWS legacy mapping (amortised
+  vs unblended) and a `blended_cost` trap warning. Defensible allocation keys
+  table, shared-services hard cases (network, observability, security, ingress),
+  `InvoiceId` reconciliation, unallocated spend > 10% as a tagging signal,
+  showback report design and routing into team-existing surfaces, data-quality
+  dispute process
 
 All guidance is framed through OptimNow's methodology: connecting cost to business value,
 diagnosing before prescribing, and recommending actions matched to organisational maturity.
@@ -266,7 +274,8 @@ cloud-finops-skills/
         ├── finops-sam.md                       ← SaaS asset management (SAM)
         ├── finops-itam.md                     ← ITAM collaboration (BYOL, marketplace, entitlements)
         ├── greenops-cloud-carbon.md            ← GreenOps and cloud carbon
-        └── finops-anomaly-management.md        ← Anomaly management (standalone Inform-phase capability)
+        ├── finops-anomaly-management.md        ← Anomaly management (standalone Inform-phase capability)
+        └── finops-allocation-showback.md       ← Cost allocation methodology + showback
 ```
 
 The `SKILL.md` file is the entry point for Claude Code and generic agents. `POWER.md` is
