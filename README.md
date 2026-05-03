@@ -123,6 +123,17 @@ The skill provides accurate, framework-aligned guidance across the following dom
   decision-owner table mapping each prerequisite to the right Finance role,
   methodology dispute process, the chargeback-revolt anti-pattern (12-18
   months of credibility loss when skipped)
+- **Onboarding workloads** - migration-time cost hygiene as the cheapest
+  moment to enforce tagging, allocation, forecasting, and commitment-strategy
+  alignment. Covers the intake gate (mandatory checklist + three
+  implementation patterns: PR gate, cutover gate, pre-prod gate), the 60-90
+  day forecast-then-commit rule that prevents committing on a volatile
+  baseline, the double-bubble cost (parallel-run source and target) with
+  explicit shutoff discipline, the migration-cost-estimate-vs-actuals trap
+  driven by data-centre-to-cloud network cost differences, M&A integration
+  playbook (months 1-12 sequence), FOCUS-during-migration logic, cost-aware
+  architecture review integration, the requirement for a named
+  post-migration FinOps owner
 
 All guidance is framed through OptimNow's methodology: connecting cost to business value,
 diagnosing before prescribing, and recommending actions matched to organisational maturity.
@@ -288,7 +299,8 @@ cloud-finops-skills/
         ├── greenops-cloud-carbon.md            ← GreenOps and cloud carbon
         ├── finops-anomaly-management.md        ← Anomaly management (standalone Inform-phase capability)
         ├── finops-allocation-showback.md       ← Cost allocation methodology + showback
-        └── finops-chargeback.md                ← Chargeback maturity ladder + Finance/accounting prerequisites
+        ├── finops-chargeback.md                ← Chargeback maturity ladder + Finance/accounting prerequisites
+        └── finops-onboarding-workloads.md      ← Migration-time cost hygiene + M&A integration
 ```
 
 The `SKILL.md` file is the entry point for Claude Code and generic agents. `POWER.md` is
