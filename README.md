@@ -271,25 +271,41 @@ domain-specific content is shared.
 
 ## Installation
 
-See **[INSTALLATION.md](./INSTALLATION.md)** for step-by-step setup instructions
-covering Claude Code, Kiro IDE, Claude.ai, and API integration.
+The skill installs into 11 different tools via a single bash installer that converts
+the canonical Claude / Agent-Skills format into each target tool's expected shape.
+See **[INSTALLATION.md](./INSTALLATION.md)** for the full per-tool instructions.
 
-### Quick install: Claude Code plugin
+### One-liner (auto-detect)
 
-For Claude Code users, the skill is also distributed as a self-hosted plugin with
-auto-update support. Two commands:
+```bash
+curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash
+```
 
-> **Where to type these:** at the **Claude Code prompt** - the chat input you see after
-> running `claude` in your terminal. They are slash commands, not shell commands. Pasting
-> them into PowerShell, bash, or zsh will fail.
+Auto-detects which tools you have installed (Claude Code, Cursor, Windsurf, Codex, etc.)
+and installs the skill for each, with the right per-tool conversion.
+
+### One specific tool
+
+```bash
+curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash -s -- --tool <name>
+```
+
+Supported tools: `claude-code`, `claude-projects`, `cursor`, `windsurf`, `chatgpt`,
+`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`. Run `./install.sh --list`
+to see them all.
+
+### Claude Code plugin (auto-updating alternative)
+
+For Claude Code specifically, the skill is also distributed as a self-hosted plugin
+with built-in update via `/plugin update`. Two commands at the **Claude Code prompt**
+(not your shell):
 
 ```text
 /plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git
 /plugin install cloud-finops@optimnow
 ```
 
-To pull the latest content (including the bi-monthly automated updates), run this at the
-same Claude Code prompt:
+To pull the latest content (including the bi-monthly automated updates):
 
 ```text
 /plugin update cloud-finops@optimnow
@@ -297,13 +313,18 @@ same Claude Code prompt:
 
 **Note on the URL form:** the explicit HTTPS URL above avoids an SSH-authentication
 prompt that some Claude Code installs hit when given the `OptimNow/cloud-finops-skills`
-shorthand (the shorthand can resolve to `git@github.com:` and require an SSH key
-on file with GitHub). The repository is fully public over HTTPS - no credentials
-needed.
+shorthand. The repository is fully public over HTTPS - no credentials needed.
 
-For Claude Desktop / claude.ai users, the manual zip-upload path stays as documented
-in `INSTALLATION.md` (Option 1). Both distribution channels share the same skill
-content - pick the one that matches how you use Claude.
+### Claude Desktop / claude.ai
+
+For the web / desktop apps, the installer can build a clean upload zip:
+
+```bash
+./install.sh --tool claude-projects
+```
+
+Then upload `dist/claude-projects/cloud-finops.zip` via Settings → Skills → Upload zip.
+The same zip is also attached to every [GitHub release](https://github.com/OptimNow/cloud-finops-skills/releases).
 
 ---
 

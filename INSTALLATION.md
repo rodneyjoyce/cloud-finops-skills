@@ -1,138 +1,215 @@
 # Installation Guide
 
+The skill ships in a single canonical Claude / Agent-Skills format and is converted on
+the fly to the shape each target tool expects. One installer (`./install.sh`) handles
+the conversion for every supported tool. Per-tool blocks below are copy-pasteable.
+
 ## Prerequisites
 
-- Claude Code, or another agent that supports the Agent Skills specification
-- Git
+- `git` (for clone / fetch — only required if running the installer remotely)
+- `bash` 4+ (macOS / Linux / WSL)
+- For the Claude Projects zip: `python3` or `zip`
 
 ---
 
-## Option 1: One-liner install (recommended)
+## Quick reference: one installer, eleven tools
 
 ```bash
+# Auto-detect tools in the current project / $HOME and install for each
 curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash
+
+# Or install for a specific tool
+curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash -s -- --tool <name>
+
+# Other useful flags
+./install.sh --list              # list supported tools
+./install.sh --dry-run           # print what would happen
+./install.sh --user              # install at $HOME paths (Claude Code, Gemini CLI)
+./install.sh --dest <dir>        # override target directory
 ```
 
-This downloads the skill into the current directory. To install into a specific project:
+Supported tools: `claude-code`, `claude-projects`, `cursor`, `windsurf`, `chatgpt`,
+`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`.
+
+---
+
+## Per-tool blocks
+
+### Claude Code (project)
 
 ```bash
-curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash -s -- --dir ~/my-project
+./install.sh --tool claude-code
 ```
 
-The script clones the repo, copies the `cloud-finops/` folder, verifies the installation,
-and cleans up. Works on Mac, Linux, and WSL.
+Copies the skill folder to `<project>/.claude/skills/cloud-finops/`. Restart Claude Code
+or run `/reload-plugins` to pick up.
 
----
+For auto-updating installs, prefer the plugin marketplace path:
 
-## Option 2: Manual install (Claude Code)
+```
+/plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git
+/plugin install cloud-finops@optimnow
+/plugin update cloud-finops@optimnow
+```
 
-> **For most Claude Code users**, the plugin marketplace path documented in
-> [README.md](./README.md#quick-install-claude-code-plugin) is simpler and supports
-> auto-updates. Those `/plugin ...` commands are typed at the **Claude Code prompt**
-> (the chat input after running `claude`), not in a shell. Use the manual clone below
-> only when you want full control over where the skill files live or when you cannot
-> use the plugin marketplace.
+(Run those at the Claude Code prompt, not in a shell.)
+
+### Claude Code (user-level)
 
 ```bash
-# Clone the repository
-git clone https://github.com/OptimNow/cloud-finops-skills.git
-
-# Copy the skill folder to your project or skills directory
-cp -r cloud-finops-skills/cloud-finops ~/.claude/skills/
-
-# Verify structure
-ls ~/.claude/skills/cloud-finops/
-# Should show: SKILL.md, references/
+./install.sh --tool claude-code --user
 ```
 
-After copying, Claude Code will automatically detect the skill. Test it:
+Copies to `~/.claude/skills/cloud-finops/` so the skill is available across all your
+Claude Code projects.
 
-```
-"What are the first steps to manage AI inference costs?"
-"How do I choose between Reserved Instances and Savings Plans on AWS?"
-"We have zero tagging compliance - where do we start?"
-```
-
----
-
-## Option 3: Kiro IDE (power)
-
-In Kiro IDE, add the power directly from GitHub:
-
-1. Open the **Powers** panel in Kiro
-2. Click **Add power from GitHub**
-3. Enter the repository URL: `https://github.com/OptimNow/cloud-finops-skills/`
-4. The power installs automatically and activates when you mention cloud costs,
-   FinOps, AI spend, or any of the covered domains
-
-The power loads dynamically based on conversation context - no manual activation needed.
-
----
-
-## Option 4: Claude.ai skill upload
-
-If you are using Claude.ai (not Claude Code), you can upload the skill directly.
-
-### Step 1: Download the skill
-
-Clone or download this repository, then create a zip of the `cloud-finops/` folder:
+### Claude Projects / claude.ai (web upload)
 
 ```bash
-git clone https://github.com/OptimNow/cloud-finops-skills.git
-cd cloud-finops-skills
-zip -r cloud-finops.zip cloud-finops/
+./install.sh --tool claude-projects
 ```
 
-On Windows (PowerShell):
+Builds `dist/claude-projects/cloud-finops.zip`. Upload via Claude.ai or Claude Desktop:
+**Settings → Skills → Upload zip**.
 
-```powershell
-git clone https://github.com/OptimNow/cloud-finops-skills.git
-cd cloud-finops-skills
-Compress-Archive -Path cloud-finops -DestinationPath cloud-finops.zip
+The release workflow also attaches the same zip to every GitHub release - you can grab
+it from https://github.com/OptimNow/cloud-finops-skills/releases.
+
+### Cursor
+
+```bash
+./install.sh --tool cursor
 ```
 
-### Step 2: Open the Customize panel
+Writes `<project>/.cursor/rules/cloud-finops.mdc` (single rule with the full skill body
++ Cursor frontmatter). Cursor auto-loads `.cursor/rules/`. Trigger by asking a FinOps
+question in chat.
 
-On the Claude.ai home page, find and click **Manage connectors & skills** at the
-bottom of the sidebar.
+### Windsurf
 
-<img src="assets/claude-manage-connectors.png" alt="Claude.ai home page - Manage connectors and skills" width="400" />
+```bash
+./install.sh --tool windsurf
+```
 
-### Step 3: Go to Skills and click +
+Writes `<project>/.windsurf/rules/cloud-finops.md` with Windsurf rule frontmatter
+(`trigger: model_decision`).
 
-In the Customize panel, click **Skills** in the left sidebar, then click the **+**
-button at the top to add a new skill.
+### ChatGPT (Custom GPT)
 
-<img src="assets/claude-skill-customize.png" alt="Claude.ai Customize panel - Skills section" width="400" />
+```bash
+./install.sh --tool chatgpt
+```
 
-### Step 4: Upload the zip
+Builds two artefacts in `dist/chatgpt/`:
 
-Drag and drop `cloud-finops.zip` into the upload dialog, or click to browse.
-The zip must contain a `SKILL.md` file with valid YAML frontmatter.
+- `instructions.md` - target ≤ 8000 chars; the routing logic, reasoning sequence, and
+  response contract that go into the GPT's Instructions field. The installer warns if
+  the file exceeds the limit.
+- `knowledge/*.md` - 20 reference files for upload to the GPT's Knowledge section. The
+  21st reference (`optimnow-methodology.md`) is **merged into `finops-for-ai.md`** to
+  fit ChatGPT's 20-file cap; the methodology lens stays available via that file.
 
-<img src="assets/claude-skill-upload.png" alt="Claude.ai skill upload dialog" width="400" />
+Then manually:
 
-Once uploaded, the skill appears under **Personal plugins** and activates
-automatically when you ask FinOps-related questions.
+1. Open https://chatgpt.com/gpts/editor
+2. Paste `dist/chatgpt/instructions.md` into the Instructions field
+3. Upload all files from `dist/chatgpt/knowledge/` to the Knowledge section
+4. Set name (`Cloud FinOps`), category, visibility per preference
+
+**Trade-off:** ChatGPT's 8K Instructions limit means routing + response contract live
+inline, but the reference content is RAG-retrieved from Knowledge files. Compared to
+the Claude / Cursor install, ChatGPT may miss cross-reference detail because it
+retrieves chunks rather than loading the full skill into context.
+
+### Gemini Gems (web)
+
+```bash
+./install.sh --tool gemini
+```
+
+Builds `dist/gemini/instructions.md` (same content as ChatGPT) and
+`dist/gemini/knowledge/*.md` - references **grouped by domain** (aws, azure, gcp, ai,
+data-platforms, oci, cross-cutting, methodology) to fit Gemini Gems' tighter file cap.
+
+Manual upload at https://gemini.google.com/gems/. Same trade-off as ChatGPT applies.
+
+### Gemini CLI
+
+```bash
+./install.sh --tool gemini-cli --user
+```
+
+Copies to `~/.gemini/skills/cloud-finops/`.
+
+### OpenAI Codex CLI
+
+```bash
+./install.sh --tool codex
+```
+
+Writes `<project>/AGENTS.md` (or `AGENTS-cloud-finops.md` if `AGENTS.md` already exists,
+to avoid clobbering). Codex CLI reads `AGENTS.md` as project-level context.
+
+This is the interim path; an MCP server (planned) will be the cleaner cross-agent
+distribution mechanism.
+
+### Aider
+
+```bash
+./install.sh --tool aider
+```
+
+Writes `<project>/CONVENTIONS.md` (or `CONVENTIONS-cloud-finops.md` if one exists).
+Aider auto-reads `CONVENTIONS.md`. Default coverage is the four general references
+(AWS, Azure, GCP, AI). Add specific references at runtime with:
+
+```bash
+aider --read cloud-finops/references/finops-bedrock.md ...
+```
+
+### GitHub Copilot
+
+```bash
+./install.sh --tool copilot
+```
+
+Writes `<project>/.github/copilot-instructions.md`. Copilot's customisation surface
+is shallow - the file informs code-suggestion context but won't power deep FinOps Q&A
+the way Claude / Cursor do. Use as a lightweight context hint, not a full skill load.
+
+### Kiro IDE
+
+```bash
+./install.sh --tool kiro
+```
+
+Copies the skill to `<project>/.kiro/powers/cloud-finops/`. Kiro uses `POWER.md` as the
+entry point.
 
 ---
 
-## Option 5: Agent integration
+## Updating
 
-The skill is designed to integrate directly with OptimNow's Agent Smith.
-
-```python
-# In your Agent Smith configuration, add to the skills loader:
-skill_loader.load_skill("cloud-finops")
+```bash
+./install.sh --tool <name>
 ```
 
-Refer to the Agent Smith documentation for skill configuration details.
+Re-running the installer for a tool overwrites the previous install in place. The
+script is idempotent - safe to run on every release.
+
+For Claude Code plugin users:
+
+```
+/plugin update cloud-finops@optimnow
+```
 
 ---
 
-## Option 6: API integration (system prompt injection)
+## API integration (system-prompt injection)
 
-For direct API use, concatenate the skill files into your system prompt:
+For direct API use without one of the supported tools, concatenate the skill files
+into your system prompt. This is the model-agnostic path - works with any LLM API
+(Claude, OpenAI, Gemini, Mistral, others).
 
 ```python
 import os
@@ -150,13 +227,13 @@ def load_cloud_finops_skill(skill_dir: str) -> str:
 system_prompt = load_cloud_finops_skill("./cloud-finops")
 ```
 
-For token efficiency, load only the domain reference files relevant to your use case
-rather than all references at once.
+For token efficiency, load only the references relevant to your use case. For most
+single-domain queries, one reference file plus `optimnow-methodology.md` is sufficient.
 
-For GPT and other models, use a **response contract** in your system prompt so the model
-produces structured, billing-grounded answers instead of generic advice.
+### Recommended response contract
 
-Recommended contract (model-agnostic):
+For non-Claude models, prepend this contract to your system prompt to keep responses
+structured and grounded in the injected references:
 
 ```text
 # Cloud FinOps Response Contract - by OptimNow
@@ -209,31 +286,27 @@ Use headers:
 Do not output JSON unless requested.
 ```
 
-
----
-
-## Updating the skill
-
-```bash
-# Pull latest changes
-cd cloud-finops-skills
-git pull origin main
-
-# Re-copy to your skills directory
-cp -r cloud-finops ~/.claude/skills/
-```
-
-Or re-run the one-liner installer - it will replace the existing installation automatically.
-
 ---
 
 ## Troubleshooting
 
-**Skill not activating:** Check that the YAML frontmatter in `SKILL.md` is valid.
-The `name` and `description` fields are required.
+**Skill not activating in Claude Code:** check that the YAML frontmatter in `SKILL.md`
+is valid. The `name` and `description` fields are required.
 
-**References not loading:** Ensure all files in `references/` are readable and correctly
-named. The SKILL.md router references files by exact filename.
+**Cursor / Windsurf rule not triggering:** verify the rule's `description` field is
+specific enough that the model picks it up. The default description in the installer
+already covers the major FinOps query types.
 
-**Token budget exceeded:** Load only the relevant domain reference file rather than all
-references. For most queries, one reference file + `optimnow-methodology.md` is sufficient.
+**ChatGPT instructions exceed 8K limit:** the installer warns when the build crosses
+the limit. If it does, manually trim the routing table to only the providers you care
+about, or upload the trimmed routing as a knowledge file and keep instructions minimal.
+
+**ChatGPT only allows 20 knowledge files:** the installer merges `optimnow-methodology.md`
+into `finops-for-ai.md` to fit. If you have other custom knowledge files you want to
+keep, drop one of the references manually instead.
+
+**Token budget exceeded on system-prompt injection:** load only the domain references
+relevant to your query. For most use cases, `SKILL.md` + 1-2 references is enough.
+
+**Path issues on Windows:** the installer is bash-only. Use WSL2 (`wsl.exe`) or Git
+Bash. Native PowerShell is not supported.
