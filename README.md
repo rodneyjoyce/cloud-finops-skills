@@ -134,6 +134,19 @@ The skill provides accurate, framework-aligned guidance across the following dom
   playbook (months 1-12 sequence), FOCUS-during-migration logic, cost-aware
   architecture review integration, the requirement for a named
   post-migration FinOps owner
+- **Kubernetes FinOps** - the cross-cluster discipline (EKS, GKE, AKS) for
+  the hardest variant of cloud-cost allocation. Covers tooling choice
+  (OpenCost / Kubecost / cloud-native), FOCUS-emitting K8s allocation with
+  K8s-labels-to-FOCUS-Tags mapping (so per-pod costs join non-K8s costs in
+  the warehouse), container rightsizing methodology (VPA in
+  recommendation-only mode, p99 + 30% memory safety margin, p95 + 50% CPU
+  safety, per-workload rollout), node-level autoscaling (Karpenter beats
+  Cluster Autoscaler on cost efficiency where available, consolidation
+  policy tuning, Pod Disruption Budgets as non-negotiable, Spot
+  diversification across instance types and availability zones), and idle
+  node cost as Platform team overhead rather than redistributed across
+  application teams. Provider-specific node mechanics live in the per-cloud
+  files
 
 All guidance is framed through OptimNow's methodology: connecting cost to business value,
 diagnosing before prescribing, and recommending actions matched to organisational maturity.
@@ -300,7 +313,8 @@ cloud-finops-skills/
         ├── finops-anomaly-management.md        ← Anomaly management (standalone Inform-phase capability)
         ├── finops-allocation-showback.md       ← Cost allocation methodology + showback
         ├── finops-chargeback.md                ← Chargeback maturity ladder + Finance/accounting prerequisites
-        └── finops-onboarding-workloads.md      ← Migration-time cost hygiene + M&A integration
+        ├── finops-onboarding-workloads.md      ← Migration-time cost hygiene + M&A integration
+        └── finops-kubernetes.md                ← Kubernetes cross-cluster discipline (EKS/GKE/AKS)
 ```
 
 The `SKILL.md` file is the entry point for Claude Code and generic agents. `POWER.md` is
