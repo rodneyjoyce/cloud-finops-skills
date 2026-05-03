@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+#
+# fcp-coverage.sh - Report which FinOps Framework Capabilities are covered by
+# the reference files in this repo, and which remain as gaps.
+#
+# Reads fcp_domain + fcp_capability + fcp_capabilities_secondary from the YAML
+# frontmatter of every reference file under cloud-finops/references/ and
+# compares against the canonical 22 Capabilities of the FinOps Foundation
+# Framework (https://www.finops.org/framework/).
+#
+# Output: writes fcp-coverage.md at the repo root and prints a summary to
+# stdout. Exit code is 0 if the matrix can be built, 1 if a reference declares
+# a non-canonical Capability (typo / convention drift).
+#
+# Usage:
+#   ./scripts/fcp-coverage.sh           Generate fcp-coverage.md
+#   ./scripts/fcp-coverage.sh --check   Generate AND fail if a frontmatter is
+#                                       missing or declares a non-canonical
+#                                       capability (use in CI).
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
+
+CHECK_MODE=""
+[[ "${1:-}" == "--check" ]] && CHECK_MODE=1
+
+REF_DIR="cloud-finops/references"
+OUT_FILE="fcp-coverage.md"
+
+# ---- Canonical FinOps Framework (4 Domains, 22 Capabilities) ---------------
+declare -A CANONICAL
+CANONICAL["Understand Usage & Cost"]="Data Ingestion|Allocation|Reporting & Analytics|Anomaly Management"
+CANONICAL["Quantify Business Value"]="Planning & Estimating|Forecasting|Budgeting|Benchmarking|Unit Economics"
+CANONICAL["Optimize Usage & Cost"]="Architecting for Cloud|Rate Optimization|Workload Optimization|Cloud Sustainability|Licensing & SaaS"
+CANONICAL["Manage the FinOps Practice"]="FinOps Practice Operations|Policy & Governance|FinOps Assessment|FinOps Tools & Services|FinOps Education & Enablement|Invoicing & Chargeback|Onboarding Workloads|Intersecting Disciplines"
+
+DOMAIN_ORDER=("Understand Usage & Cost" "Quantify Business Value" "Optimize Usage & Cost" "Manage the FinOps Practice")
+
+# Reverse map: capability -> domain (for secondary lookups)
+declare -A CAP_TO_DOMAIN
+for d in "${DOMAIN_ORDER[@]}"; do
+  IFS='|' read -ra caps <<< "${CANONICAL[$d]}"
+  for c in "${caps[@]}"; do
+    CAP_TO_DOMAIN["$c"]="$d"
+  done
+done
+
+# ---- Walk references and collect coverage ----------------------------------
+declare -A PRIMARY    # "Domain||Capability" -> "ref1; ref2; ..."
+declare -A SECONDARY  # same shape, secondary mentions only
+ERRORS=0
+
+# Strip surrounding quotes from a YAML scalar (single or double).
+strip_quotes() {
+  local s="$1"
+  s="${s#\"}"; s="${s%\"}"
+  s="${s#\'}"; s="${s%\'}"
+  printf '%s' "$s"
+}
+
+while IFS= read -r f; do
+  fname=$(basename "$f")
+
+  # First two `---` markers delimit frontmatter
+  in_fm=0
+  fm_count=0
+  domain=""
+  capability=""
+  secondary_line=""
+  while IFS= read -r line; do
+    # Strip trailing \r in case the file has CRLF line endings (common on
+    # Windows checkouts).
+    line="${line%$'\r'}"
+    if [[ "$line" == "---" ]]; then
+      fm_count=$((fm_count + 1))
+      [[ $fm_count -ge 2 ]] && break
+      in_fm=1
+      continue
+    fi
+    [[ $in_fm -eq 1 ]] || continue
+    case "$line" in
+      "fcp_domain:"*)
+        domain=$(strip_quotes "$(printf '%s' "${line#fcp_domain:}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')")
+        ;;
+      "fcp_capability:"*)
+        capability=$(strip_quotes "$(printf '%s' "${line#fcp_capability:}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')")
+        ;;
+      "fcp_capabilities_secondary:"*)
+        secondary_line="${line#fcp_capabilities_secondary:}"
+        ;;
+    esac
+  done < "$f"
+
+  if [[ -z "$domain" || -z "$capability" ]]; then
+    echo "WARN: $fname missing fcp_domain or fcp_capability" >&2
+    ERRORS=$((ERRORS + 1))
+    continue
+  fi
+
+  # Validate primary capability is canonical for the declared domain
+  if [[ -z "${CANONICAL[$domain]:-}" ]]; then
+    echo "ERROR: $fname declares non-canonical fcp_domain: $domain" >&2
+    ERRORS=$((ERRORS + 1))
+    continue
+  fi
+  if [[ "|${CANONICAL[$domain]}|" != *"|${capability}|"* ]]; then
+    echo "ERROR: $fname declares fcp_capability=$capability not in canonical list for $domain" >&2
+    ERRORS=$((ERRORS + 1))
+    continue
+  fi
+
+  pkey="${domain}||${capability}"
+  if [[ -n "${PRIMARY[$pkey]:-}" ]]; then
+    PRIMARY[$pkey]="${PRIMARY[$pkey]}; ${fname}"
+  else
+    PRIMARY[$pkey]="${fname}"
+  fi
+
+  # Secondary capabilities (YAML inline list: ["Cap A", "Cap B"])
+  if [[ -n "$secondary_line" ]]; then
+    sec=$(printf '%s' "$secondary_line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' \
+      | sed 's/^\[//;s/\]$//' \
+      | tr ',' '\n' \
+      | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' \
+      | sed 's/^"//;s/"$//' \
+      | sed "s/^'//;s/'$//")
+    while IFS= read -r cap; do
+      [[ -z "$cap" ]] && continue
+      sd="${CAP_TO_DOMAIN[$cap]:-}"
+      if [[ -z "$sd" ]]; then
+        echo "WARN: $fname secondary capability $cap not in canonical list" >&2
+        continue
+      fi
+      skey="${sd}||${cap}"
+      if [[ -n "${SECONDARY[$skey]:-}" ]]; then
+        SECONDARY[$skey]="${SECONDARY[$skey]}; ${fname}"
+      else
+        SECONDARY[$skey]="${fname}"
+      fi
+    done <<< "$sec"
+  fi
+done < <(find "$REF_DIR" -maxdepth 1 -name "*.md" -type f | sort)
+
+# ---- Render fcp-coverage.md -----------------------------------------------
+total_caps=0
+covered_caps=0
+{
+  echo "# FCP Framework Coverage Matrix"
+  echo
+  echo "Generated by \`scripts/fcp-coverage.sh\` from the YAML frontmatter of"
+  echo "every reference file under \`cloud-finops/references/\`. The canonical"
+  echo "list is the 4 Domains / 22 Capabilities of the"
+  echo "[FinOps Framework](https://www.finops.org/framework/)."
+  echo
+  echo "**Do not edit this file by hand** - re-run the script after changing a"
+  echo "reference's frontmatter."
+  echo
+
+  for d in "${DOMAIN_ORDER[@]}"; do
+    echo "## $d"
+    echo
+    IFS='|' read -ra caps <<< "${CANONICAL[$d]}"
+    for c in "${caps[@]}"; do
+      total_caps=$((total_caps + 1))
+      key="${d}||${c}"
+      primary="${PRIMARY[$key]:-}"
+      secondary="${SECONDARY[$key]:-}"
+      mark=" "
+      if [[ -n "$primary" ]]; then
+        mark="x"
+        covered_caps=$((covered_caps + 1))
+      fi
+      line="- [$mark] **$c**"
+      if [[ -n "$primary" ]]; then
+        line="$line - $primary"
+      fi
+      if [[ -n "$secondary" ]]; then
+        line="$line _(secondary: $secondary)_"
+      fi
+      if [[ -z "$primary" && -z "$secondary" ]]; then
+        line="$line - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)"
+      fi
+      echo "$line"
+    done
+    echo
+  done
+
+  echo "---"
+  echo
+  pct=$(( (covered_caps * 100) / total_caps ))
+  echo "**Coverage: ${covered_caps} / ${total_caps} Framework Capabilities (${pct}%)**"
+  echo
+  echo "Gaps (no primary or secondary coverage) are tracked in the Roadmap"
+  echo "section of \`CLAUDE.md\` with rationale and trigger-to-revisit. They are"
+  echo "deferred deliberately, not forgotten."
+} > "$OUT_FILE"
+
+echo "Generated $OUT_FILE: ${covered_caps}/${total_caps} capabilities covered"
+
+if [[ -n "$CHECK_MODE" && $ERRORS -gt 0 ]]; then
+  echo "FAIL: $ERRORS frontmatter error(s) - see warnings above" >&2
+  exit 1
+fi

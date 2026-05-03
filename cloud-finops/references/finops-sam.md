@@ -1,8 +1,8 @@
 ---
 name: finops-sam
-fcp_domain: "Optimise Usage & Cost"
+fcp_domain: "Optimize Usage & Cost"
 fcp_capability: "Licensing & SaaS"
-fcp_phases: ["Optimise", "Operate"]
+fcp_phases: ["Optimize", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Procurement"]
 fcp_personas_collaborating: ["Engineering", "Finance", "Leadership"]
 fcp_maturity_entry: "Walk"
