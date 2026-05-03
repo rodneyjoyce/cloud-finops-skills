@@ -9,6 +9,9 @@
 #   ./install.sh --list                List supported tools
 #   ./install.sh --dry-run             Print what would happen, no writes
 #   ./install.sh --user                Install at user-level paths where supported (Claude Code)
+#   ./install.sh --grouped             ChatGPT only: produce a 9-file grouped build
+#                                      (same content bundled by domain) instead of
+#                                      27 per-reference files. Easier to upload.
 #   ./install.sh --dest <dir>          Override the project / target directory
 #   ./install.sh --help                Show this help
 #
@@ -49,6 +52,7 @@ TOOL=""
 DRY_RUN=""
 USER_LEVEL=""
 DEST_OVERRIDE=""
+GROUPED=""
 
 cleanup() { [[ -n "$TMPDIR" ]] && rm -rf "$TMPDIR" 2>/dev/null || true; }
 trap cleanup EXIT
@@ -263,33 +267,43 @@ install_chatgpt() {
     return
   fi
 
+  # Wipe any previous build so renamed/removed references don't linger
+  rm -rf "$knowledge_dir"
   mkdir -p "$knowledge_dir"
   build_chatgpt_instructions > "$instructions_path"
   local size
   size=$(wc -c < "$instructions_path")
 
-  # Knowledge files: copy each reference, but merge optimnow-methodology into for-ai
-  local methodology="$SRC_DIR/cloud-finops/references/optimnow-methodology.md"
-  for ref in "$SRC_DIR/cloud-finops/references"/*.md; do
-    local name
-    name=$(basename "$ref")
-    if [[ "$name" == "optimnow-methodology.md" ]]; then
-      continue
-    fi
-    if [[ "$name" == "finops-for-ai.md" ]]; then
-      {
-        cat "$ref"
-        echo
-        echo "---"
-        echo
-        echo "## Reasoning Methodology Appendix"
-        echo
-        [[ -f "$methodology" ]] && cat "$methodology"
-      } > "$knowledge_dir/$name"
-    else
-      cp "$ref" "$knowledge_dir/$name"
-    fi
-  done
+  if [[ -n "$GROUPED" ]]; then
+    # Grouped build (default for fresh installs): same domain bundling as Gemini.
+    # Produces 9 knowledge files instead of 27 - well under any historical
+    # ChatGPT Custom GPT cap and easier to upload reliably.
+    build_gemini_grouped_knowledge "$knowledge_dir"
+  else
+    # Per-reference build: one knowledge file per reference, methodology merged
+    # into finops-for-ai.md. 27 files - may exceed ChatGPT's historical cap.
+    local methodology="$SRC_DIR/cloud-finops/references/optimnow-methodology.md"
+    for ref in "$SRC_DIR/cloud-finops/references"/*.md; do
+      local name
+      name=$(basename "$ref")
+      if [[ "$name" == "optimnow-methodology.md" ]]; then
+        continue
+      fi
+      if [[ "$name" == "finops-for-ai.md" ]]; then
+        {
+          cat "$ref"
+          echo
+          echo "---"
+          echo
+          echo "## Reasoning Methodology Appendix"
+          echo
+          [[ -f "$methodology" ]] && cat "$methodology"
+        } > "$knowledge_dir/$name"
+      else
+        cp "$ref" "$knowledge_dir/$name"
+      fi
+    done
+  fi
 
   local file_count
   file_count=$(find "$knowledge_dir" -maxdepth 1 -name "*.md" | wc -l | tr -d ' ')
@@ -301,14 +315,19 @@ install_chatgpt() {
   fi
   if [[ $file_count -gt 20 ]]; then
     warn "ChatGPT historically capped Custom GPT Knowledge at 20 files. Current build is $file_count files."
-    dim "  If your upload is rejected, drop the least relevant references for your use case,"
-    dim "  or use the Gemini-style grouped build instead (./install.sh --tool gemini)."
+    dim "  If your upload is rejected, re-run with --grouped to produce a 9-file"
+    dim "  bundled build (same content, fewer files): ./install.sh --tool chatgpt --grouped"
   fi
   dim "  Manual upload steps:"
   dim "    1. Open https://chatgpt.com/gpts/editor"
   dim "    2. Paste $instructions_path into the Instructions field"
   dim "    3. Upload all files from $knowledge_dir/ to Knowledge"
-  dim "    4. Note: methodology is merged into finops-for-ai.md to keep file count down"
+  if [[ -z "$GROUPED" ]]; then
+    dim "    4. Note: methodology is merged into finops-for-ai.md to keep file count down"
+  else
+    dim "    4. Grouped mode: 9 thematic files (aws, azure, gcp, ai, data-platforms,"
+    dim "       oci, cross-cutting, finops-discipline, methodology)"
+  fi
 }
 
 build_chatgpt_instructions() {
@@ -396,6 +415,8 @@ install_gemini() {
     return
   fi
 
+  # Wipe any previous build so renamed/removed references don't linger
+  rm -rf "$knowledge_dir"
   mkdir -p "$knowledge_dir"
   # Same instructions content as ChatGPT - same cross-LLM contract
   build_chatgpt_instructions > "$instructions_path"
@@ -571,6 +592,7 @@ main() {
       --tool)     TOOL="${2:?--tool requires a value}"; shift 2 ;;
       --dry-run)  DRY_RUN=1; shift ;;
       --user)     USER_LEVEL=1; shift ;;
+      --grouped)  GROUPED=1; shift ;;
       --dest)     DEST_OVERRIDE="${2:?--dest requires a value}"; shift 2 ;;
       --dir)      DEST_OVERRIDE="${2:?--dir requires a value}"; shift 2 ;;  # legacy alias
       --list)     list_tools; exit 0 ;;
