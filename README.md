@@ -279,14 +279,19 @@ covering Claude Code, Kiro IDE, Claude.ai, and API integration.
 For Claude Code users, the skill is also distributed as a self-hosted plugin with
 auto-update support. Two commands:
 
-```bash
+> **Where to type these:** at the **Claude Code prompt** - the chat input you see after
+> running `claude` in your terminal. They are slash commands, not shell commands. Pasting
+> them into PowerShell, bash, or zsh will fail.
+
+```text
 /plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git
 /plugin install cloud-finops@optimnow
 ```
 
-To pull the latest content (including the bi-monthly automated updates):
+To pull the latest content (including the bi-monthly automated updates), run this at the
+same Claude Code prompt:
 
-```bash
+```text
 /plugin update cloud-finops@optimnow
 ```
 
