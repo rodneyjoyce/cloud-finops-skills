@@ -111,6 +111,18 @@ The skill provides accurate, framework-aligned guidance across the following dom
   `InvoiceId` reconciliation, unallocated spend > 10% as a tagging signal,
   showback report design and routing into team-existing surfaces, data-quality
   dispute process
+- **Chargeback** - soft-to-hard chargeback maturity ladder built on top of
+  allocation and showback. Covers the Finance and accounting prerequisites
+  that determine whether hard chargeback is operationally possible at all:
+  ERP readiness (SAP CO cycles, Oracle / Workday / NetSuite equivalents),
+  inter-BU P&L impact and incentive-plan alignment, CFO sponsorship as a
+  hard requirement, transfer pricing for intercompany cloud recharges
+  (cost-plus methodology, re-characterisation risk), cross-border tax
+  mechanics (VAT reverse-charge, withholding, permanent-establishment risk,
+  EU/OECD Pillar 2 minimum tax, US GILTI/FDII/BEAT), SOX-equivalent controls,
+  decision-owner table mapping each prerequisite to the right Finance role,
+  methodology dispute process, the chargeback-revolt anti-pattern (12-18
+  months of credibility loss when skipped)
 
 All guidance is framed through OptimNow's methodology: connecting cost to business value,
 diagnosing before prescribing, and recommending actions matched to organisational maturity.
@@ -275,7 +287,8 @@ cloud-finops-skills/
         ├── finops-itam.md                     ← ITAM collaboration (BYOL, marketplace, entitlements)
         ├── greenops-cloud-carbon.md            ← GreenOps and cloud carbon
         ├── finops-anomaly-management.md        ← Anomaly management (standalone Inform-phase capability)
-        └── finops-allocation-showback.md       ← Cost allocation methodology + showback
+        ├── finops-allocation-showback.md       ← Cost allocation methodology + showback
+        └── finops-chargeback.md                ← Chargeback maturity ladder + Finance/accounting prerequisites
 ```
 
 The `SKILL.md` file is the entry point for Claude Code and generic agents. `POWER.md` is

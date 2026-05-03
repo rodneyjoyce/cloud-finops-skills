@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "cloud-finops",
-      "description": "Expert FinOps guidance for cloud, AI, SaaS, and data-platform spend. 24 reference files spanning AWS, Azure, GCP, Anthropic, Bedrock, Azure OpenAI, Vertex AI, Databricks, Microsoft Fabric, Snowflake, OCI, AI coding tools, FinOps Framework 2024+2026, GreenOps (AWS Sustainability Console, CSRD engagement framing), self-hosted vs managed AI inference decisioning, anomaly management, allocation and showback, SaaS asset management, and ITAM. Open source, model-agnostic, refreshed bi-monthly.",
+      "description": "Expert FinOps guidance for cloud, AI, SaaS, and data-platform spend. 25 reference files spanning AWS, Azure, GCP, Anthropic, Bedrock, Azure OpenAI, Vertex AI, Databricks, Microsoft Fabric, Snowflake, OCI, AI coding tools, FinOps Framework 2024+2026, GreenOps (AWS Sustainability Console, CSRD engagement framing), self-hosted vs managed AI inference decisioning, anomaly management, allocation and showback, chargeback (incl. Finance and accounting prerequisites), SaaS asset management, and ITAM. Open source, model-agnostic, refreshed bi-monthly.",
       "author": {
         "name": "OptimNow",
         "url": "https://optimnow.io"
