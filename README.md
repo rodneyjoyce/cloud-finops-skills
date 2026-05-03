@@ -371,7 +371,7 @@ with built-in update via `/plugin update`. Two commands at the **Claude Code pro
 /plugin install cloud-finops@optimnow
 ```
 
-To pull the latest content (including the bi-monthly automated updates):
+To pull the latest content (including the twice-monthly automated updates):
 
 ```text
 /plugin update cloud-finops@optimnow
@@ -398,10 +398,11 @@ users who prefer downloading over building locally.
 
 ## This skill is actively maintained
 
-This is a living repository. Reference files are updated on the 15th of every month,
-driven by an automated scan of 29 data sources - cloud provider pricing pages, release
-notes, billing changelogs, and FinOps community publications. Changes are reviewed
-before being applied, so the content reflects verified updates rather than raw feed output.
+This is a living repository. Reference files are refreshed twice a month (around the
+1st and the 15th), driven by an automated scan of 29 data sources - cloud provider
+pricing pages, release notes, billing changelogs, and FinOps community publications.
+Changes are reviewed before being applied, so the content reflects verified updates
+rather than raw feed output.
 
 AI cost management is moving particularly fast - new model releases, capacity options, and
 billing mechanics appear every few weeks. Watch or star this repo to be notified when

@@ -2489,9 +2489,9 @@ VPC Flow Logs configured with the ALL filter and delivered to CloudWatch Logs of
 - Implement periodic audits of logging configurations to catch overly verbose setups
 
 **Unfiltered Recording Of High Churn Resource Types In Aws Config**
-Service: Inefficiency Type | Type: Explanation
+Service: AWS Config | Type: Inefficient Configuration
 
-By default, AWS Config can be set to record changes across all supported resource types, including those that change frequently, such as security group rules, IAM role policies, route tables, or network interfaces frequent ephemeral resources in containerized or auto-scaling setupsThese high-churn resources can generate an outsized number of configuration items and inflate costs  - especially in dynamic or large-scale environments. This inefficiency arises when recording is enabled indiscriminately across all resources without evaluating whether the data is necessary.
+By default, AWS Config can be set to record changes across all supported resource types, including those that change frequently, such as security group rules, IAM role policies, route tables, or network interfaces - frequent ephemeral resources in containerized or auto-scaling setups. These high-churn resources can generate an outsized number of configuration items and inflate costs - especially in dynamic or large-scale environments. This inefficiency arises when recording is enabled indiscriminately across all resources without evaluating whether the data is necessary.
 
 - Limit AWS Config recording to only essential resource types using resource recording groups
 - Exclude high-churn resource types that provide minimal compliance or operational value
