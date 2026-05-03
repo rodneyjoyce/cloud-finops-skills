@@ -135,6 +135,17 @@ keywords:
   - focus during migration
   - cost-aware architecture review
   - post-migration owner
+  - kubernetes finops
+  - k8s allocation
+  - opencost
+  - kubecost
+  - container rightsizing
+  - karpenter
+  - cluster autoscaler
+  - pod disruption budgets
+  - spot diversification
+  - idle node cost
+  - node efficiency
 ---
 
 # Cloud FinOps - Expert Guidance
@@ -189,6 +200,7 @@ matching the query.
 | Cost allocation methodology, showback, EffectiveCost vs BilledCost (FOCUS), amortised vs unblended (AWS legacy), blended-cost trap, defensible allocation keys, shared-services allocation (network, observability, security, ingress), InvoiceId reconciliation, unallocated spend signal, showback report design and routing | `references/finops-allocation-showback.md` |
 | Chargeback, soft chargeback, hard chargeback, financial accountability, Finance and accounting prerequisites for chargeback, ERP readiness (SAP CO, Oracle, Workday, NetSuite), inter-BU P&L impact, CFO sponsorship, transfer pricing for intercompany cloud recharge, cross-border tax (VAT, withholding, permanent establishment, Pillar 2, GILTI / FDII / BEAT), SOX-equivalent controls, methodology dispute process, chargeback-revolt anti-pattern | `references/finops-chargeback.md` |
 | Onboarding workloads, migration-time cost hygiene, intake gate, mandatory tags at go-live, 60-90 day forecast-then-commit rule, double-bubble cost (parallel-run source and target), migration cost estimate vs actuals, network-cost trap (data-centre to cloud), M&A integration patterns, FOCUS-during-migration, architecture review integration, post-migration FinOps owner | `references/finops-onboarding-workloads.md` |
+| Kubernetes FinOps, K8s cost allocation, OpenCost, Kubecost, GKE Cost Allocation, EKS Split Cost Allocation, AKS Cost Analysis, FOCUS-emitting K8s allocation, container rightsizing (VPA, p95/p99 with safety margins), node-level autoscaling (Karpenter, Cluster Autoscaler), Pod Disruption Budgets, Spot diversification, idle node cost, node efficiency KPI | `references/finops-kubernetes.md` |
 | Multi-domain query | Load all relevant references, synthesise |
 
 ### Reasoning sequence (apply to every response)
