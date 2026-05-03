@@ -95,6 +95,12 @@ keywords:
   - ai dev tools
   - litellm
   - developer tool spend
+  - anomaly management
+  - cost anomaly
+  - masked anomaly
+  - layered detection
+  - threshold tuning
+  - new-region detection
 ---
 
 # Cloud FinOps - Expert Guidance
@@ -145,6 +151,7 @@ matching the query.
 | GreenOps, cloud carbon, sustainability, carbon-aware workloads | `references/greenops-cloud-carbon.md` |
 | SaaS management, licence optimisation, shadow IT, SaaS sprawl, renewal governance, SMP, SAM | `references/finops-sam.md` |
 | ITAM, IT asset management, BYOL, marketplace channel governance, licence compliance, vendor negotiation, FinOps-ITAM collaboration, entitlement management, consumption-based SaaS overages | `references/finops-itam.md` |
+| Cost anomaly management, anomaly detection, masked anomalies, layered detection, threshold tuning, AWS Cost Anomaly Detection config, Azure anomaly detection, GCP budget anomaly alerts, new-region detection, security integration | `references/finops-anomaly-management.md` |
 | Multi-domain query | Load all relevant references, synthesise |
 
 ### Reasoning sequence (apply to every response)

@@ -98,6 +98,11 @@ The skill provides accurate, framework-aligned guidance across the following dom
   overage monitoring, entitlement integration, and maturity framework
 - **GreenOps and cloud carbon** - carbon measurement tooling, FinOps-to-GreenOps
   integration, carbon-aware workload shifting, region selection, GHG Protocol reporting
+- **Anomaly management** - cost anomaly detection as a standalone Inform-phase
+  capability: AWS Cost Anomaly Detection / Azure / GCP native tooling, threshold
+  philosophy (absolute dollars plus percentage), layered detection across service,
+  region, account, and tag scopes, the masked-anomaly failure mode, new-region
+  detection, integration with Security
 
 All guidance is framed through OptimNow's methodology: connecting cost to business value,
 diagnosing before prescribing, and recommending actions matched to organisational maturity.
@@ -260,7 +265,8 @@ cloud-finops-skills/
         ├── finops-oci.md                       ← OCI optimisation
         ├── finops-sam.md                       ← SaaS asset management (SAM)
         ├── finops-itam.md                     ← ITAM collaboration (BYOL, marketplace, entitlements)
-        └── greenops-cloud-carbon.md            ← GreenOps and cloud carbon
+        ├── greenops-cloud-carbon.md            ← GreenOps and cloud carbon
+        └── finops-anomaly-management.md        ← Anomaly management (standalone Inform-phase capability)
 ```
 
 The `SKILL.md` file is the entry point for Claude Code and generic agents. `POWER.md` is
