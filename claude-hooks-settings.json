@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "if": "Bash(git commit *)",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "A git commit was just made. Your job is to update the project documentation so it stays in sync with the code. Follow these steps:\n\n1. Run `git diff HEAD~1 HEAD` to see what changed in the last commit.\n2. Run `git log -1 --pretty=format:'%s'` to read the commit message.\n3. Check if a README.md exists in the project root. If yes, review whether any sections are now outdated by the changes (e.g. directory structure, feature descriptions, usage examples, installation steps).\n4. Check if a docs/ folder exists. If yes, scan its files and update any that are affected by the commit.\n5. If the project has a CLAUDE.md, do NOT update it here (a separate hook handles that).\n6. Only make changes that are clearly needed. Do not rewrite sections that are still accurate. Do not add speculative content.\n7. If no documentation updates are needed, do nothing.\n8. Use the same writing style and formatting conventions already present in each file.\n9. After making changes, run `git add` on the updated doc files and commit with message: 'docs: update documentation after <original-commit-subject>'.",
+            "timeout": 120
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "if": "Bash(gh pr merge *)",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "A pull request was just merged. Your job is to update CLAUDE.md so it reflects any new patterns, conventions, or architectural decisions introduced by this PR. Follow these steps:\n\n1. Run `gh pr view --json title,body,files` to get the PR details and changed files.\n2. Run `git log --oneline -10` to see the recent commit history and understand the scope of the merge.\n3. Read the current CLAUDE.md file.\n4. Determine if the PR introduced any of the following:\n   - New project structure or directories\n   - New coding conventions or patterns\n   - New dependencies or tools\n   - Changes to build, test, or deploy workflows\n   - New reference files or content areas\n   - Changes to contribution guidelines\n5. If yes, update the relevant sections of CLAUDE.md. Keep entries concise and factual.\n6. If the PR was a minor fix, content update, or refactor that doesn't change how the project works, do nothing.\n7. Do not remove existing CLAUDE.md content unless it is now factually wrong.\n8. After making changes, run `git add CLAUDE.md` and commit with message: 'docs: update CLAUDE.md after PR merge - <pr-title>'.",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

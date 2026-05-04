@@ -30,12 +30,26 @@ CHECK_MODE=""
 REF_DIR="cloud-finops/references"
 OUT_FILE="fcp-coverage.md"
 
-# ---- Canonical FinOps Framework (4 Domains, 22 Capabilities) ---------------
+# ---- Canonical FinOps Framework 2026 (4 Domains, 22 Capabilities) ----------
+# Source: https://www.finops.org/framework/ (post-2026 update)
+# Renames vs the 2024 framework, captured here for migration audits:
+#   - Architecting for Cloud  -> Architecting & Workload Placement
+#   - Workload Optimization   -> Usage Optimization
+#   - Cloud Sustainability    -> Sustainability
+#   - Benchmarking            -> KPIs & Benchmarking
+#   - Policy & Governance     -> Governance, Policy & Risk
+#   - FinOps Tools & Services -> Automation, Tools & Services
+# Added in 2026:
+#   - Executive Strategy Alignment (Manage the FinOps Practice)
+# Removed in 2026:
+#   - Onboarding Workloads (the workload-placement / sizing-at-intake angle is
+#     now part of Architecting & Workload Placement; the practice-operations
+#     angle of intake gates folds into FinOps Practice Operations).
 declare -A CANONICAL
 CANONICAL["Understand Usage & Cost"]="Data Ingestion|Allocation|Reporting & Analytics|Anomaly Management"
-CANONICAL["Quantify Business Value"]="Planning & Estimating|Forecasting|Budgeting|Benchmarking|Unit Economics"
-CANONICAL["Optimize Usage & Cost"]="Architecting for Cloud|Rate Optimization|Workload Optimization|Cloud Sustainability|Licensing & SaaS"
-CANONICAL["Manage the FinOps Practice"]="FinOps Practice Operations|Policy & Governance|FinOps Assessment|FinOps Tools & Services|FinOps Education & Enablement|Invoicing & Chargeback|Onboarding Workloads|Intersecting Disciplines"
+CANONICAL["Quantify Business Value"]="Planning & Estimating|Forecasting|Budgeting|KPIs & Benchmarking|Unit Economics"
+CANONICAL["Optimize Usage & Cost"]="Architecting & Workload Placement|Usage Optimization|Rate Optimization|Licensing & SaaS|Sustainability"
+CANONICAL["Manage the FinOps Practice"]="Executive Strategy Alignment|FinOps Practice Operations|Governance, Policy & Risk|FinOps Education & Enablement|Invoicing & Chargeback|FinOps Assessment|Automation, Tools & Services|Intersecting Disciplines"
 
 DOMAIN_ORDER=("Understand Usage & Cost" "Quantify Business Value" "Optimize Usage & Cost" "Manage the FinOps Practice")
 
@@ -121,9 +135,12 @@ while IFS= read -r f; do
 
   # Secondary capabilities (YAML inline list: ["Cap A", "Cap B"])
   if [[ -n "$secondary_line" ]]; then
+    # Split YAML inline list ["A", "B, C", "D"] on `","` (quote-comma-quote)
+    # rather than bare comma so capability names that contain commas
+    # (e.g. "Governance, Policy & Risk") stay intact.
     sec=$(printf '%s' "$secondary_line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' \
       | sed 's/^\[//;s/\]$//' \
-      | tr ',' '\n' \
+      | sed 's/"[[:space:]]*,[[:space:]]*"/"\n"/g' \
       | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' \
       | sed 's/^"//;s/"$//' \
       | sed "s/^'//;s/'$//")

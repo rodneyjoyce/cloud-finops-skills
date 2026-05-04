@@ -299,10 +299,10 @@ GitHub issues, which track in-flight work.
   computes coverage from the actual repo, not from claims; (2) PR check - new
   references with a non-canonical capability or a missing frontmatter trip the script;
   (3) Roadmap-driven view - the matrix shows which capabilities are deferred (currently
-  Forecasting, Unit Economics, Practice Operations, Education & Enablement, Tools &
-  Services) so the gap is auto-rendered, not buried in this Roadmap section. Trigger to
-  build: any time after the doctrine layer ships (the script needs the FCP frontmatter
-  convention to be settled, which it now is).
+  Budgeting, KPIs & Benchmarking, Executive Strategy Alignment, FinOps Education &
+  Enablement, and Automation Tools & Services) so the gap is auto-rendered, not buried
+  in this Roadmap section. Trigger to build: shipped in PR #64 and migrated to the
+  2026 taxonomy in the FCP-2026 follow-up PR.
 
 - **Public Custom GPT for ChatGPT users.** The current ChatGPT install path is
   self-host: `./install.sh --tool chatgpt --grouped` produces 10 grouped knowledge
