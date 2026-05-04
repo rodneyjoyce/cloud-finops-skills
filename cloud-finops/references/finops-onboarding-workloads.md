@@ -2,7 +2,7 @@
 name: finops-onboarding-workloads
 fcp_domain: "Optimize Usage & Cost"
 fcp_capability: "Architecting & Workload Placement"
-fcp_capabilities_secondary: ["Allocation", "FinOps Practice Operations", "Budgeting"]
+fcp_capabilities_secondary: ["Allocation", "FinOps Practice Operations", "Budgeting", "Forecasting"]
 fcp_phases: ["Inform", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Finance", "Procurement", "Leadership"]

@@ -17,13 +17,13 @@ Marker legend:
 
 - [x] **Data Ingestion** - finops-oci.md _(secondary: finops-aws.md; finops-azure.md; finops-gcp.md)_
 - [x] **Allocation** - finops-allocation-showback.md; finops-kubernetes.md; finops-tagging.md _(secondary: finops-ai-dev-tools.md; finops-databricks.md; finops-for-ai.md; finops-onboarding-workloads.md)_
-- [~] **Reporting & Analytics** _(secondary: finops-allocation-showback.md)_
+- [~] **Reporting & Analytics** _(secondary: finops-allocation-showback.md; finops-aws.md; finops-azure.md; finops-gcp.md)_
 - [x] **Anomaly Management** - finops-anomaly-management.md _(secondary: finops-oci.md; finops-waste-detection-playbooks.md)_
 
 ## Quantify Business Value
 
 - [x] **Planning & Estimating** - finops-ai-value-management.md
-- [~] **Forecasting** _(secondary: finops-ai-value-management.md)_
+- [~] **Forecasting** _(secondary: finops-ai-value-management.md; finops-onboarding-workloads.md)_
 - [~] **Budgeting** _(secondary: finops-allocation-showback.md; finops-anomaly-management.md; finops-chargeback.md; finops-onboarding-workloads.md)_
 - [ ] **KPIs & Benchmarking** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
 - [x] **Unit Economics** - finops-for-ai.md
