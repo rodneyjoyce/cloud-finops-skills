@@ -2,7 +2,7 @@
 name: finops-allocation-showback
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Allocation"
-fcp_capabilities_secondary: ["Reporting & Analytics"]
+fcp_capabilities_secondary: ["Reporting & Analytics", "Budgeting"]
 fcp_phases: ["Inform"]
 fcp_personas_primary: ["FinOps Practitioner"]
 fcp_personas_collaborating: ["Engineering", "Finance"]

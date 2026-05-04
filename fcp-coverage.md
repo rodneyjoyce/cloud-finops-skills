@@ -24,7 +24,7 @@ Marker legend:
 
 - [x] **Planning & Estimating** - finops-ai-value-management.md
 - [~] **Forecasting** _(secondary: finops-ai-value-management.md)_
-- [ ] **Budgeting** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
+- [~] **Budgeting** _(secondary: finops-allocation-showback.md; finops-anomaly-management.md; finops-chargeback.md; finops-onboarding-workloads.md)_
 - [ ] **KPIs & Benchmarking** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
 - [x] **Unit Economics** - finops-for-ai.md
 
@@ -44,15 +44,15 @@ Marker legend:
 - [ ] **FinOps Education & Enablement** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
 - [x] **Invoicing & Chargeback** - finops-chargeback.md
 - [~] **FinOps Assessment** _(secondary: finops-framework.md)_
-- [ ] **Automation, Tools & Services** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
+- [~] **Automation, Tools & Services** _(secondary: finops-tagging.md; finops-waste-detection-playbooks.md)_
 - [~] **Intersecting Disciplines** _(secondary: finops-itam.md)_
 
 ---
 
 **Primary coverage**: 12 / 22 (54%) - capabilities with at least one reference whose `fcp_capability` is the primary classification.
 
-**Any-coverage** (primary OR secondary): 17 / 22 (77%) - includes 5 capabilities marked `[~]` that are touched by another reference's `fcp_capabilities_secondary` but have no primary owner yet.
+**Any-coverage** (primary OR secondary): 19 / 22 (86%) - includes 7 capabilities marked `[~]` that are touched by another reference's `fcp_capabilities_secondary` but have no primary owner yet.
 
-**True gaps** (no primary AND no secondary): 5. These are tracked in the Roadmap section of CLAUDE.md with rationale and trigger-to-revisit.
+**True gaps** (no primary AND no secondary): 3. These are tracked in the Roadmap section of CLAUDE.md with rationale and trigger-to-revisit.
 
 _Legacy summary line (do not rely on this for scripting): **Coverage: 12 / 22 Framework Capabilities (54%)**_

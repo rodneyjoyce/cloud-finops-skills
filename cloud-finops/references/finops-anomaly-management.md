@@ -2,6 +2,7 @@
 name: finops-anomaly-management
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Anomaly Management"
+fcp_capabilities_secondary: ["Budgeting"]
 fcp_phases: ["Inform", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner"]
 fcp_personas_collaborating: ["Engineering", "Finance", "Security"]

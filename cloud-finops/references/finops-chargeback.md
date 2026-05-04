@@ -2,6 +2,7 @@
 name: finops-chargeback
 fcp_domain: "Manage the FinOps Practice"
 fcp_capability: "Invoicing & Chargeback"
+fcp_capabilities_secondary: ["Budgeting"]
 fcp_phases: ["Operate"]
 fcp_personas_primary: ["FinOps Practitioner"]
 fcp_personas_collaborating: ["Finance", "Leadership", "Tax", "Internal Audit"]

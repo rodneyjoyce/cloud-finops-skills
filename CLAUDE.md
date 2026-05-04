@@ -298,11 +298,13 @@ GitHub issues, which track in-flight work.
   them. Adds three benefits: (1) honesty signal vis-a-vis the framework - the matrix
   computes coverage from the actual repo, not from claims; (2) PR check - new
   references with a non-canonical capability or a missing frontmatter trip the script;
-  (3) Roadmap-driven view - the matrix shows which capabilities are deferred (currently
-  Budgeting, KPIs & Benchmarking, Executive Strategy Alignment, FinOps Education &
-  Enablement, and Automation Tools & Services) so the gap is auto-rendered, not buried
-  in this Roadmap section. Trigger to build: shipped in PR #64 and migrated to the
-  2026 taxonomy in the FCP-2026 follow-up PR.
+  (3) Roadmap-driven view - the matrix shows which capabilities have no primary owner
+  yet. Current true gaps after the frontmatter-truth pass: KPIs & Benchmarking,
+  Executive Strategy Alignment, FinOps Education & Enablement (all in the deferred
+  table below). Budgeting and Automation Tools & Services were initially flagged
+  as gaps but are covered dispersed - the matrix now renders them as `[~]`
+  secondary-only after the frontmatter was updated to reflect that reality (PR
+  following the FCP-2026 migration).
 
 - **Public Custom GPT for ChatGPT users.** The current ChatGPT install path is
   self-host: `./install.sh --tool chatgpt --grouped` produces 10 grouped knowledge
@@ -359,6 +361,25 @@ than re-litigating priority. Tracking issue: `OptimNow/cloud-finops-skills#55`.
 | `finops-education-enablement.md` | P2 | Demand emerges; consider folding into practice-operations | Smaller scope than the other P2 files; could double as a section in practice-operations |
 | `finops-benchmarking.md` | P3 | Client engagement specifically requires it | Clients rarely ask; external benchmarking has well-known data-quality issues. Could be a section in `finops-framework.md` |
 | `finops-cost-warehouse.md` | P3 | Engagement requires it (e.g. Snowflake-FinOps integration) | Heavy lift, specialist content (FOCUS conformed-dim modelling, dbt + semantic layer, CUR2 / Azure Cost Mgmt / BigQuery loading patterns, late-binding analytics) |
+| `finops-executive-strategy-alignment.md` | **Will not write** | (no trigger - deliberately not covering) | The 2026 FCP added "Executive Strategy Alignment" as a capability. The OptimNow doctrine ("connect cost to business value", the CFO test) already covers the practitioner-grade version of executive engagement; the FCP framing reads as a positioning concept rather than an operating discipline. If a client engagement specifically asks for the FCP-aligned executive-strategy artefact, it can be written then; the Roadmap-default position is not to ship it as a separate reference. |
+
+**Note on Budgeting**: Budgeting is NOT a deferred capability. It is covered as a
+secondary in `finops-anomaly-management.md`, `finops-allocation-showback.md`,
+`finops-chargeback.md`, and `finops-onboarding-workloads.md` because each of
+those files has a substantive Budgeting section (AWS Budgets, Azure Budgets and
+Alerts, GCP budget anomaly alerts, OCI Budgets, Snowflake Budgets, Databricks
+budget policies, AI investment budgets, the 60-90 day forecast-then-commit rule
+at intake, the soft-to-hard chargeback budget enforcement). The FCP coverage
+matrix renders Budgeting as `[~]` (any-coverage via secondary) rather than
+`[ ]` (true gap) once the frontmatter declares it. There is no plan to ship a
+dedicated `finops-budgeting.md` because the cross-cutting nature of budgeting
+is better served by the dispersed coverage.
+
+**Note on Automation, Tools & Services**: same shape as Budgeting. Covered as
+secondary in `finops-tagging.md` (MCP automation, IaC enforcement) and
+`finops-waste-detection-playbooks.md` (WasteLine appliance). Plus the
+`finops-tools-services.md` deferred entry above which would be the dedicated
+write-up if engagement demand emerges.
 
 When picking up a deferred item: read the rationale above, check the white-space analysis
 context (Cletrics comparison report dated 2026-05-03 in `~/Downloads/`, plus implementation

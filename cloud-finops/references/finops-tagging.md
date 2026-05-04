@@ -2,7 +2,7 @@
 name: finops-tagging
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Allocation"
-fcp_capabilities_secondary: ["Governance, Policy & Risk"]
+fcp_capabilities_secondary: ["Governance, Policy & Risk", "Automation, Tools & Services"]
 fcp_phases: ["Inform", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Security", "Finance"]
