@@ -255,6 +255,20 @@ billing.
 
 Overage charges apply at $0.04 per premium request beyond the monthly allocation.
 
+**Imminent change - GitHub AI Credits (1 June 2026).** GitHub is moving Copilot
+overage from a fixed-rate `$0.04 per premium request` to **usage-based billing in
+GitHub AI Credits**. After 1 June 2026, requests are priced per their underlying
+model token cost (with the provider margin baked into the credit rate) rather
+than at the flat $0.04. This is a material shift for FinOps teams running
+Copilot at scale: cost forecasts based on the historical $0.04 rate will drift
+once developers route to higher-cost models (Claude Sonnet, GPT-5 family) where
+the credit price exceeds the legacy flat rate. Recommendations: (1) capture the
+last 90 days of premium-request volume per developer and project the AI Credits
+spend at the new rates before 1 June, (2) review Copilot model-routing defaults
+and Enterprise admin controls before the cutover, (3) validate that procurement
+budgets allow for variable usage-based billing in the relevant tax / cost-centre
+structure. Source: https://docs.github.com/en/copilot/how-tos/manage-and-track-spending/prepare-for-your-move-to-usage-based-billing
+
 Enterprise total cost of ownership is $60/seat/month when including the required GitHub
 Enterprise Cloud subscription - a detail that often surprises procurement.
 

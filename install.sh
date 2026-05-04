@@ -60,7 +60,7 @@ trap cleanup EXIT
 # ---- helpers ----
 
 usage() {
-  sed -n '3,18p' "$0" | sed 's/^# \?//'
+  sed -n '3,25p' "$0" | sed 's/^# \?//'
   exit 0
 }
 
