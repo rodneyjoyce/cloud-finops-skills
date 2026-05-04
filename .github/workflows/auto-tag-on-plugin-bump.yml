@@ -1,0 +1,83 @@
+name: Auto-tag on plugin.json bump
+
+# When a push to main changes .claude-plugin/plugin.json, read the version
+# field and create a matching v<version> tag if one does not already exist.
+# Pushing the tag triggers release.yml, which produces the cloud-finops-
+# v<version>.zip artefact.
+#
+# This closes the failure mode the cloud-finops-skills repo hit between
+# v1.12 and v1.20.0: the plugin.json version was bumped through several PRs
+# (1.13, 1.14, ..., 1.19) without anyone manually tagging, so release.yml
+# never fired and the latest release zip drifted weeks behind main.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.claude-plugin/plugin.json'
+
+permissions:
+  contents: write   # required to push the new tag
+
+jobs:
+  tag-from-plugin-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need full history so `git tag` sees existing tags
+
+      - name: Read version from plugin.json
+        id: read_version
+        run: |
+          set -euo pipefail
+          version=$(jq -r '.version' .claude-plugin/plugin.json)
+          if [[ -z "$version" || "$version" == "null" ]]; then
+            echo "::error::plugin.json has no .version field"
+            exit 1
+          fi
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::plugin.json .version=$version is not semver-like (X.Y.Z)"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if tag already exists
+        id: check_tag
+        run: |
+          set -euo pipefail
+          tag="${{ steps.read_version.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists, nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag $tag does not exist yet."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create and push tag
+        if: steps.check_tag.outputs.skip == 'false'
+        run: |
+          set -euo pipefail
+          tag="${{ steps.read_version.outputs.tag }}"
+          version="${{ steps.read_version.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Build a tag message that points at plugin.json as the source of truth
+          # for what changed. The release.yml workflow uses generate_release_notes
+          # so the user-facing release body still gets auto-populated from the
+          # commits between this tag and the previous one.
+          git tag -a "$tag" -m "Auto-tagged from .claude-plugin/plugin.json bump to $version
+
+This tag was created automatically by .github/workflows/auto-tag-on-plugin-bump.yml
+when plugin.json on main moved to version $version.
+
+The release.yml workflow will fire from this tag and publish
+cloud-finops-${tag}.zip to a new GitHub release."
+
+          git push origin "$tag"
+          echo "Pushed tag $tag - release.yml will produce cloud-finops-${tag}.zip"
