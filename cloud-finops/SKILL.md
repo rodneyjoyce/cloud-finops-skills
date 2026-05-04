@@ -76,7 +76,7 @@ matching the query.
 ## Core FinOps principles (always apply)
 <!-- fp:37b46c22605776cb -->
 
-These six principles from the FinOps Foundation (2025 wording) underpin every recommendation:
+These six principles from the FinOps Foundation (2026 framework) underpin every recommendation:
 
 1. Teams need to collaborate
 2. Business value drives technology decisions
