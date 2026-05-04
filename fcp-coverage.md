@@ -25,34 +25,34 @@ Marker legend:
 - [x] **Planning & Estimating** - finops-ai-value-management.md
 - [~] **Forecasting** _(secondary: finops-ai-value-management.md)_
 - [ ] **Budgeting** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
-- [ ] **Benchmarking** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
+- [ ] **KPIs & Benchmarking** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
 - [x] **Unit Economics** - finops-for-ai.md
 
 ## Optimize Usage & Cost
 
-- [x] **Architecting for Cloud** - finops-ai-self-hosted-vs-managed.md _(secondary: finops-genai-capacity.md; finops-kubernetes.md; finops-onboarding-workloads.md; finops-waste-detection-playbooks.md; greenops-cloud-carbon.md)_
+- [x] **Architecting & Workload Placement** - finops-ai-self-hosted-vs-managed.md; finops-onboarding-workloads.md _(secondary: finops-genai-capacity.md; finops-kubernetes.md; finops-waste-detection-playbooks.md; greenops-cloud-carbon.md)_
+- [x] **Usage Optimization** - finops-ai-dev-tools.md; finops-anthropic.md; finops-bedrock.md; finops-databricks.md; finops-snowflake.md; finops-waste-detection-playbooks.md _(secondary: finops-ai-self-hosted-vs-managed.md; finops-aws.md; finops-azure-openai.md; finops-azure.md; finops-fabric.md; finops-for-ai.md; finops-gcp.md; finops-genai-capacity.md; finops-kubernetes.md; finops-oci.md; finops-vertexai.md; greenops-cloud-carbon.md)_
 - [x] **Rate Optimization** - finops-aws.md; finops-azure-openai.md; finops-azure.md; finops-fabric.md; finops-gcp.md; finops-genai-capacity.md; finops-vertexai.md _(secondary: finops-ai-self-hosted-vs-managed.md; finops-bedrock.md; finops-databricks.md; finops-snowflake.md)_
-- [x] **Workload Optimization** - finops-ai-dev-tools.md; finops-anthropic.md; finops-bedrock.md; finops-databricks.md; finops-snowflake.md; finops-waste-detection-playbooks.md _(secondary: finops-ai-self-hosted-vs-managed.md; finops-aws.md; finops-azure-openai.md; finops-azure.md; finops-fabric.md; finops-for-ai.md; finops-gcp.md; finops-genai-capacity.md; finops-kubernetes.md; finops-oci.md; finops-vertexai.md; greenops-cloud-carbon.md)_
-- [x] **Cloud Sustainability** - greenops-cloud-carbon.md
 - [x] **Licensing & SaaS** - finops-itam.md; finops-sam.md _(secondary: finops-ai-dev-tools.md)_
+- [x] **Sustainability** - greenops-cloud-carbon.md
 
 ## Manage the FinOps Practice
 
-- [x] **FinOps Practice Operations** - finops-framework.md; optimnow-methodology.md _(secondary: finops-ai-value-management.md)_
-- [~] **Policy & Governance** _(secondary: finops-tagging.md)_
-- [~] **FinOps Assessment** _(secondary: finops-framework.md)_
-- [ ] **FinOps Tools & Services** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
+- [ ] **Executive Strategy Alignment** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
+- [x] **FinOps Practice Operations** - finops-framework.md; optimnow-methodology.md _(secondary: finops-ai-value-management.md; finops-onboarding-workloads.md)_
+- [~] **Governance, Policy & Risk** _(secondary: finops-tagging.md)_
 - [ ] **FinOps Education & Enablement** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
 - [x] **Invoicing & Chargeback** - finops-chargeback.md
-- [x] **Onboarding Workloads** - finops-onboarding-workloads.md _(secondary: finops-fabric.md)_
+- [~] **FinOps Assessment** _(secondary: finops-framework.md)_
+- [ ] **Automation, Tools & Services** - **GAP** (see Roadmap in CLAUDE.md for deferred capabilities)
 - [~] **Intersecting Disciplines** _(secondary: finops-itam.md)_
 
 ---
 
-**Primary coverage**: 13 / 22 (59%) - capabilities with at least one reference whose `fcp_capability` is the primary classification.
+**Primary coverage**: 12 / 22 (54%) - capabilities with at least one reference whose `fcp_capability` is the primary classification.
 
-**Any-coverage** (primary OR secondary): 18 / 22 (81%) - includes 5 capabilities marked `[~]` that are touched by another reference's `fcp_capabilities_secondary` but have no primary owner yet.
+**Any-coverage** (primary OR secondary): 17 / 22 (77%) - includes 5 capabilities marked `[~]` that are touched by another reference's `fcp_capabilities_secondary` but have no primary owner yet.
 
-**True gaps** (no primary AND no secondary): 4. These are tracked in the Roadmap section of CLAUDE.md with rationale and trigger-to-revisit.
+**True gaps** (no primary AND no secondary): 5. These are tracked in the Roadmap section of CLAUDE.md with rationale and trigger-to-revisit.
 
-_Legacy summary line (do not rely on this for scripting): **Coverage: 13 / 22 Framework Capabilities (59%)**_
+_Legacy summary line (do not rely on this for scripting): **Coverage: 12 / 22 Framework Capabilities (54%)**_

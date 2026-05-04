@@ -2,7 +2,7 @@
 name: finops-kubernetes
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Allocation"
-fcp_capabilities_secondary: ["Workload Optimization", "Architecting for Cloud"]
+fcp_capabilities_secondary: ["Usage Optimization", "Architecting & Workload Placement"]
 fcp_phases: ["Inform", "Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Platform Engineering", "SRE", "Finance"]

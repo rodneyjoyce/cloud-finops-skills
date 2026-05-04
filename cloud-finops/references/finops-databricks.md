@@ -1,7 +1,7 @@
 ---
 name: finops-databricks
 fcp_domain: "Optimize Usage & Cost"
-fcp_capability: "Workload Optimization"
+fcp_capability: "Usage Optimization"
 fcp_capabilities_secondary: ["Rate Optimization", "Allocation"]
 fcp_phases: ["Optimize", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]

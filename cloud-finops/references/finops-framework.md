@@ -137,49 +137,69 @@ become difficult to reverse.
 
 ---
 
-## The 4 Domains and 22 Capabilities
+## The 4 Domains and 22 Capabilities (2026 update)
 
-### Domain 1: Understand Usage and Cost
+The FinOps Foundation refreshed the framework in 2026. Six capabilities were
+renamed to be more inclusive of non-public-cloud technology spend (SaaS,
+licensing, AI), one new capability was added (`Executive Strategy Alignment`),
+and the previous `Onboarding Workloads` capability was absorbed into
+`Architecting & Workload Placement` (intake-time decisions) and
+`FinOps Practice Operations` (the intake-gate process discipline).
+
+Mapping vs the 2024 framework:
+
+| 2024 name | 2026 name | Domain |
+|---|---|---|
+| Architecting for Cloud | Architecting & Workload Placement | Optimize Usage & Cost |
+| Workload Optimization | Usage Optimization | Optimize Usage & Cost |
+| Cloud Sustainability | Sustainability | Optimize Usage & Cost |
+| Benchmarking | KPIs & Benchmarking | Quantify Business Value |
+| Policy & Governance | Governance, Policy & Risk | Manage the FinOps Practice |
+| FinOps Tools & Services | Automation, Tools & Services | Manage the FinOps Practice |
+| (none) | Executive Strategy Alignment | Manage the FinOps Practice (NEW) |
+| Onboarding Workloads | (folded - see above) | (removed) |
+
+### Domain 1: Understand Usage & Cost
 
 | Capability | Description |
 |---|---|
-| Data Ingestion | Collecting billing data from cloud providers into a central platform. FOCUS specification (v1.2 for AWS and Azure, v1.0-1.2 for other providers) enables normalised data ingestion across multiple clouds. |
-| Allocation | Distributing shared costs to cost centers, teams, or products |
-| Reporting and Analytics | Providing actionable cost and usage reports |
+| Data Ingestion | Collecting billing and usage data from cloud, SaaS, AI, and licensing providers into a central platform. FOCUS conformance (v1.2 for AWS and Azure, v1.0-1.2 for other providers) is the recommended cross-source schema. |
+| Allocation | Distributing shared costs to cost centres, teams, or products |
+| Reporting & Analytics | Providing actionable cost and usage reports across audiences (Finance, Engineering, Leadership) |
 | Anomaly Management | Detecting and responding to unexpected cost changes |
 
 ### Domain 2: Quantify Business Value
 
 | Capability | Description |
 |---|---|
-| Planning and Estimating | Forecasting cloud spend for new projects and features |
-| Budgeting | Setting and managing cloud budgets across the organization |
-| Forecasting | Predicting future cloud spend based on current trends |
-| Unit Economics | Connecting cloud cost to business output metrics |
-| Sustainability | Measuring and reducing the carbon impact of cloud usage |
+| Planning & Estimating | Forecasting cost for new projects, features, and architectural changes before deployment |
+| Forecasting | Predicting future spend based on current trends and committed business plans |
+| Budgeting | Setting and managing cost budgets across the organisation |
+| KPIs & Benchmarking | Establishing measurable cost-and-value indicators and comparing against internal trend or external benchmarks |
+| Unit Economics | Connecting cost to business output metrics (cost per tenant, per request, per business outcome) |
 
-### Domain 3: Optimize Usage and Cost
+### Domain 3: Optimize Usage & Cost
 
 | Capability | Description |
 |---|---|
-| Rightsizing | Matching resource size to actual workload requirements |
-| Commitment Discounts | Managing RIs, Savings Plans, and CUDs for sustained workloads |
-| Workload Optimization | Architectural changes that reduce cost at the workload level |
-| License Optimization | Managing software licenses (BYOL, AHUB, marketplace) |
-| Cloud Sustainability | Reducing energy and carbon footprint of cloud workloads |
+| Architecting & Workload Placement | Designing workloads and choosing where they run so cost is appropriate to value at deployment time. Covers migration-time placement decisions, intake-gate sizing, and architecture review. |
+| Usage Optimization | Architectural and operational changes that reduce cost at the workload level (rightsizing, scheduling, scale-to-zero, modernisation, idle elimination) |
+| Rate Optimization | Managing commitment discounts (RIs, Savings Plans, CUDs, Reservations) and negotiated agreements (EDP, MACC, GCP commits) |
+| Licensing & SaaS | Managing software entitlements - BYOL, marketplace, SaaS subscriptions, AI tool seats, AI inference contracts |
+| Sustainability | Measuring and reducing the energy / carbon impact of technology workloads, and connecting sustainability to cost-and-value decisions |
 
 ### Domain 4: Manage the FinOps Practice
 
 | Capability | Description |
 |---|---|
-| FinOps Practice Operations | Running the FinOps team and driving organizational adoption. This includes both reactive and intentional team building patterns - organisations often start reactively (responding to unexplained bills or unattributed spend) before transitioning to proactive practice establishment. |
-| FinOps Assessment | Measuring maturity across all capabilities |
-| FinOps Education and Enablement | Training teams to incorporate FinOps into daily work |
-| Onboarding Workflows | Managing cost implications of cloud migrations |
-| Cloud Policy and Governance | Establishing controls that align cloud use with business objectives |
-| FinOps Tools and Services | Evaluating and integrating tools to support FinOps capabilities. FOCUS-compliant exports now available from AWS, Azure, GCP, Oracle, Tencent, Huawei, OVHCloud, Alibaba, and Nebius. |
-| Invoicing and Chargeback | Reconciling cloud invoices and implementing financial accountability |
-| Cloud Vendor Management | Managing relationships, contracts, and commitments with cloud providers |
+| Executive Strategy Alignment | Connecting FinOps to executive decision-making across executive priority alignment, multi-year investment strategy, product prioritisation, and strategic decision support (NEW in 2026) |
+| FinOps Practice Operations | Running the FinOps team and driving organisational adoption. Covers both reactive team formation (responding to unexplained bills, unattributed spend) and intentional team formation (cloud adoption strategy, platform teams, cloud centres of excellence) |
+| Governance, Policy & Risk | Establishing controls that align technology use with business objectives and managing financial / operational / compliance risk |
+| FinOps Education & Enablement | Training teams - Engineering, Finance, Product, Procurement - to incorporate FinOps into daily work |
+| Invoicing & Chargeback | Reconciling invoices and implementing financial accountability (showback, soft chargeback, hard chargeback) |
+| FinOps Assessment | Measuring maturity across all capabilities and producing per-capability scorecards |
+| Automation, Tools & Services | Evaluating and integrating tools and automation that support FinOps capabilities. FOCUS-conformant exports are available from AWS, Azure, GCP, Oracle, Tencent, Huawei, OVHCloud, Alibaba, and Nebius. |
+| Intersecting Disciplines | Integration with adjacent operating disciplines (ITAM, ITSM, ITFM, Security, Sustainability, Procurement) |
 
 ### Building FinOps teams: Reactive vs intentional approaches
 

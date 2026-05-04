@@ -2,7 +2,7 @@
 name: finops-genai-capacity
 fcp_domain: "Optimize Usage & Cost"
 fcp_capability: "Rate Optimization"
-fcp_capabilities_secondary: ["Workload Optimization", "Architecting for Cloud"]
+fcp_capabilities_secondary: ["Usage Optimization", "Architecting & Workload Placement"]
 fcp_phases: ["Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Product", "Finance"]

@@ -1,7 +1,7 @@
 ---
 name: finops-anthropic
 fcp_domain: "Optimize Usage & Cost"
-fcp_capability: "Workload Optimization"
+fcp_capability: "Usage Optimization"
 fcp_phases: ["Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Product", "Finance"]

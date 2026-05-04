@@ -2,7 +2,7 @@
 name: finops-azure-openai
 fcp_domain: "Optimize Usage & Cost"
 fcp_capability: "Rate Optimization"
-fcp_capabilities_secondary: ["Workload Optimization"]
+fcp_capabilities_secondary: ["Usage Optimization"]
 fcp_phases: ["Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Product", "Finance"]

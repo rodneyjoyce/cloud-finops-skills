@@ -1,8 +1,8 @@
 ---
 name: finops-waste-detection-playbooks
 fcp_domain: "Optimize Usage & Cost"
-fcp_capability: "Workload Optimization"
-fcp_capabilities_secondary: ["Anomaly Management", "Architecting for Cloud"]
+fcp_capability: "Usage Optimization"
+fcp_capabilities_secondary: ["Anomaly Management", "Architecting & Workload Placement"]
 fcp_phases: ["Optimize", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Finance", "SRE"]

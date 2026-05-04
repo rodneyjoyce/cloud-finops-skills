@@ -1,8 +1,8 @@
 ---
 name: finops-ai-self-hosted-vs-managed
 fcp_domain: "Optimize Usage & Cost"
-fcp_capability: "Architecting for Cloud"
-fcp_capabilities_secondary: ["Workload Optimization", "Rate Optimization"]
+fcp_capability: "Architecting & Workload Placement"
+fcp_capabilities_secondary: ["Usage Optimization", "Rate Optimization"]
 fcp_phases: ["Inform", "Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Product", "Leadership", "Finance"]
