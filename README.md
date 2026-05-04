@@ -12,6 +12,21 @@
 
 ---
 
+## Install in 5 seconds
+
+| Tool | One-step install |
+|---|---|
+| <img src="https://img.shields.io/badge/-Claude%20Code-D97757?logo=anthropic&logoColor=white" alt="Claude Code" height="22"/> | At the Claude Code prompt: `/plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git` then `/plugin install cloud-finops@optimnow` |
+| <img src="https://img.shields.io/badge/-Claude.ai%20%2F%20Desktop-D97757?logo=anthropic&logoColor=white" alt="Claude.ai / Claude Desktop" height="22"/> | [Download the latest release zip](https://github.com/OptimNow/cloud-finops-skills/releases/latest), then **Settings -> Skills -> Upload zip** |
+| <img src="https://img.shields.io/badge/-ChatGPT-10A37F?logo=openai&logoColor=white" alt="ChatGPT" height="22"/> | Self-host: `./install.sh --tool chatgpt --grouped` _(a public Cloud FinOps GPT is on the Roadmap)_ |
+| <img src="https://img.shields.io/badge/-Gemini-4285F4?logo=googlegemini&logoColor=white" alt="Gemini" height="22"/> | Self-host: `./install.sh --tool gemini` _(a public Cloud FinOps Gem is on the Roadmap)_ |
+| <img src="https://img.shields.io/badge/-Cursor-000000?logo=cursor&logoColor=white" alt="Cursor" height="22"/> <img src="https://img.shields.io/badge/-Windsurf-3DDC91?logoColor=white" alt="Windsurf" height="22"/> <img src="https://img.shields.io/badge/-Codex-412991?logo=openai&logoColor=white" alt="Codex" height="22"/> <img src="https://img.shields.io/badge/-Aider-0F172A?logoColor=white" alt="Aider" height="22"/> <img src="https://img.shields.io/badge/-Copilot-181717?logo=githubcopilot&logoColor=white" alt="Copilot" height="22"/> <img src="https://img.shields.io/badge/-Kiro%20IDE-FF6F00?logoColor=white" alt="Kiro IDE" height="22"/> <img src="https://img.shields.io/badge/-Gemini%20CLI-4285F4?logo=googlegemini&logoColor=white" alt="Gemini CLI" height="22"/> | One-liner: `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash -s -- --tool <name>` |
+| <img src="https://img.shields.io/badge/-Auto--detect-555555?logo=gnubash&logoColor=white" alt="Auto-detect" height="22"/> | `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash` |
+
+Full options, troubleshooting, and the model-agnostic API loader: see [INSTALLATION.md](./INSTALLATION.md).
+
+---
+
 ## What is a Skill, and why does it matter
 
 A Skill is a structured knowledge file that you attach to an AI agent or a large language
@@ -55,6 +70,38 @@ and follow the installation steps, you can add FinOps expertise to any compatibl
 
 ---
 
+## Design principles
+
+- **AI cost management is a first-class domain.** Most FinOps resources treat AI
+  workloads as an edge case. This skill treats them as a primary concern, with
+  dedicated reference files for each major AI platform.
+- **Visibility before optimisation.** The skill follows a consistent sequence:
+  establish what you are spending, understand what is driving it, then act. It does
+  not recommend optimisation steps before the visibility preconditions are met.
+- **Provider-mechanics-first, vendor-claim-skeptical.** Guidance is grounded in how
+  billing actually works (CUR columns, Azure cost-management semantics, BigQuery
+  export, FOCUS conformance) rather than in vendor marketing or framework
+  positioning. Vendor sustainability and savings claims are read critically, with
+  primary sources cited.
+- **Maturity is contextual, not aspirational.** Verticals where cloud is not a
+  revenue generator do not need to reach Run; Crawl plus selective Walk is the right
+  state when cloud is a cost centre. Verticals where cloud IS the product need Run
+  because cloud efficiency directly drives gross margin. Pushing every organisation
+  toward the same maturity ceiling is malpractice.
+- **Connect cost to business value.** Every recommendation answers the CFO test:
+  what business outcome does this protect or unlock. Cost reduction without a value
+  lens is a leak.
+- **FinOps is an operating discipline, not a culture.** The discipline lives in
+  allocation, anomaly management, commitment management, rightsizing, and
+  governance, all of which produce measurable outputs. "Culture of FinOps" framing
+  tends to substitute slideware for those outputs. In the agentic era this matters
+  more, not less: agents execute discipline, not culture.
+
+These principles will grow into a `cloud-finops/doctrine/` directory of opposable
+theses with their own primary sources; see the `Roadmap` section of `CLAUDE.md`.
+
+---
+
 ## What this skill covers
 
 The skill provides accurate, framework-aligned guidance across the following domains:
@@ -65,10 +112,8 @@ The skill provides accurate, framework-aligned guidance across the following dom
   funding, practice operations, cross-functional governance for AI investments
 - **GenAI capacity planning** - provisioned vs shared capacity, traffic shape analysis,
   spillover mechanics, throughput units, cross-provider comparison
-- **Self-hosted vs managed AI inference** - decision framework for "should we self-host our
-  LLM?" with per-token vs per-hour billing comparison, hidden cost surface (operational,
-  reliability, compliance, talent FTEs), 5-criteria ML-Ops maturity rubric, hybrid routing
-  patterns (LiteLLM, Portkey), eight client diagnostic questions, six common anti-patterns
+- **Self-hosted vs managed AI inference** - decision framework for self-host vs managed LLM,
+  hidden cost surface, ML-Ops maturity rubric, hybrid routing patterns (LiteLLM, Portkey)
 - **Anthropic billing** - Claude model pricing, Fast mode, long-context cliffs,
   prompt caching, Batch API, governance controls
 - **AWS Bedrock** - model pricing, provisioned throughput, batch inference, cost allocation
@@ -84,9 +129,13 @@ The skill provides accurate, framework-aligned guidance across the following dom
 - **Tagging governance** - tag taxonomy design, naming conventions, IaC enforcement,
   virtual tagging, MCP-based automation, and compliance monitoring
 - **FinOps Framework** - full FinOps Foundation framework, 22 capabilities, maturity model
-- **Databricks** - cost data foundations (system.billing.usage, budget policies, serverless and model-serving attribution), allocation and governance (DBU executor patterns, DBCU commitments, Photon and serverless multipliers, amortised vs PAYG split, Azure VM RI vs DBU clarification), cluster optimisation, jobs, Spark, Unity Catalog costs
-- **Microsoft Fabric** - capacity FinOps (F-SKU model, Capacity Units, 24-hour CU smoothing, throttling), pause / resume, Reserved Capacity, the Pro/PPU to Fabric migration governance trap, shared-capacity allocation models, Capacity Metrics app
-- **Snowflake** - warehouse optimisation, query tuning, storage, credits, QUERY_ATTRIBUTION_HISTORY, Budgets including AI feature budgets, Cortex governance, resource monitor scope limit
+- **Databricks** - cost data foundations (system.billing.usage, DBU executor patterns,
+  DBCU commitments, Photon multiplier, amortised vs PAYG split), cluster and Spark
+  optimisation, Unity Catalog costs
+- **Microsoft Fabric** - F-SKU capacity model, 24-hour CU smoothing, throttling,
+  pause / resume, Reserved Capacity, Pro/PPU to Fabric migration governance trap
+- **Snowflake** - warehouse optimisation, query tuning, QUERY_ATTRIBUTION_HISTORY,
+  Budgets including AI feature budgets, Cortex governance, resource monitor scope
 - **AI coding tools** - Cursor, Claude Code, Copilot, Windsurf, Codex billing models,
   cost attribution with LiteLLM proxy, seat + usage vs BYOK architecture comparison,
   optimisation levers, cross-tool spend overlap audit
@@ -100,86 +149,23 @@ The skill provides accurate, framework-aligned guidance across the following dom
 - **GreenOps and cloud carbon** - carbon measurement tooling, FinOps-to-GreenOps
   integration, carbon-aware workload shifting, region selection, GHG Protocol reporting
 - **Anomaly management** - cost anomaly detection as a standalone Inform-phase
-  capability: AWS Cost Anomaly Detection / Azure / GCP native tooling, threshold
-  philosophy (absolute dollars plus percentage), layered detection across service,
-  region, account, and tag scopes, the masked-anomaly failure mode, new-region
-  detection, integration with Security
-- **Allocation and showback** - cost allocation methodology and the showback
-  delivery model that earns the upgrade to chargeback. FOCUS cost columns
-  (`EffectiveCost` vs `BilledCost`) with explicit AWS legacy mapping (amortised
-  vs unblended) and a `blended_cost` trap warning. Defensible allocation keys
-  table, shared-services hard cases (network, observability, security, ingress),
-  `InvoiceId` reconciliation, unallocated spend > 10% as a tagging signal,
-  showback report design and routing into team-existing surfaces, data-quality
-  dispute process
-- **Chargeback** - soft-to-hard chargeback maturity ladder built on top of
-  allocation and showback. Covers the Finance and accounting prerequisites
-  that determine whether hard chargeback is operationally possible at all:
-  ERP readiness (SAP CO cycles, Oracle / Workday / NetSuite equivalents),
-  inter-BU P&L impact and incentive-plan alignment, CFO sponsorship as a
-  hard requirement, transfer pricing for intercompany cloud recharges
-  (cost-plus methodology, re-characterisation risk), cross-border tax
-  mechanics (VAT reverse-charge, withholding, permanent-establishment risk,
-  EU/OECD Pillar 2 minimum tax, US GILTI/FDII/BEAT), SOX-equivalent controls,
-  decision-owner table mapping each prerequisite to the right Finance role,
-  methodology dispute process, the chargeback-revolt anti-pattern (12-18
-  months of credibility loss when skipped)
-- **Onboarding workloads** - migration-time cost hygiene as the cheapest
-  moment to enforce tagging, allocation, forecasting, and commitment-strategy
-  alignment. Covers the intake gate (mandatory checklist + three
-  implementation patterns: PR gate, cutover gate, pre-prod gate), the 60-90
-  day forecast-then-commit rule that prevents committing on a volatile
-  baseline, the double-bubble cost (parallel-run source and target) with
-  explicit shutoff discipline, the migration-cost-estimate-vs-actuals trap
-  driven by data-centre-to-cloud network cost differences, M&A integration
-  playbook (months 1-12 sequence), FOCUS-during-migration logic, cost-aware
-  architecture review integration, the requirement for a named
-  post-migration FinOps owner
-- **Kubernetes FinOps** - the cross-cluster discipline (EKS, GKE, AKS) for
-  the hardest variant of cloud-cost allocation. Covers tooling choice
-  (OpenCost / Kubecost / cloud-native), FOCUS-emitting K8s allocation with
-  K8s-labels-to-FOCUS-Tags mapping (so per-pod costs join non-K8s costs in
-  the warehouse), container rightsizing methodology (VPA in
-  recommendation-only mode, p99 + 30% memory safety margin, p95 + 50% CPU
-  safety, per-workload rollout), node-level autoscaling (Karpenter beats
-  Cluster Autoscaler on cost efficiency where available, consolidation
-  policy tuning, Pod Disruption Budgets as non-negotiable, Spot
-  diversification across instance types and availability zones), and idle
-  node cost as Platform team overhead rather than redistributed across
-  application teams. Provider-specific node mechanics live in the per-cloud
-  files
-- **Waste detection playbooks** - OptimNow's seven-category waste taxonomy
-  (orphaned, idle, overprovisioned, commitment mismatches, schedule
-  blindness, modernization opportunities, AI/ML inefficiency) covering
-  the detection patterns, two-signal classification rule, three-tier
-  confidence model (obvious / likely / possible), and realised-vs-potential
-  savings discipline. Operationally backed by the OptimNow WasteLine
-  appliance for AWS (49 deterministic detection rules, read-only, with
-  proposal-only remediation artifacts); for Azure and GCP, points to the
-  in-cloud pattern catalogues. Crawl/Walk/Run progression from manual
-  quarterly hunt to continuous Fargate-scheduled detection
-
-All guidance is framed through OptimNow's methodology: connecting cost to business value,
-diagnosing before prescribing, and recommending actions matched to organisational maturity.
-
----
-
-## Design principles
-
-- **AI cost management is a first-class domain.** Most FinOps resources treat AI workloads
-  as an edge case. This skill treats them as a primary concern, with dedicated reference
-  files for each major AI platform.
-- **Visibility before optimisation.** The skill follows a consistent sequence: establish
-  what you are spending, understand what is driving it, then act. It does not recommend
-  optimisation steps before the visibility preconditions are met.
-- **Practical over theoretical.** Guidance is based on how billing actually works and
-  what has proven effective in enterprise delivery - not on what the documentation implies.
-- **Maturity-sensitive.** Recommendations reflect the organisation's current state.
-  A team with no cost allocation in place receives different guidance than a team
-  evaluating cross-account chargeback models.
-- **Tool-aware where relevant.** The skill references OptimNow's open-source tools
-  (MCP for Tagging, AI ROI Calculator, FinOps Maturity Assessment) when they directly
-  apply to the question at hand.
+  capability across AWS / Azure / GCP native tooling, layered detection, masked-anomaly
+  failure mode, integration with Security
+- **Allocation and showback** - FOCUS cost columns (EffectiveCost vs BilledCost), AWS
+  legacy mapping, defensible allocation keys, shared-services hard cases,
+  InvoiceId reconciliation, showback report design
+- **Chargeback** - soft-to-hard chargeback maturity ladder, Finance and accounting
+  prerequisites (ERP readiness, transfer pricing, cross-border tax, SOX-equivalent
+  controls), chargeback-revolt anti-pattern
+- **Onboarding workloads** - migration-time cost hygiene, intake gate, 60-90 day
+  forecast-then-commit rule, double-bubble cost discipline, M&A integration playbook
+- **Kubernetes FinOps** - cross-cluster discipline (EKS / GKE / AKS), OpenCost / Kubecost,
+  FOCUS-emitting K8s allocation, container rightsizing methodology, Karpenter, Spot
+  diversification
+- **Waste detection playbooks** - OptimNow's seven-category waste taxonomy (orphaned,
+  idle, overprovisioned, commitment mismatches, schedule blindness, modernisation,
+  AI/ML inefficiency), two-signal classification, three-tier confidence, WasteLine
+  appliance for AWS
 
 ---
 
@@ -335,64 +321,16 @@ domain-specific content is shared.
 
 ---
 
-## Installation
+## Installation details
 
-The skill installs into 11 different tools via a single bash installer that converts
-the canonical Claude / Agent-Skills format into each target tool's expected shape.
-See **[INSTALLATION.md](./INSTALLATION.md)** for the full per-tool instructions.
+The "Install in 5 seconds" table at the top of this README covers the one-step path
+for every supported tool. For per-tool blocks, troubleshooting, the model-agnostic
+API loader, and the recommended response contract, see
+**[INSTALLATION.md](./INSTALLATION.md)**.
 
-### One-liner (auto-detect)
-
-```bash
-curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash
-```
-
-Auto-detects which tools you have installed (Claude Code, Cursor, Windsurf, Codex, etc.)
-and installs the skill for each, with the right per-tool conversion.
-
-### One specific tool
-
-```bash
-curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash -s -- --tool <name>
-```
-
-Supported tools: `claude-code`, `claude-projects`, `cursor`, `windsurf`, `chatgpt`,
-`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`. Run `./install.sh --list`
-to see them all.
-
-### Claude Code plugin (auto-updating alternative)
-
-For Claude Code specifically, the skill is also distributed as a self-hosted plugin
-with built-in update via `/plugin update`. Two commands at the **Claude Code prompt**
-(not your shell):
-
-```text
-/plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git
-/plugin install cloud-finops@optimnow
-```
-
-To pull the latest content (including the twice-monthly automated updates):
-
-```text
-/plugin update cloud-finops@optimnow
-```
-
-**Note on the URL form:** the explicit HTTPS URL above avoids an SSH-authentication
-prompt that some Claude Code installs hit when given the `OptimNow/cloud-finops-skills`
-shorthand. The repository is fully public over HTTPS - no credentials needed.
-
-### Claude Desktop / claude.ai
-
-For the web / desktop apps, the installer can build a clean upload zip:
-
-```bash
-./install.sh --tool claude-projects
-```
-
-Then upload `dist/claude-projects/cloud-finops.zip` via Settings → Skills → Upload zip.
-A version-tagged build (`cloud-finops-vX.Y.Z.zip`) is also attached to every
+A version-tagged release zip (`cloud-finops-vX.Y.Z.zip`) is attached to every
 [GitHub release](https://github.com/OptimNow/cloud-finops-skills/releases) for
-users who prefer downloading over building locally.
+Claude Desktop / claude.ai users who prefer downloading over building locally.
 
 ---
 
@@ -412,15 +350,78 @@ updates are published.
 
 ## Contributing
 
-Contributions are welcome. If you spot an inaccuracy, a missing provider feature, or a
-gap in coverage, open an issue or submit a pull request.
+**Process and credit.** Open an issue first for anything larger than a typo or
+single fact correction, so we can scope before you write. Pull requests should
+keep the existing structure of the file you are touching, follow the conventions
+in [`CLAUDE.md`](./CLAUDE.md) (FCP frontmatter, no em dashes, British spelling
+in prose, license footer), and pass the FCP coverage check
+(`./scripts/fcp-coverage.sh --check`).
 
-To suggest improvements:
+You keep authorship: every contribution lives in the commit history under your
+name and shows up in `git blame`. Substantive contributors are visible in the
+repo's contributors list on GitHub.
 
-1. Review the source material at [finops.org/framework](https://www.finops.org/framework/)
-2. Identify gaps or inaccuracies in existing reference files
-3. Submit a pull request with proposed changes
-4. For new domains, follow the structure of an existing reference file as a template
+**License and what that means for you.** All contributions are licensed under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). This is an
+OptimNow-maintained repo, but CC BY-SA was chosen specifically so anyone -
+including you - can fork, customise, and redistribute under their own brand,
+as long as they credit and share-alike. If you want a project under your own
+name rather than contributing here, fork freely; see "Adapting this skill for
+your organisation" below for the fork playbook. Both paths are first-class.
+
+Practitioner experience is the highest-value contribution. Frameworks and
+vendor docs are already public; what is rare is "we tried X in production,
+this is what actually billed". Issues and PRs that bring that lens are welcome
+in any of the layers below.
+
+**Concrete contribution types we actively want:**
+
+- **Pricing or billing-mechanic correction.** A CUR column name we got wrong, a
+  CUD / Reservation discount depth that has shifted, a refund cap that does not
+  match the latest contract terms. Cite the primary source (provider doc, your
+  invoice, an enrollment agreement) so the change is verifiable.
+- **New named playbook.** A waste pattern you see in the field that is not yet in
+  `cloud-finops/playbooks/`. Follow the format documented in
+  [`playbooks/README.md`](./cloud-finops/playbooks/README.md): symptoms / detection
+  query / fix / anti-pattern / sources, ~2-4 KB. Examples we'd love: Lambda
+  cold-start sprawl, Bedrock model proliferation, Snowflake warehouse fragmentation,
+  Databricks all-purpose-cluster default-on, Cloud Run min-instance creep.
+- **Fix or enrich an existing playbook.** A detection query that returns
+  false positives in your data, an anti-pattern you saw burn a team, a fix step
+  that does not work without a precondition we missed.
+- **Pick up a deferred reference file.** The `Roadmap > Deferred reference
+  files` section of [`CLAUDE.md`](./CLAUDE.md) lists the P2/P3 items
+  (forecasting, unit economics, practice operations, education & enablement,
+  benchmarking, cost warehouse) with the rationale and trigger to revisit.
+  If your engagement has surfaced one of those, that is the trigger - open
+  an issue with the engagement context and we will scope the file together.
+- **Tool installer addition.** Adding `--tool <new-tool>` for a coding
+  assistant or agent we do not yet support. Match the existing
+  installer pattern in `install.sh` (idempotent, dry-run-safe, exclude
+  local-only files like `.claude/` and `.backups/`).
+- **Real-world case study or counter-example.** Something you tried that did
+  not work, or worked under conditions we do not flag. These end up as
+  anti-pattern blocks in the relevant reference or playbook.
+- **Adversarial review.** Disagreement on a recommendation, with reasoning
+  and ideally a source. The repo is opinionated; it should also be falsifiable.
+- **Bug report.** Installer fails on your setup, a file does not render in your
+  tool, a guard rail false-positives. Open an issue with the exact command and
+  output.
+- **Translation.** Selected references in another language, maintained as a
+  parallel directory rather than a fork, when you can commit to keeping them
+  in sync with the next refresh.
+
+**What we push back on:**
+
+- Vendor marketing material restated as fact, without a primary source or
+  practitioner-grade evidence behind the claim.
+- Wholesale AI-generated reference content with no human practitioner pass.
+  The pipeline that powers the bi-monthly refresh has hard guard rails (see
+  the `Lessons learned` section of `CLAUDE.md` for why). Hand-written
+  contributions go through human review for the same reasons.
+- "Best practices" lists with no business-value framing. Every recommendation
+  in this repo connects cost to a business outcome; contributions should follow
+  that pattern.
 
 ---
 

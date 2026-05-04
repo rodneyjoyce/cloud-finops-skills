@@ -232,6 +232,27 @@ GitHub issues, which track in-flight work.
   build: any time after the doctrine layer ships (the script needs the FCP frontmatter
   convention to be settled, which it now is).
 
+- **Public Custom GPT for ChatGPT users.** The current ChatGPT install path is
+  self-host: `./install.sh --tool chatgpt --grouped` produces 10 grouped knowledge
+  files the user uploads themselves. A public Cloud FinOps GPT in the OpenAI GPT
+  Store would replace that with a single click for non-technical users. Build steps:
+  (1) run the grouped installer once to get the artefacts; (2) create the GPT in
+  `chatgpt.com/gpts/editor`, paste `instructions.md`, upload the 10 grouped knowledge
+  files; (3) set name, category, visibility = Anyone with link / Public; (4) capture
+  the resulting `https://chat.openai.com/g/g-XXXXX` URL and replace the placeholder in
+  `README.md`'s install table. Maintenance burden: a GitHub Action that re-builds the
+  artefacts on each release, plus a manual re-upload to ChatGPT (their API does not
+  expose a "publish new version" endpoint for Custom GPTs). Cadence target: monthly
+  refresh on top of the twice-monthly source updates.
+
+- **Public Gemini Gem for Gemini users.** Same shape as the ChatGPT GPT. Build
+  steps: (1) run `./install.sh --tool gemini` to produce the 10 grouped knowledge
+  files; (2) at `gemini.google.com/gems/`, create a new Gem, paste `instructions.md`,
+  upload the 10 grouped files; (3) set the visibility, capture the public Gem URL and
+  replace the placeholder in `README.md`. Maintenance burden: same as the GPT (manual
+  re-upload, no API). Trigger: ship the GPT first, see whether the install-time
+  friction reduction matters, then mirror to Gemini.
+
 ### Depth passes (extend existing files when bandwidth allows)
 
 - **Extend GreenOps depth to Azure and GCP.** The May 2026 GreenOps pass added AWS-specific
