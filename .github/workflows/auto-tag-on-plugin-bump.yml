@@ -67,17 +67,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Build a tag message that points at plugin.json as the source of truth
-          # for what changed. The release.yml workflow uses generate_release_notes
-          # so the user-facing release body still gets auto-populated from the
-          # commits between this tag and the previous one.
-          git tag -a "$tag" -m "Auto-tagged from .claude-plugin/plugin.json bump to $version
-
-This tag was created automatically by .github/workflows/auto-tag-on-plugin-bump.yml
-when plugin.json on main moved to version $version.
-
-The release.yml workflow will fire from this tag and publish
-cloud-finops-${tag}.zip to a new GitHub release."
+          # Single-line tag message; the user-facing release notes are
+          # auto-populated by release.yml's generate_release_notes flag
+          # from the commit history between this tag and the previous one.
+          git tag -a "$tag" -m "Auto-tagged from .claude-plugin/plugin.json bump to $version"
 
           git push origin "$tag"
           echo "Pushed tag $tag - release.yml will produce cloud-finops-${tag}.zip"
