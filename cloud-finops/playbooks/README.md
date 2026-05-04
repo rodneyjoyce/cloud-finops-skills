@@ -86,8 +86,9 @@ drift, the recommended workflow is:
    playbook
 3. When a pattern's *core economics* change (e.g. AWS halves NAT Gateway
    pricing), update both - the reference file's pattern catalogue entry
-   should ideally `[link to the playbook](path)` rather than repeat all
-   the detail
+   should ideally link to the matching playbook (e.g.
+   `[aws-zombie-nat-gateway](../playbooks/aws-zombie-nat-gateway.md)`)
+   rather than repeat all the detail
 
 The `cloud-finops/references/finops-waste-detection-playbooks.md` file is
 the canonical taxonomy and confidence rubric; playbooks instantiate it.

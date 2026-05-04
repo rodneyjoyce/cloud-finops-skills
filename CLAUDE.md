@@ -82,7 +82,8 @@ cloud-finops-skills/
 
 ## Content update pipeline
 
-The `pipeline/` folder contains a weekly content scanner that detects FinOps-relevant
+The `pipeline/` folder contains a twice-monthly content scanner (around the 1st
+and 15th) that detects FinOps-relevant
 changes across 29 sources and proposes updates to the reference files. It is gitignored
 and not part of the public distribution.
 
@@ -286,7 +287,9 @@ GitHub issues, which track in-flight work.
   for ChatGPT / Gemini / generic LLM retrieval. Routing rule to add to SKILL.md and
   POWER.md: "named waste pattern X -> `playbooks/X.md`". Drift risk to manage: changes
   to a pattern must be applied in both places, or the reference file should be updated
-  to reference the playbook by `[file](path)` instead of duplicating the content.
+  to reference the playbook by an inline Markdown link (e.g.
+  `[aws-zombie-nat-gateway](../playbooks/aws-zombie-nat-gateway.md)`) instead of
+  duplicating the content.
 
 - **FCP coverage matrix tooling.** Adapt the approach from Cletrics' `fcp-coverage.sh`:
   a small bash script that parses `fcp_domain` / `fcp_capability` /

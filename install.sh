@@ -9,9 +9,9 @@
 #   ./install.sh --list                List supported tools
 #   ./install.sh --dry-run             Print what would happen, no writes
 #   ./install.sh --user                Install at user-level paths where supported (Claude Code)
-#   ./install.sh --grouped             ChatGPT only: produce a 9-file grouped build
+#   ./install.sh --grouped             ChatGPT only: produce a 10-file grouped build
 #                                      (same content bundled by domain) instead of
-#                                      27 per-reference files. Easier to upload.
+#                                      42 per-reference files. Easier to upload.
 #   ./install.sh --dest <dir>          Override the project / target directory
 #   ./install.sh --help                Show this help
 #
