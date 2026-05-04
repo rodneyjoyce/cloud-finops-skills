@@ -227,7 +227,7 @@ Many organizations assign separate Snowflake warehouses to individual business u
 **Underutilized Snowflake Warehouse**
 Service: Snowflake Virtual Warehouse | Type: Underutilized Resource
 
-Underutilized Snowflake warehouses occur when a workload is assigned a larger warehouse size than necessary. For example, a workload that could efficiently execute on a Medium (M) warehouse may be running on a Large (L) or Extra Large (XL) warehouse.This leads to unnecessary credit consumption without a proportional benefit to performance.
+Underutilized Snowflake warehouses occur when a workload is assigned a larger warehouse size than necessary. For example, a workload that could efficiently execute on a Medium (M) warehouse may be running on a Large (L) or Extra Large (XL) warehouse. This leads to unnecessary credit consumption without a proportional benefit to performance.
 
 - Right-size the Snowflake warehouse by selecting a smaller size (e.g., from L to M, or M to S) that adequately supports workload performance and concurrency needs.
 - Implement a periodic review process to reassess warehouse sizing based on observed usage patterns and changes in workload requirements

@@ -171,7 +171,13 @@ detect_gemini()          { return 1; }   # web-only
 detect_gemini_cli()      { command -v gemini >/dev/null 2>&1 || [[ -d "$HOME/.gemini" ]]; }
 detect_codex()           { command -v codex >/dev/null 2>&1 || [[ -d ".codex" || -d "$HOME/.codex" ]]; }
 detect_aider()           { command -v aider >/dev/null 2>&1 || [[ -f "CONVENTIONS.md" ]]; }
-detect_copilot()         { command -v code >/dev/null 2>&1 || [[ -d ".github" ]]; }
+detect_copilot()         {
+  # Heuristic: VS Code CLI present OR an existing copilot-instructions.md
+  # already in this repo. The previous version also detected on the
+  # presence of any .github/ directory, which over-detected on every
+  # repo with issue templates or workflows. Removed.
+  command -v code >/dev/null 2>&1 || [[ -f ".github/copilot-instructions.md" ]]
+}
 detect_kiro()            { command -v kiro >/dev/null 2>&1 || [[ -d ".kiro" ]]; }
 
 is_detected() {

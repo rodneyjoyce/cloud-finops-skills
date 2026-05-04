@@ -416,7 +416,7 @@ in any of the layers below.
 - Vendor marketing material restated as fact, without a primary source or
   practitioner-grade evidence behind the claim.
 - Wholesale AI-generated reference content with no human practitioner pass.
-  The pipeline that powers the bi-monthly refresh has hard guard rails (see
+  The pipeline that powers the twice-monthly refresh has hard guard rails (see
   the `Lessons learned` section of `CLAUDE.md` for why). Hand-written
   contributions go through human review for the same reasons.
 - "Best practices" lists with no business-value framing. Every recommendation
