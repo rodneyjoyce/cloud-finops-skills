@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//c/Users/jlati/Documents/GitHub/cloud-finops-skills/**)",
-      "Bash(gh pr create --title 'Extend Azure FinOps reference: rightsizing, AKS, databases, governance, storage, networking, FOCUS' --body ' *)",
-      "PowerShell($current = [Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); $target = \"C:\\\\Users\\\\jlati\\\\.local\\\\bin\"; if \\($current -split \";\" -contains $target\\) { \"Already present in User PATH - no change made.\" } else { $sep = if \\($current.EndsWith\\(\";\"\\) -or [string]::IsNullOrEmpty\\($current\\)\\) { \"\" } else { \";\" }; $new = $current + $sep + $target; [Environment]::SetEnvironmentVariable\\(\"Path\", $new, \"User\"\\); \"Added '$target' to User PATH.\" }; \"---\"; \"Current User PATH entries:\"; [Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\) -split \";\" | ForEach-Object { \" - $_\" })"
-    ]
-  }
-}
