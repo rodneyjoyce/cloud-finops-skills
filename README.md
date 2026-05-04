@@ -16,22 +16,14 @@
 
 | Tool | One-step install |
 |---|---|
-| **Claude Code** (CLI / IDE) | At the Claude Code prompt: `/plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git` then `/plugin install cloud-finops@optimnow` |
-| **Claude.ai** / **Claude Desktop** (web) | [Download the latest release zip](https://github.com/OptimNow/cloud-finops-skills/releases/latest), then **Settings -> Skills -> Upload zip** |
-| **ChatGPT Custom GPT** | Self-host: `./install.sh --tool chatgpt --grouped` (a public Cloud FinOps GPT is on the Roadmap) |
-| **Gemini Gem** | Self-host: `./install.sh --tool gemini` (a public Cloud FinOps Gem is on the Roadmap) |
-| **Cursor / Windsurf / Codex CLI / Aider / Copilot / Kiro IDE / Gemini CLI** | One-liner: `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash -s -- --tool <name>` |
-| **Auto-detect every tool installed locally** | `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash` |
+| <img src="https://img.shields.io/badge/-Claude%20Code-D97757?logo=anthropic&logoColor=white" alt="" height="22"/> &nbsp; **Claude Code** (CLI / IDE) | At the Claude Code prompt: `/plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git` then `/plugin install cloud-finops@optimnow` |
+| <img src="https://img.shields.io/badge/-Claude.ai-D97757?logo=anthropic&logoColor=white" alt="" height="22"/> &nbsp; **Claude.ai** / **Claude Desktop** (web) | [Download the latest release zip](https://github.com/OptimNow/cloud-finops-skills/releases/latest), then **Settings -> Skills -> Upload zip** |
+| <img src="https://img.shields.io/badge/-ChatGPT-10A37F?logo=openai&logoColor=white" alt="" height="22"/> &nbsp; **ChatGPT Custom GPT** | Self-host: `./install.sh --tool chatgpt --grouped` _(a public Cloud FinOps GPT is on the Roadmap)_ |
+| <img src="https://img.shields.io/badge/-Gemini-4285F4?logo=googlegemini&logoColor=white" alt="" height="22"/> &nbsp; **Gemini Gem** | Self-host: `./install.sh --tool gemini` _(a public Cloud FinOps Gem is on the Roadmap)_ |
+| <img src="https://img.shields.io/badge/-Cursor-000000?logo=cursor&logoColor=white" alt="" height="22"/> <img src="https://img.shields.io/badge/-Windsurf-3DDC91?logoColor=white" alt="" height="22"/> <img src="https://img.shields.io/badge/-Codex-412991?logo=openai&logoColor=white" alt="" height="22"/> <img src="https://img.shields.io/badge/-Aider-0F172A?logoColor=white" alt="" height="22"/> <img src="https://img.shields.io/badge/-Copilot-181717?logo=githubcopilot&logoColor=white" alt="" height="22"/> <img src="https://img.shields.io/badge/-Kiro%20IDE-FF6F00?logoColor=white" alt="" height="22"/> <img src="https://img.shields.io/badge/-Gemini%20CLI-4285F4?logo=googlegemini&logoColor=white" alt="" height="22"/> | One-liner: `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash -s -- --tool <name>` |
+| <img src="https://img.shields.io/badge/-Auto--detect-555555?logo=gnubash&logoColor=white" alt="" height="22"/> &nbsp; **Every tool installed locally** | `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash` |
 
 Full options, troubleshooting, and the model-agnostic API loader: see [INSTALLATION.md](./INSTALLATION.md).
-
-[![Install in Claude Code](https://img.shields.io/badge/Claude%20Code-Install%20plugin-D97757?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#claude-code-project)
-[![Claude.ai upload](https://img.shields.io/badge/Claude.ai-Upload%20zip-D97757?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/releases/latest)
-[![Cursor](https://img.shields.io/badge/Cursor-Add%20rule-000000?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#cursor)
-[![Windsurf](https://img.shields.io/badge/Windsurf-Add%20rule-3DDC91?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#windsurf)
-[![Kiro](https://img.shields.io/badge/Kiro%20IDE-Add%20Power-FF6F00?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#kiro-ide)
-[![ChatGPT](https://img.shields.io/badge/ChatGPT-Self--host%20GPT-10A37F?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#chatgpt-custom-gpt)
-[![Gemini](https://img.shields.io/badge/Gemini-Self--host%20Gem-4285F4?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#gemini-gems-web)
 
 ---
 
