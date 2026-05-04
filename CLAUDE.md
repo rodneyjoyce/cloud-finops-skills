@@ -156,6 +156,75 @@ GitHub issues, which track in-flight work.
 
 ### In-flight (write when prerequisites land)
 
+- **P1 - Audit, harden, stabilise, and publish the refresh pipeline.** The pipeline
+  in `pipeline/` is currently frozen (`run_apply.py.FROZEN`) since the May 2026
+  truncation incident (8 reference files truncated across two runs - see the
+  `Lessons learned` section above for the forensic). Hard guard rails are in
+  the applier (`validate_post_apply` with deletion threshold + footer presence +
+  double-HR check; `apply_with_guard_rails` with snapshot + rollback; run-level
+  fail-safe at 2 failures), and 9 unit tests pass against synthesised failure
+  modes. What is missing is end-to-end validation, hardening of the rest of the
+  pipeline, and a decision on public release. Four phases:
+
+  1. **Audit (week 1).** Read every module - `scanner/` (fetch + classify),
+     `proposer/` (CHANGES.md report builder), `applier/` (file rewrite, now
+     guard-railed), `alerter/` (Gmail draft builder), `state/`. Document each
+     module's contract (inputs, outputs, side effects, failure modes), the
+     LLM prompts in use, and any place where the pipeline takes a destructive
+     action. Identify implicit assumptions and any other module besides
+     `applier/` that can write to `cloud-finops/references/` or `cloud-finops/playbooks/`
+     - if anything else writes there, it must inherit the same guard-rail
+     contract.
+  2. **Harden (week 1-2).** Bring code-level validators to the modules that
+     currently rely on prompt instructions. Concrete targets: `scanner/`
+     validates fetch results (HTTP status, content-type, minimum payload
+     length) so a 200-with-empty-body cannot become a "this source has no
+     news" classification; `proposer/` validates that proposed CHANGES.md is
+     well-formed before write; the `Anthropic` API calls in
+     `applier/file_updater.py` switch to the structured output (tool-use)
+     pattern so the model returns a JSON object with explicit fields rather
+     than free-form markdown that the Python code parses with regex. Every
+     module produces a per-run structured report (one JSON file per run,
+     archived under `pipeline/state/runs/<timestamp>/`) so post-hoc audit
+     does not depend on stdout scrolling. Add ratchets: secrets handling
+     (no API keys in commit messages, no .env in stdout), idempotency
+     (re-running the same change produces zero diff), and replay-from-state
+     so a partial failure can be resumed.
+  3. **Stabilise (week 2-3).** Define the un-freeze criteria explicitly.
+     Recommended set: (a) 5 consecutive dry runs against the historical
+     change archive produce zero false-positive guard-rail rejections AND
+     zero silent truncations; (b) a fresh real run on a synthetic forked
+     references directory completes end-to-end without manual intervention;
+     (c) the run-level fail-safe correctly aborts a run that injects 3+
+     truncations across 3 different files; (d) all `pipeline/tests/`
+     unit tests pass on Python 3.10/3.11/3.12. When all four are green,
+     `mv pipeline/run_apply.py.FROZEN pipeline/run_apply.py` to unfreeze.
+     Document the unfreeze decision and the test evidence in the
+     `Lessons learned` section of this CLAUDE.md so it is auditable.
+  4. **Publish (week 3-4, requires separate strategic decision).** The
+     pipeline is currently gitignored as "private until public release"
+     (per the existing `## Content update pipeline` section above). The
+     decision is whether public release adds more credibility (dogfooding
+     the doctrine that "agentic FinOps must be auditable", letting the
+     community contribute guard rails) than complexity (maintaining a
+     public repo, exposing internals like `sources.yaml`, prompt
+     strategies, .env handling, the OptimNow API key rotation cadence).
+     Two viable shapes if the answer is yes:
+     - **Same repo, public top-level `pipeline/` directory** (most
+       transparent; matches the doctrine). Keeps `.env*` and runtime
+       state gitignored. Maximum benefit, maximum maintenance burden.
+     - **Separate repo `OptimNow/cloud-finops-skills-pipeline`**
+       (compartmentalises the privacy boundary; harder to dogfood).
+       Lower exposure, lower transparency.
+     Either way, the Lessons learned section becomes the public artefact
+     that proves the discipline (the incident, the recovery, the guard
+     rails, the unfreeze criteria). Trigger: phases 1-3 must complete
+     before this decision is even on the table.
+
+  Cross-references: this work directly extends the `Lessons learned`
+  section above and should produce a follow-up Lessons learned entry
+  describing the un-freeze evidence.
+
 - **WasteLine extension to Azure and GCP.** `finops-waste-detection-playbooks.md` covers the
   seven-category waste taxonomy and references the WasteLine appliance for AWS automation;
   Azure and GCP coverage currently routes to the in-cloud pattern catalogues
