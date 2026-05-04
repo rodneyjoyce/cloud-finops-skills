@@ -2,7 +2,7 @@
 name: finops-azure
 fcp_domain: "Optimize Usage & Cost"
 fcp_capability: "Rate Optimization"
-fcp_capabilities_secondary: ["Usage Optimization", "Data Ingestion"]
+fcp_capabilities_secondary: ["Usage Optimization", "Data Ingestion", "Reporting & Analytics"]
 fcp_phases: ["Optimize", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Finance", "Procurement"]
