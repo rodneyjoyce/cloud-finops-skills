@@ -54,7 +54,23 @@ generally available - the canonical path for FOCUS-conformant cost data on AWS.
   FOCUS 1.2 preview export and GCP's FOCUS export, enabling true cross-cloud
   normalisation in a single warehouse.
 
-Source: https://aws.amazon.com/about-aws/whats-new/2025/11/aws-data-exports-focus-1-2-available/
+**Cross-account delivery (March 2026, GA).** AWS Data Exports now supports
+delivery directly to an S3 bucket in a different (authorised) account. This is
+the path AWS-native landing zones and centralised FinOps warehouses have been
+asking for: payer accounts can publish FOCUS 1.2 / CUR 2.0 exports straight into
+the FinOps team's analytics account without an intermediate copy step or a
+cross-account replication rule. Configure via the destination bucket policy on
+the receiving side and the export configuration on the source side.
+- Removes the previous "copy from payer S3 to analytics S3" pipeline that many
+  organisations had to operate themselves.
+- Simplifies the IAM model: one bucket policy on the analytics side rather than
+  per-payer-account IAM roles.
+- Especially useful for organisations that consolidate billing across multiple
+  AWS Organizations (M&A integrations, multi-payer setups, partner-resold
+  accounts).
+
+Sources: https://aws.amazon.com/about-aws/whats-new/2025/11/aws-data-exports-focus-1-2-available/
+and https://aws.amazon.com/about-aws/whats-new/2026/03/aws-data-exports-cross-account-delivery-cost/
 
 **Common CUR analysis queries (Athena):**
 ```sql
