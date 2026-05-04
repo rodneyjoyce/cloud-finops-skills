@@ -181,20 +181,33 @@ diagnosing before prescribing, and recommending actions matched to organisationa
 
 ## Design principles
 
-- **AI cost management is a first-class domain.** Most FinOps resources treat AI workloads
-  as an edge case. This skill treats them as a primary concern, with dedicated reference
-  files for each major AI platform.
-- **Visibility before optimisation.** The skill follows a consistent sequence: establish
-  what you are spending, understand what is driving it, then act. It does not recommend
-  optimisation steps before the visibility preconditions are met.
-- **Practical over theoretical.** Guidance is based on how billing actually works and
-  what has proven effective in enterprise delivery - not on what the documentation implies.
-- **Maturity-sensitive.** Recommendations reflect the organisation's current state.
-  A team with no cost allocation in place receives different guidance than a team
-  evaluating cross-account chargeback models.
-- **Tool-aware where relevant.** The skill references OptimNow's open-source tools
-  (MCP for Tagging, AI ROI Calculator, FinOps Maturity Assessment) when they directly
-  apply to the question at hand.
+- **AI cost management is a first-class domain.** Most FinOps resources treat AI
+  workloads as an edge case. This skill treats them as a primary concern, with
+  dedicated reference files for each major AI platform.
+- **Visibility before optimisation.** The skill follows a consistent sequence:
+  establish what you are spending, understand what is driving it, then act. It does
+  not recommend optimisation steps before the visibility preconditions are met.
+- **Provider-mechanics-first, vendor-claim-skeptical.** Guidance is grounded in how
+  billing actually works (CUR columns, Azure cost-management semantics, BigQuery
+  export, FOCUS conformance) rather than in vendor marketing or framework
+  positioning. Vendor sustainability and savings claims are read critically, with
+  primary sources cited.
+- **Maturity is contextual, not aspirational.** Verticals where cloud is not a
+  revenue generator do not need to reach Run; Crawl plus selective Walk is the right
+  state when cloud is a cost centre. Verticals where cloud IS the product need Run
+  because cloud efficiency directly drives gross margin. Pushing every organisation
+  toward the same maturity ceiling is malpractice.
+- **Connect cost to business value.** Every recommendation answers the CFO test:
+  what business outcome does this protect or unlock. Cost reduction without a value
+  lens is a leak.
+- **FinOps is an operating discipline, not a culture.** The discipline lives in
+  allocation, anomaly management, commitment management, rightsizing, and
+  governance, all of which produce measurable outputs. "Culture of FinOps" framing
+  tends to substitute slideware for those outputs. In the agentic era this matters
+  more, not less: agents execute discipline, not culture.
+
+These principles will grow into a `cloud-finops/doctrine/` directory of opposable
+theses with their own primary sources; see the `Roadmap` section of `CLAUDE.md`.
 
 ---
 
@@ -427,10 +440,29 @@ updates are published.
 
 ## Contributing
 
-Practitioner experience is the highest-value contribution to this repo.
-Frameworks and vendor docs are already public; what is rare is "we tried X in
-production, this is what actually billed". Issues and PRs that bring that lens
-are welcome - in any of the layers below.
+**Process and credit.** Open an issue first for anything larger than a typo or
+single fact correction, so we can scope before you write. Pull requests should
+keep the existing structure of the file you are touching, follow the conventions
+in [`CLAUDE.md`](./CLAUDE.md) (FCP frontmatter, no em dashes, British spelling
+in prose, license footer), and pass the FCP coverage check
+(`./scripts/fcp-coverage.sh --check`).
+
+You keep authorship: every contribution lives in the commit history under your
+name and shows up in `git blame`. Substantive contributors are visible in the
+repo's contributors list on GitHub.
+
+**License and what that means for you.** All contributions are licensed under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). This is an
+OptimNow-maintained repo, but CC BY-SA was chosen specifically so anyone -
+including you - can fork, customise, and redistribute under their own brand,
+as long as they credit and share-alike. If you want a project under your own
+name rather than contributing here, fork freely; see "Adapting this skill for
+your organisation" below for the fork playbook. Both paths are first-class.
+
+Practitioner experience is the highest-value contribution. Frameworks and
+vendor docs are already public; what is rare is "we tried X in production,
+this is what actually billed". Issues and PRs that bring that lens are welcome
+in any of the layers below.
 
 **Concrete contribution types we actively want:**
 
@@ -471,9 +503,8 @@ are welcome - in any of the layers below.
 
 **What we push back on:**
 
-- Vendor marketing material restated as fact (especially from FinOps
-  Foundation sponsors), without a primary source or practitioner-grade
-  evidence behind the claim.
+- Vendor marketing material restated as fact, without a primary source or
+  practitioner-grade evidence behind the claim.
 - Wholesale AI-generated reference content with no human practitioner pass.
   The pipeline that powers the bi-monthly refresh has hard guard rails (see
   the `Lessons learned` section of `CLAUDE.md` for why). Hand-written
@@ -481,15 +512,6 @@ are welcome - in any of the layers below.
 - "Best practices" lists with no business-value framing. Every recommendation
   in this repo connects cost to a business outcome; contributions should follow
   that pattern.
-
-**Process.** Open an issue first for anything larger than a typo or single
-fact correction, so we can scope before you write. Pull requests should keep
-the existing structure of the file you are touching, follow the conventions
-in [`CLAUDE.md`](./CLAUDE.md) (FCP frontmatter, no em dashes, British spelling
-in prose, license footer), and pass the FCP coverage check
-(`./scripts/fcp-coverage.sh --check`). All contributions are licensed
-under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) -
-your name in the commit history is the credit.
 
 ---
 
