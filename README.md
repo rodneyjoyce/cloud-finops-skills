@@ -12,6 +12,29 @@
 
 ---
 
+## Install in 5 seconds
+
+| Tool | One-step install |
+|---|---|
+| **Claude Code** (CLI / IDE) | At the Claude Code prompt: `/plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git` then `/plugin install cloud-finops@optimnow` |
+| **Claude.ai** / **Claude Desktop** (web) | [Download the latest release zip](https://github.com/OptimNow/cloud-finops-skills/releases/latest), then **Settings -> Skills -> Upload zip** |
+| **ChatGPT Custom GPT** | Self-host: `./install.sh --tool chatgpt --grouped` (a public Cloud FinOps GPT is on the Roadmap) |
+| **Gemini Gem** | Self-host: `./install.sh --tool gemini` (a public Cloud FinOps Gem is on the Roadmap) |
+| **Cursor / Windsurf / Codex CLI / Aider / Copilot / Kiro IDE / Gemini CLI** | One-liner: `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash -s -- --tool <name>` |
+| **Auto-detect every tool installed locally** | `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash` |
+
+Full options, troubleshooting, and the model-agnostic API loader: see [INSTALLATION.md](./INSTALLATION.md).
+
+[![Install in Claude Code](https://img.shields.io/badge/Claude%20Code-Install%20plugin-D97757?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#claude-code-project)
+[![Claude.ai upload](https://img.shields.io/badge/Claude.ai-Upload%20zip-D97757?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/releases/latest)
+[![Cursor](https://img.shields.io/badge/Cursor-Add%20rule-000000?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#cursor)
+[![Windsurf](https://img.shields.io/badge/Windsurf-Add%20rule-3DDC91?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#windsurf)
+[![Kiro](https://img.shields.io/badge/Kiro%20IDE-Add%20Power-FF6F00?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#kiro-ide)
+[![ChatGPT](https://img.shields.io/badge/ChatGPT-Self--host%20GPT-10A37F?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#chatgpt-custom-gpt)
+[![Gemini](https://img.shields.io/badge/Gemini-Self--host%20Gem-4285F4?style=for-the-badge)](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md#gemini-gems-web)
+
+---
+
 ## What is a Skill, and why does it matter
 
 A Skill is a structured knowledge file that you attach to an AI agent or a large language
