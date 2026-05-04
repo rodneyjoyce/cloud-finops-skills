@@ -70,115 +70,6 @@ and follow the installation steps, you can add FinOps expertise to any compatibl
 
 ---
 
-## What this skill covers
-
-The skill provides accurate, framework-aligned guidance across the following domains:
-
-- **FinOps for AI** - LLM inference economics, token cost management, agentic cost
-  patterns, unit economics for AI features, ROI frameworks, and AI cost governance
-- **AI value management** - AI Investment Council, stage gate model, incremental
-  funding, practice operations, cross-functional governance for AI investments
-- **GenAI capacity planning** - provisioned vs shared capacity, traffic shape analysis,
-  spillover mechanics, throughput units, cross-provider comparison
-- **Self-hosted vs managed AI inference** - decision framework for "should we self-host our
-  LLM?" with per-token vs per-hour billing comparison, hidden cost surface (operational,
-  reliability, compliance, talent FTEs), 5-criteria ML-Ops maturity rubric, hybrid routing
-  patterns (LiteLLM, Portkey), eight client diagnostic questions, six common anti-patterns
-- **Anthropic billing** - Claude model pricing, Fast mode, long-context cliffs,
-  prompt caching, Batch API, governance controls
-- **AWS Bedrock** - model pricing, provisioned throughput, batch inference, cost allocation
-- **Azure OpenAI Service** - PTU pool model, deployment locality, spillover mechanics,
-  model modernisation, optimisation framework, use case economics, cost visibility
-- **GCP Vertex AI** - Gemini pricing, provisioned throughput, batch prediction, cost visibility
-- **AWS FinOps** - CUR setup, Cost Explorer, EC2 rightsizing, Reserved Instances vs
-  Savings Plans, Enterprise Discount Program (EDP) negotiation, RDS cost management,
-  multi-organisation billing, cost allocation, SCPs, and AWS-native quick wins
-- **Azure FinOps** - Azure Cost Management, Reservations, Azure Policy, FinOps Toolkit,
-  Azure Hybrid Benefit, EA-to-MCA transition impact, and Azure-specific optimisation patterns
-- **GCP FinOps** - Compute Engine, Cloud SQL, GCS, BigQuery, networking optimisation
-- **Tagging governance** - tag taxonomy design, naming conventions, IaC enforcement,
-  virtual tagging, MCP-based automation, and compliance monitoring
-- **FinOps Framework** - full FinOps Foundation framework, 22 capabilities, maturity model
-- **Databricks** - cost data foundations (system.billing.usage, budget policies, serverless and model-serving attribution), allocation and governance (DBU executor patterns, DBCU commitments, Photon and serverless multipliers, amortised vs PAYG split, Azure VM RI vs DBU clarification), cluster optimisation, jobs, Spark, Unity Catalog costs
-- **Microsoft Fabric** - capacity FinOps (F-SKU model, Capacity Units, 24-hour CU smoothing, throttling), pause / resume, Reserved Capacity, the Pro/PPU to Fabric migration governance trap, shared-capacity allocation models, Capacity Metrics app
-- **Snowflake** - warehouse optimisation, query tuning, storage, credits, QUERY_ATTRIBUTION_HISTORY, Budgets including AI feature budgets, Cortex governance, resource monitor scope limit
-- **AI coding tools** - Cursor, Claude Code, Copilot, Windsurf, Codex billing models,
-  cost attribution with LiteLLM proxy, seat + usage vs BYOK architecture comparison,
-  optimisation levers, cross-tool spend overlap audit
-- **OCI** - compute, storage, networking optimisation
-- **SaaS asset management (SAM)** - SaaS discovery, license optimization, renewal
-  governance, SaaS Management Platforms (SMPs), shadow IT detection, sprawl patterns,
-  and the connection to AI transition readiness
-- **ITAM collaboration** - FinOps-ITAM joint operating model, BYOL cost mechanics,
-  marketplace channel governance, Tier 1 vendor co-management, consumption-based SaaS
-  overage monitoring, entitlement integration, and maturity framework
-- **GreenOps and cloud carbon** - carbon measurement tooling, FinOps-to-GreenOps
-  integration, carbon-aware workload shifting, region selection, GHG Protocol reporting
-- **Anomaly management** - cost anomaly detection as a standalone Inform-phase
-  capability: AWS Cost Anomaly Detection / Azure / GCP native tooling, threshold
-  philosophy (absolute dollars plus percentage), layered detection across service,
-  region, account, and tag scopes, the masked-anomaly failure mode, new-region
-  detection, integration with Security
-- **Allocation and showback** - cost allocation methodology and the showback
-  delivery model that earns the upgrade to chargeback. FOCUS cost columns
-  (`EffectiveCost` vs `BilledCost`) with explicit AWS legacy mapping (amortised
-  vs unblended) and a `blended_cost` trap warning. Defensible allocation keys
-  table, shared-services hard cases (network, observability, security, ingress),
-  `InvoiceId` reconciliation, unallocated spend > 10% as a tagging signal,
-  showback report design and routing into team-existing surfaces, data-quality
-  dispute process
-- **Chargeback** - soft-to-hard chargeback maturity ladder built on top of
-  allocation and showback. Covers the Finance and accounting prerequisites
-  that determine whether hard chargeback is operationally possible at all:
-  ERP readiness (SAP CO cycles, Oracle / Workday / NetSuite equivalents),
-  inter-BU P&L impact and incentive-plan alignment, CFO sponsorship as a
-  hard requirement, transfer pricing for intercompany cloud recharges
-  (cost-plus methodology, re-characterisation risk), cross-border tax
-  mechanics (VAT reverse-charge, withholding, permanent-establishment risk,
-  EU/OECD Pillar 2 minimum tax, US GILTI/FDII/BEAT), SOX-equivalent controls,
-  decision-owner table mapping each prerequisite to the right Finance role,
-  methodology dispute process, the chargeback-revolt anti-pattern (12-18
-  months of credibility loss when skipped)
-- **Onboarding workloads** - migration-time cost hygiene as the cheapest
-  moment to enforce tagging, allocation, forecasting, and commitment-strategy
-  alignment. Covers the intake gate (mandatory checklist + three
-  implementation patterns: PR gate, cutover gate, pre-prod gate), the 60-90
-  day forecast-then-commit rule that prevents committing on a volatile
-  baseline, the double-bubble cost (parallel-run source and target) with
-  explicit shutoff discipline, the migration-cost-estimate-vs-actuals trap
-  driven by data-centre-to-cloud network cost differences, M&A integration
-  playbook (months 1-12 sequence), FOCUS-during-migration logic, cost-aware
-  architecture review integration, the requirement for a named
-  post-migration FinOps owner
-- **Kubernetes FinOps** - the cross-cluster discipline (EKS, GKE, AKS) for
-  the hardest variant of cloud-cost allocation. Covers tooling choice
-  (OpenCost / Kubecost / cloud-native), FOCUS-emitting K8s allocation with
-  K8s-labels-to-FOCUS-Tags mapping (so per-pod costs join non-K8s costs in
-  the warehouse), container rightsizing methodology (VPA in
-  recommendation-only mode, p99 + 30% memory safety margin, p95 + 50% CPU
-  safety, per-workload rollout), node-level autoscaling (Karpenter beats
-  Cluster Autoscaler on cost efficiency where available, consolidation
-  policy tuning, Pod Disruption Budgets as non-negotiable, Spot
-  diversification across instance types and availability zones), and idle
-  node cost as Platform team overhead rather than redistributed across
-  application teams. Provider-specific node mechanics live in the per-cloud
-  files
-- **Waste detection playbooks** - OptimNow's seven-category waste taxonomy
-  (orphaned, idle, overprovisioned, commitment mismatches, schedule
-  blindness, modernization opportunities, AI/ML inefficiency) covering
-  the detection patterns, two-signal classification rule, three-tier
-  confidence model (obvious / likely / possible), and realised-vs-potential
-  savings discipline. Operationally backed by the OptimNow WasteLine
-  appliance for AWS (49 deterministic detection rules, read-only, with
-  proposal-only remediation artifacts); for Azure and GCP, points to the
-  in-cloud pattern catalogues. Crawl/Walk/Run progression from manual
-  quarterly hunt to continuous Fargate-scheduled detection
-
-All guidance is framed through OptimNow's methodology: connecting cost to business value,
-diagnosing before prescribing, and recommending actions matched to organisational maturity.
-
----
-
 ## Design principles
 
 - **AI cost management is a first-class domain.** Most FinOps resources treat AI
@@ -208,6 +99,73 @@ diagnosing before prescribing, and recommending actions matched to organisationa
 
 These principles will grow into a `cloud-finops/doctrine/` directory of opposable
 theses with their own primary sources; see the `Roadmap` section of `CLAUDE.md`.
+
+---
+
+## What this skill covers
+
+The skill provides accurate, framework-aligned guidance across the following domains:
+
+- **FinOps for AI** - LLM inference economics, token cost management, agentic cost
+  patterns, unit economics for AI features, ROI frameworks, and AI cost governance
+- **AI value management** - AI Investment Council, stage gate model, incremental
+  funding, practice operations, cross-functional governance for AI investments
+- **GenAI capacity planning** - provisioned vs shared capacity, traffic shape analysis,
+  spillover mechanics, throughput units, cross-provider comparison
+- **Self-hosted vs managed AI inference** - decision framework for self-host vs managed LLM,
+  hidden cost surface, ML-Ops maturity rubric, hybrid routing patterns (LiteLLM, Portkey)
+- **Anthropic billing** - Claude model pricing, Fast mode, long-context cliffs,
+  prompt caching, Batch API, governance controls
+- **AWS Bedrock** - model pricing, provisioned throughput, batch inference, cost allocation
+- **Azure OpenAI Service** - PTU pool model, deployment locality, spillover mechanics,
+  model modernisation, optimisation framework, use case economics, cost visibility
+- **GCP Vertex AI** - Gemini pricing, provisioned throughput, batch prediction, cost visibility
+- **AWS FinOps** - CUR setup, Cost Explorer, EC2 rightsizing, Reserved Instances vs
+  Savings Plans, Enterprise Discount Program (EDP) negotiation, RDS cost management,
+  multi-organisation billing, cost allocation, SCPs, and AWS-native quick wins
+- **Azure FinOps** - Azure Cost Management, Reservations, Azure Policy, FinOps Toolkit,
+  Azure Hybrid Benefit, EA-to-MCA transition impact, and Azure-specific optimisation patterns
+- **GCP FinOps** - Compute Engine, Cloud SQL, GCS, BigQuery, networking optimisation
+- **Tagging governance** - tag taxonomy design, naming conventions, IaC enforcement,
+  virtual tagging, MCP-based automation, and compliance monitoring
+- **FinOps Framework** - full FinOps Foundation framework, 22 capabilities, maturity model
+- **Databricks** - cost data foundations (system.billing.usage, DBU executor patterns,
+  DBCU commitments, Photon multiplier, amortised vs PAYG split), cluster and Spark
+  optimisation, Unity Catalog costs
+- **Microsoft Fabric** - F-SKU capacity model, 24-hour CU smoothing, throttling,
+  pause / resume, Reserved Capacity, Pro/PPU to Fabric migration governance trap
+- **Snowflake** - warehouse optimisation, query tuning, QUERY_ATTRIBUTION_HISTORY,
+  Budgets including AI feature budgets, Cortex governance, resource monitor scope
+- **AI coding tools** - Cursor, Claude Code, Copilot, Windsurf, Codex billing models,
+  cost attribution with LiteLLM proxy, seat + usage vs BYOK architecture comparison,
+  optimisation levers, cross-tool spend overlap audit
+- **OCI** - compute, storage, networking optimisation
+- **SaaS asset management (SAM)** - SaaS discovery, license optimization, renewal
+  governance, SaaS Management Platforms (SMPs), shadow IT detection, sprawl patterns,
+  and the connection to AI transition readiness
+- **ITAM collaboration** - FinOps-ITAM joint operating model, BYOL cost mechanics,
+  marketplace channel governance, Tier 1 vendor co-management, consumption-based SaaS
+  overage monitoring, entitlement integration, and maturity framework
+- **GreenOps and cloud carbon** - carbon measurement tooling, FinOps-to-GreenOps
+  integration, carbon-aware workload shifting, region selection, GHG Protocol reporting
+- **Anomaly management** - cost anomaly detection as a standalone Inform-phase
+  capability across AWS / Azure / GCP native tooling, layered detection, masked-anomaly
+  failure mode, integration with Security
+- **Allocation and showback** - FOCUS cost columns (EffectiveCost vs BilledCost), AWS
+  legacy mapping, defensible allocation keys, shared-services hard cases,
+  InvoiceId reconciliation, showback report design
+- **Chargeback** - soft-to-hard chargeback maturity ladder, Finance and accounting
+  prerequisites (ERP readiness, transfer pricing, cross-border tax, SOX-equivalent
+  controls), chargeback-revolt anti-pattern
+- **Onboarding workloads** - migration-time cost hygiene, intake gate, 60-90 day
+  forecast-then-commit rule, double-bubble cost discipline, M&A integration playbook
+- **Kubernetes FinOps** - cross-cluster discipline (EKS / GKE / AKS), OpenCost / Kubecost,
+  FOCUS-emitting K8s allocation, container rightsizing methodology, Karpenter, Spot
+  diversification
+- **Waste detection playbooks** - OptimNow's seven-category waste taxonomy (orphaned,
+  idle, overprovisioned, commitment mismatches, schedule blindness, modernisation,
+  AI/ML inefficiency), two-signal classification, three-tier confidence, WasteLine
+  appliance for AWS
 
 ---
 
@@ -363,64 +321,16 @@ domain-specific content is shared.
 
 ---
 
-## Installation
+## Installation details
 
-The skill installs into 11 different tools via a single bash installer that converts
-the canonical Claude / Agent-Skills format into each target tool's expected shape.
-See **[INSTALLATION.md](./INSTALLATION.md)** for the full per-tool instructions.
+The "Install in 5 seconds" table at the top of this README covers the one-step path
+for every supported tool. For per-tool blocks, troubleshooting, the model-agnostic
+API loader, and the recommended response contract, see
+**[INSTALLATION.md](./INSTALLATION.md)**.
 
-### One-liner (auto-detect)
-
-```bash
-curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash
-```
-
-Auto-detects which tools you have installed (Claude Code, Cursor, Windsurf, Codex, etc.)
-and installs the skill for each, with the right per-tool conversion.
-
-### One specific tool
-
-```bash
-curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh | bash -s -- --tool <name>
-```
-
-Supported tools: `claude-code`, `claude-projects`, `cursor`, `windsurf`, `chatgpt`,
-`gemini`, `gemini-cli`, `codex`, `aider`, `copilot`, `kiro`. Run `./install.sh --list`
-to see them all.
-
-### Claude Code plugin (auto-updating alternative)
-
-For Claude Code specifically, the skill is also distributed as a self-hosted plugin
-with built-in update via `/plugin update`. Two commands at the **Claude Code prompt**
-(not your shell):
-
-```text
-/plugin marketplace add https://github.com/OptimNow/cloud-finops-skills.git
-/plugin install cloud-finops@optimnow
-```
-
-To pull the latest content (including the twice-monthly automated updates):
-
-```text
-/plugin update cloud-finops@optimnow
-```
-
-**Note on the URL form:** the explicit HTTPS URL above avoids an SSH-authentication
-prompt that some Claude Code installs hit when given the `OptimNow/cloud-finops-skills`
-shorthand. The repository is fully public over HTTPS - no credentials needed.
-
-### Claude Desktop / claude.ai
-
-For the web / desktop apps, the installer can build a clean upload zip:
-
-```bash
-./install.sh --tool claude-projects
-```
-
-Then upload `dist/claude-projects/cloud-finops.zip` via Settings → Skills → Upload zip.
-A version-tagged build (`cloud-finops-vX.Y.Z.zip`) is also attached to every
+A version-tagged release zip (`cloud-finops-vX.Y.Z.zip`) is attached to every
 [GitHub release](https://github.com/OptimNow/cloud-finops-skills/releases) for
-users who prefer downloading over building locally.
+Claude Desktop / claude.ai users who prefer downloading over building locally.
 
 ---
 
