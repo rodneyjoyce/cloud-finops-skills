@@ -22,6 +22,7 @@
 | <img src="https://img.shields.io/badge/-Gemini-4285F4?logo=googlegemini&logoColor=white" alt="Gemini" height="22"/> | Self-host: `./install.sh --tool gemini` _(a public Cloud FinOps Gem is on the Roadmap)_ |
 | <img src="https://img.shields.io/badge/-Cursor-000000?logo=cursor&logoColor=white" alt="Cursor" height="22"/> <img src="https://img.shields.io/badge/-Windsurf-3DDC91?logoColor=white" alt="Windsurf" height="22"/> <img src="https://img.shields.io/badge/-Codex-412991?logo=openai&logoColor=white" alt="Codex" height="22"/> <img src="https://img.shields.io/badge/-Aider-0F172A?logoColor=white" alt="Aider" height="22"/> <img src="https://img.shields.io/badge/-Copilot-181717?logo=githubcopilot&logoColor=white" alt="Copilot" height="22"/> <img src="https://img.shields.io/badge/-Kiro%20IDE-FF6F00?logoColor=white" alt="Kiro IDE" height="22"/> <img src="https://img.shields.io/badge/-Gemini%20CLI-4285F4?logo=googlegemini&logoColor=white" alt="Gemini CLI" height="22"/> | One-liner: `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash -s -- --tool <name>` |
 | <img src="https://img.shields.io/badge/-Auto--detect-555555?logo=gnubash&logoColor=white" alt="Auto-detect" height="22"/> | `curl -sL https://raw.githubusercontent.com/OptimNow/cloud-finops-skills/main/install.sh \| bash` |
+| <img src="https://img.shields.io/badge/-MCP%20server-7C3AED?logoColor=white" alt="MCP server" height="22"/> | `pip install cloud-finops-mcp` then add to your MCP client config (Claude Code / Cursor / Codex / Windsurf / Cline). Snippets: `./install.sh --tool mcp`. Six tools - faceted retrieval over the 28 references and 15 named-pattern playbooks. |
 
 Full options, troubleshooting, and the model-agnostic API loader: see [INSTALLATION.md](./INSTALLATION.md).
 
@@ -279,8 +280,10 @@ provider-specific behaviour.
 ```
 cloud-finops-skills/
 ├── README.md                                   ← This file
-├── INSTALLATION.md                             ← Setup instructions
+├── INSTALLATION.md                             ← Setup instructions (incl. MCP server)
 ├── LICENSE.md                                  ← CC BY-SA 4.0
+├── install.sh                                  ← Cross-tool installer (12 targets)
+├── mcp_server/                                 ← cloud-finops-mcp PyPI package
 └── cloud-finops/                               ← Install this folder
     ├── SKILL.md                                ← Entry point + domain router (Claude Code, generic agents)
     ├── POWER.md                                ← Entry point (Kiro IDE)
@@ -331,6 +334,24 @@ API loader, and the recommended response contract, see
 A version-tagged release zip (`cloud-finops-vX.Y.Z.zip`) is attached to every
 [GitHub release](https://github.com/OptimNow/cloud-finops-skills/releases) for
 Claude Desktop / claude.ai users who prefer downloading over building locally.
+
+### MCP server (cross-tool, search-style retrieval)
+
+For agents that want tool-style retrieval rather than full-context injection, the
+skill is also published as an MCP server (`cloud-finops-mcp` on PyPI):
+
+```bash
+pip install cloud-finops-mcp
+./install.sh --tool mcp     # prints config snippets for every MCP-aware client
+```
+
+Six tools across two surfaces. **References** (long-form provider/discipline files):
+`list_references`, `get_reference`, `find_references` (faceted by FinOps
+Capability/Phase). **Playbooks** (small named-pattern runbooks): `list_playbooks`,
+`get_playbook`, `find_playbooks` (faceted by scope / service / waste category /
+confidence). Wires into Claude Code, Cursor, Codex CLI, Windsurf, Cline, and any
+other MCP-aware client. See [mcp_server/](./mcp_server/README.md) and the
+[INSTALLATION.md MCP section](./INSTALLATION.md#mcp-server-cross-tool).
 
 ---
 

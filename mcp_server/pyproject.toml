@@ -1,0 +1,86 @@
+[build-system]
+requires = ["hatchling>=1.18", "hatch-build-scripts>=0.0.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cloud-finops-mcp"
+version = "1.13.0"
+description = "MCP server exposing the OptimNow Cloud FinOps skill (28 references) as queryable tools."
+readme = "README.md"
+license = { text = "CC-BY-SA-4.0" }
+authors = [
+  { name = "OptimNow", email = "contact@optimnow.io" }
+]
+maintainers = [
+  { name = "Jean Latière", email = "j.latiere@gmail.com" }
+]
+requires-python = ">=3.10"
+keywords = ["finops", "cloud", "cost", "mcp", "claude", "aws", "azure", "gcp"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "License :: OSI Approved",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "mcp>=1.0.0",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.4",
+  "pytest-asyncio>=0.23",
+  "ruff>=0.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/OptimNow/cloud-finops-skills"
+Repository = "https://github.com/OptimNow/cloud-finops-skills"
+Issues = "https://github.com/OptimNow/cloud-finops-skills/issues"
+Documentation = "https://github.com/OptimNow/cloud-finops-skills/tree/main/mcp_server"
+
+[project.scripts]
+cloud-finops-mcp = "cloud_finops_mcp.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cloud_finops_mcp"]
+# .md files in src/cloud_finops_mcp/data/ are gitignored but live in the
+# package directory; hatch picks them up via the package walk, no
+# force-include needed.
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/cloud_finops_mcp",
+  "scripts",
+  "tests",
+  "README.md",
+  "pyproject.toml",
+]
+# Force-include the synced reference bundle so the sdist is self-contained -
+# without this, hatch respects ../../.gitignore and drops src/.../data/*.md.
+[tool.hatch.build.targets.sdist.force-include]
+"src/cloud_finops_mcp/data" = "src/cloud_finops_mcp/data"
+
+[[tool.hatch.build.hooks.build-scripts.scripts]]
+out_dir = "src/cloud_finops_mcp/data"
+commands = ["python scripts/sync_references.py"]
+artifacts = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+ignore = ["E501"]
