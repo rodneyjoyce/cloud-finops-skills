@@ -13,11 +13,14 @@ Claude, GPT, Gemini, or any MCP-compatible agent.
 - **SKILL.md** - entry point for Claude Code and generic agents
 - **POWER.md** - entry point for Kiro IDE (same references, different format)
 - **references/** - domain-specific content files (billing mechanics, pricing, optimisation patterns)
-- **INSTALLATION.md** - 6 setup options including a model-agnostic response contract for non-Claude models
+- **INSTALLATION.md** - one cross-tool installer covering 11 tool integrations, plus
+  a model-agnostic response contract (system-prompt-injection section) for non-Claude
+  models
 
 Both entry points route to the same reference files. No content is duplicated.
-The response contract in INSTALLATION.md (Option 6) ensures structured, billing-grounded
-answers across all models, even when model defaults differ.
+The response contract in INSTALLATION.md (the "API integration" section) ensures
+structured, billing-grounded answers across all models, even when model defaults
+differ.
 
 ---
 
@@ -27,7 +30,7 @@ answers across all models, even when model defaults differ.
 cloud-finops-skills/
 ├── CLAUDE.md              <- You are here
 ├── README.md              <- Public-facing documentation
-├── INSTALLATION.md        <- Setup instructions (6 options) + response contract
+├── INSTALLATION.md        <- Setup instructions (11 tool integrations) + response contract
 ├── LICENSE.md             <- CC BY-SA 4.0
 ├── install.sh             <- One-liner installer script
 ├── assets/                <- Screenshots for installation guide
@@ -79,13 +82,70 @@ cloud-finops-skills/
 
 ## Content update pipeline
 
-The `pipeline/` folder contains a weekly content scanner that detects FinOps-relevant
+The `pipeline/` folder contains a twice-monthly content scanner (around the 1st
+and 15th) that detects FinOps-relevant
 changes across 29 sources and proposes updates to the reference files. It is gitignored
 and not part of the public distribution.
 
 The pipeline is human-in-the-loop: nothing is changed automatically. Every proposed
 update goes through review (list, preview diffs, approve/reject) before touching any
 reference file. See `pipeline/README.md` for the full workflow.
+
+---
+
+## Lessons learned
+
+### Pipeline applier truncated 8 reference files (April-May 2026)
+
+The bi-monthly pipeline `applier/` truncated 8 reference files across two runs:
+- PR #8 (commit 647a7ef, 15 April 2026) damaged finops-azure.md (later restored
+  by commit dfab33b) and introduced the trailing-`> Sources` truncation in
+  finops-itam.md and finops-sam.md
+- "Content update - 1 May 2026" (commit 3e64f59) made 130 insertions / 5566
+  deletions across 6 files (aws, azure, gcp, framework, ai-dev-tools, for-ai)
+  in what was supposed to be an additive content update
+
+The recovery (May 2026) restored each file from a pre-truncation commit and
+re-injected the few real additions identified in the diffs.
+
+**Why it happened.** The applier prompt instructed the LLM to "preserve the existing
+file structure" and "preserve the CC BY-SA 4.0 footer line exactly as it is". On long
+files (1500+ lines) the LLM ignored these instructions roughly 5% of the time -
+producing diffs whose "after" state was hundreds or thousands of lines shorter than
+"before". The instructions were prompts, not enforced guarantees.
+
+**Why it was not caught.** The previous recovery (PR #8 -> commit dfab33b) fixed
+symptoms without fixing the pipeline, so the same failure mode recurred 16 days later.
+A truncated file looks valid in `git diff` review (the diff stops where the file stops);
+the only signal was the missing footer at the end, which no automated check verified.
+
+**Guard rails added (`pipeline/applier/file_updater.py`):**
+- Before each apply, snapshot the file to `cloud-finops/references/.backups/` with
+  a timestamped name
+- After each apply, run `validate_post_apply`:
+  - **Deletion threshold**: reject any update whose net change is < -20% of the
+    original line count (when original > 100 lines)
+  - **Footer presence**: require the last 300 chars to contain both "OptimNow"
+    and "CC BY-SA"
+  - **Double-HR check**: reject if "---\n\n---" appears in the last 500 chars
+    (artefact of an emptied Sources block)
+- On any guard rail failure, automatically restore from the backup
+- Run-level fail-safe: if more than 2 files fail validation in a single run,
+  abort the entire run before committing
+
+**Documentation drift correction.** The same recovery surfaced ~10 spots where doc
+had not kept pace with reference growth (AGENTS.md and llms.txt listed only 17
+references when 28 existed; install.sh ChatGPT/Gemini routing missed the 6-7 newest
+domains; "6 setup options" appeared in 4 files when INSTALLATION.md had moved to
+11 tools). The PR-checklist in this file now requires updating AGENTS.md, llms.txt,
+and the install.sh per-tool routing whenever a reference is added.
+
+### When in doubt, validate the baseline before comparing
+
+When asked to compare this skill to another repo, an agent that compares against the
+truncated state will conclude the other repo is more comprehensive than it really is.
+Always check that key reference files end with the OptimNow footer (and not
+mid-sentence) before drawing any coverage comparison.
 
 ---
 
@@ -97,12 +157,175 @@ GitHub issues, which track in-flight work.
 
 ### In-flight (write when prerequisites land)
 
+- **P1 - Audit, harden, stabilise, and publish the refresh pipeline.** The pipeline
+  in `pipeline/` is currently frozen (`run_apply.py.FROZEN`) since the May 2026
+  truncation incident (8 reference files truncated across two runs - see the
+  `Lessons learned` section above for the forensic). Hard guard rails are in
+  the applier (`validate_post_apply` with deletion threshold + footer presence +
+  double-HR check; `apply_with_guard_rails` with snapshot + rollback; run-level
+  fail-safe at 2 failures), and 9 unit tests pass against synthesised failure
+  modes. What is missing is end-to-end validation, hardening of the rest of the
+  pipeline, and a decision on public release. Four phases:
+
+  1. **Audit (week 1).** Read every module - `scanner/` (fetch + classify),
+     `proposer/` (CHANGES.md report builder), `applier/` (file rewrite, now
+     guard-railed), `alerter/` (Gmail draft builder), `state/`. Document each
+     module's contract (inputs, outputs, side effects, failure modes), the
+     LLM prompts in use, and any place where the pipeline takes a destructive
+     action. Identify implicit assumptions and any other module besides
+     `applier/` that can write to `cloud-finops/references/` or `cloud-finops/playbooks/`
+     - if anything else writes there, it must inherit the same guard-rail
+     contract.
+  2. **Harden (week 1-2).** Bring code-level validators to the modules that
+     currently rely on prompt instructions. Concrete targets: `scanner/`
+     validates fetch results (HTTP status, content-type, minimum payload
+     length) so a 200-with-empty-body cannot become a "this source has no
+     news" classification; `proposer/` validates that proposed CHANGES.md is
+     well-formed before write; the `Anthropic` API calls in
+     `applier/file_updater.py` switch to the structured output (tool-use)
+     pattern so the model returns a JSON object with explicit fields rather
+     than free-form markdown that the Python code parses with regex. Every
+     module produces a per-run structured report (one JSON file per run,
+     archived under `pipeline/state/runs/<timestamp>/`) so post-hoc audit
+     does not depend on stdout scrolling. Add ratchets: secrets handling
+     (no API keys in commit messages, no .env in stdout), idempotency
+     (re-running the same change produces zero diff), and replay-from-state
+     so a partial failure can be resumed.
+  3. **Stabilise (week 2-3).** Define the un-freeze criteria explicitly.
+     Recommended set: (a) 5 consecutive dry runs against the historical
+     change archive produce zero false-positive guard-rail rejections AND
+     zero silent truncations; (b) a fresh real run on a synthetic forked
+     references directory completes end-to-end without manual intervention;
+     (c) the run-level fail-safe correctly aborts a run that injects 3+
+     truncations across 3 different files; (d) all `pipeline/tests/`
+     unit tests pass on Python 3.10/3.11/3.12. When all four are green,
+     `mv pipeline/run_apply.py.FROZEN pipeline/run_apply.py` to unfreeze.
+     Document the unfreeze decision and the test evidence in the
+     `Lessons learned` section of this CLAUDE.md so it is auditable.
+  4. **Publish (week 3-4, requires separate strategic decision).** The
+     pipeline is currently gitignored as "private until public release"
+     (per the existing `## Content update pipeline` section above). The
+     decision is whether public release adds more credibility (dogfooding
+     the doctrine that "agentic FinOps must be auditable", letting the
+     community contribute guard rails) than complexity (maintaining a
+     public repo, exposing internals like `sources.yaml`, prompt
+     strategies, .env handling, the OptimNow API key rotation cadence).
+     Two viable shapes if the answer is yes:
+     - **Same repo, public top-level `pipeline/` directory** (most
+       transparent; matches the doctrine). Keeps `.env*` and runtime
+       state gitignored. Maximum benefit, maximum maintenance burden.
+     - **Separate repo `OptimNow/cloud-finops-skills-pipeline`**
+       (compartmentalises the privacy boundary; harder to dogfood).
+       Lower exposure, lower transparency.
+     Either way, the Lessons learned section becomes the public artefact
+     that proves the discipline (the incident, the recovery, the guard
+     rails, the unfreeze criteria). Trigger: phases 1-3 must complete
+     before this decision is even on the table.
+
+  Cross-references: this work directly extends the `Lessons learned`
+  section above and should produce a follow-up Lessons learned entry
+  describing the un-freeze evidence.
+
 - **WasteLine extension to Azure and GCP.** `finops-waste-detection-playbooks.md` covers the
   seven-category waste taxonomy and references the WasteLine appliance for AWS automation;
   Azure and GCP coverage currently routes to the in-cloud pattern catalogues
   (`finops-azure.md` 48-pattern, `finops-gcp.md` 26-pattern). When WasteLine ships Azure and
   GCP providers, update the operational tooling section to reflect the broader coverage and
   remove the "for Azure and GCP, see in-cloud catalogues" caveat.
+
+- **OptimNow doctrine layer.** Today the reasoning lens lives inside
+  `optimnow-methodology.md` (visibility before optimisation, diagnose before prescribing,
+  connect cost to value, recommend progressively). The intent is to grow this into a
+  named doctrine that takes opinionated, opposable positions vs the FinOps Foundation
+  framework rather than restating it. Theses to develop, each as its own short doctrine
+  file in a future `cloud-finops/doctrine/` directory:
+
+  - **Business value before maturity.** Every recommendation must answer "what business
+    outcome does this protect or unlock?" Cost reduction without a value lens is a leak.
+  - **Maturity is contextual, not aspirational.** Verticals where cloud is not a revenue
+    generator (industrial, public sector, regulated services) do not need to reach Run.
+    Crawl + selective Walk is the right state when cloud is a cost centre. Verticals where
+    cloud IS the product (SaaS, AI-native, marketplaces) need Run because cloud efficiency
+    directly drives gross margin and pricing. Pushing every org toward Run is malpractice.
+  - **Recommend progressively, not heroically.** Quick wins that prove the discipline
+    earn the right to do structural work. Skipping the quick wins to go straight to
+    chargeback or commitment automation creates credibility-burning failures.
+  - **WasteLine and an agentic operating model.** FinOps must be agentic - signal-based
+    detection (WasteLine), AI-driven recommendation, automation-with-human-confirm. The
+    previous era's monthly-spreadsheet-review FinOps does not scale to AI-era spend
+    velocity. The operating model has to assume agents in the loop, not periodic human
+    audits.
+  - **Critical reading of vendor sustainability and FinOps claims.** Especially the claims
+    of vendors that fund the FinOps Foundation through dues and sponsorship. Their
+    incentives are not aligned with practitioner truth-telling. The doctrine should
+    teach a critical-read posture by default and flag vendor-funded claims explicitly.
+  - **There is nothing cultural about FinOps - the "FinOps culture" frame is a
+    non-sequitur.** FinOps is an operating discipline (allocation, anomaly, commitment,
+    rightsizing, governance). Calling it a "culture" is what allows organisations to
+    avoid measurable outcomes. In the agentic era this matters even more - culture
+    cannot be encoded into agents, but discipline can. The doctrine should oppose the
+    FF-central "culture" framing and replace it with explicit operating-discipline
+    metrics.
+  - **Provider-mechanics-first, FOCUS-aware, vendor-claim-skeptical.** As distinguished
+    from a "FOCUS-first" posture (which is a restatement of FF positioning, not a
+    practitioner stance). FOCUS is a useful normalisation layer; native columns
+    (CUR `unblended_cost`, Azure `costInBillingCurrency`, BigQuery `cost_at_list`) reveal
+    biases that FOCUS can hide. Document both, name the trade-off, prefer the lens that
+    answers the question.
+
+  When this lands, also remove the "Where this differs from the FinOps Foundation"
+  framing from `optimnow-methodology.md` and replace it with a pointer to the doctrine
+  layer.
+
+- **Playbooks directory** (`cloud-finops/playbooks/`). Extract the named-pattern
+  catalogues currently embedded in `finops-aws.md` (48 patterns), `finops-azure.md`
+  (48 patterns), `finops-gcp.md` (26 patterns), and the seven-category taxonomy in
+  `finops-waste-detection-playbooks.md` into individual playbook files (~2-3KB each).
+  Format per playbook: symptoms / detection (CUR / KQL / BigQuery SQL) / fix /
+  anti-pattern / sources. The reference files keep the patterns as in-context narrative
+  for linear reading; the `playbooks/` directory exposes them as RAG-friendly chunks
+  for ChatGPT / Gemini / generic LLM retrieval. Routing rule to add to SKILL.md and
+  POWER.md: "named waste pattern X -> `playbooks/X.md`". Drift risk to manage: changes
+  to a pattern must be applied in both places, or the reference file should be updated
+  to reference the playbook by an inline Markdown link (e.g.
+  `[aws-zombie-nat-gateway](../playbooks/aws-zombie-nat-gateway.md)`) instead of
+  duplicating the content.
+
+- **FCP coverage matrix tooling.** Adapt the approach from Cletrics' `fcp-coverage.sh`:
+  a small bash script that parses `fcp_domain` / `fcp_capability` /
+  `fcp_capabilities_secondary` from every reference frontmatter and emits a top-level
+  `fcp-coverage.md` table mapping the 22 FCP capabilities to the references that cover
+  them. Adds three benefits: (1) honesty signal vis-a-vis the framework - the matrix
+  computes coverage from the actual repo, not from claims; (2) PR check - new
+  references with a non-canonical capability or a missing frontmatter trip the script;
+  (3) Roadmap-driven view - the matrix shows which capabilities have no primary owner
+  yet. Current true gaps after the frontmatter-truth pass: KPIs & Benchmarking,
+  Executive Strategy Alignment, FinOps Education & Enablement (all in the deferred
+  table below). Budgeting and Automation Tools & Services were initially flagged
+  as gaps but are covered dispersed - the matrix now renders them as `[~]`
+  secondary-only after the frontmatter was updated to reflect that reality (PR
+  following the FCP-2026 migration).
+
+- **Public Custom GPT for ChatGPT users.** The current ChatGPT install path is
+  self-host: `./install.sh --tool chatgpt --grouped` produces 10 grouped knowledge
+  files the user uploads themselves. A public Cloud FinOps GPT in the OpenAI GPT
+  Store would replace that with a single click for non-technical users. Build steps:
+  (1) run the grouped installer once to get the artefacts; (2) create the GPT in
+  `chatgpt.com/gpts/editor`, paste `instructions.md`, upload the 10 grouped knowledge
+  files; (3) set name, category, visibility = Anyone with link / Public; (4) capture
+  the resulting `https://chat.openai.com/g/g-XXXXX` URL and replace the placeholder in
+  `README.md`'s install table. Maintenance burden: a GitHub Action that re-builds the
+  artefacts on each release, plus a manual re-upload to ChatGPT (their API does not
+  expose a "publish new version" endpoint for Custom GPTs). Cadence target: monthly
+  refresh on top of the twice-monthly source updates.
+
+- **Public Gemini Gem for Gemini users.** Same shape as the ChatGPT GPT. Build
+  steps: (1) run `./install.sh --tool gemini` to produce the 10 grouped knowledge
+  files; (2) at `gemini.google.com/gems/`, create a new Gem, paste `instructions.md`,
+  upload the 10 grouped files; (3) set the visibility, capture the public Gem URL and
+  replace the placeholder in `README.md`. Maintenance burden: same as the GPT (manual
+  re-upload, no API). Trigger: ship the GPT first, see whether the install-time
+  friction reduction matters, then mirror to Gemini.
 
 ### Depth passes (extend existing files when bandwidth allows)
 
@@ -138,6 +361,25 @@ than re-litigating priority. Tracking issue: `OptimNow/cloud-finops-skills#55`.
 | `finops-education-enablement.md` | P2 | Demand emerges; consider folding into practice-operations | Smaller scope than the other P2 files; could double as a section in practice-operations |
 | `finops-benchmarking.md` | P3 | Client engagement specifically requires it | Clients rarely ask; external benchmarking has well-known data-quality issues. Could be a section in `finops-framework.md` |
 | `finops-cost-warehouse.md` | P3 | Engagement requires it (e.g. Snowflake-FinOps integration) | Heavy lift, specialist content (FOCUS conformed-dim modelling, dbt + semantic layer, CUR2 / Azure Cost Mgmt / BigQuery loading patterns, late-binding analytics) |
+| `finops-executive-strategy-alignment.md` | **Will not write** | (no trigger - deliberately not covering) | The 2026 FCP added "Executive Strategy Alignment" as a capability. The OptimNow doctrine ("connect cost to business value", the CFO test) already covers the practitioner-grade version of executive engagement; the FCP framing reads as a positioning concept rather than an operating discipline. If a client engagement specifically asks for the FCP-aligned executive-strategy artefact, it can be written then; the Roadmap-default position is not to ship it as a separate reference. |
+
+**Note on Budgeting**: Budgeting is NOT a deferred capability. It is covered as a
+secondary in `finops-anomaly-management.md`, `finops-allocation-showback.md`,
+`finops-chargeback.md`, and `finops-onboarding-workloads.md` because each of
+those files has a substantive Budgeting section (AWS Budgets, Azure Budgets and
+Alerts, GCP budget anomaly alerts, OCI Budgets, Snowflake Budgets, Databricks
+budget policies, AI investment budgets, the 60-90 day forecast-then-commit rule
+at intake, the soft-to-hard chargeback budget enforcement). The FCP coverage
+matrix renders Budgeting as `[~]` (any-coverage via secondary) rather than
+`[ ]` (true gap) once the frontmatter declares it. There is no plan to ship a
+dedicated `finops-budgeting.md` because the cross-cutting nature of budgeting
+is better served by the dispersed coverage.
+
+**Note on Automation, Tools & Services**: same shape as Budgeting. Covered as
+secondary in `finops-tagging.md` (MCP automation, IaC enforcement) and
+`finops-waste-detection-playbooks.md` (WasteLine appliance). Plus the
+`finops-tools-services.md` deferred entry above which would be the dedicated
+write-up if engagement demand emerges.
 
 When picking up a deferred item: read the rationale above, check the white-space analysis
 context (Cletrics comparison report dated 2026-05-03 in `~/Downloads/`, plus implementation
@@ -282,6 +524,12 @@ Good test patterns:
 - [ ] Routing table updated in both SKILL.md and POWER.md
 - [ ] README directory listing and "What this skill covers" section updated
 - [ ] CLAUDE.md "Repository structure" directory listing updated
+- [ ] AGENTS.md and llms.txt updated to reflect the new reference (see "Lessons
+      learned" section for the documentation-drift correction)
+- [ ] install.sh per-tool routing updated: ChatGPT inline routing table, Gemini
+      grouped knowledge, and Cursor description must mention the new domain
+- [ ] File ends with the OptimNow footer (`> *Cloud FinOps Skill by [OptimNow]...
+      CC BY-SA 4.0...*`); no truncation mid-sentence or mid-table
 - [ ] Plugin version bumped in `.claude-plugin/plugin.json` (minor for user-visible feature)
 - [ ] Marketplace description in `.claude-plugin/marketplace.json` reflects the new
       reference file count and topic list

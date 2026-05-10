@@ -10,8 +10,22 @@ INTERNAL_NOTES.md
 Thumbs.db
 NUL
 
-# Claude Code local settings
+# Claude Code local settings (any depth - root, cloud-finops/, etc.)
 .claude/settings.local.json
+**/.claude/settings.local.json
+
+# Claude Code local hooks config
+claude-hooks-settings.json
+
+# Claude Code worktrees (embedded git repos)
+.claude/worktrees/
+
+# Local-only nested .claude/ directories (e.g. cloud-finops/.claude/)
+cloud-finops/.claude/
+
+# Local working notes / plan drafts
+plan-*.md
+plan-remediation-*.md
 
 # Pipeline (private until public release)
 pipeline/

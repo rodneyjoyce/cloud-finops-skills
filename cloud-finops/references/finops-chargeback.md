@@ -1,8 +1,8 @@
 ---
 name: finops-chargeback
-description: Chargeback as a distinct discipline from allocation and showback. Covers the soft-to-hard chargeback maturity transition, the Finance and accounting prerequisites that determine whether hard chargeback is operationally possible (ERP readiness, inter-BU P&L impact, transfer pricing, cross-border tax, SOX-equivalent controls), methodology disputes, the chargeback-revolt anti-pattern. Strict prerequisite is finops-allocation-showback.md.
 fcp_domain: "Manage the FinOps Practice"
 fcp_capability: "Invoicing & Chargeback"
+fcp_capabilities_secondary: ["Budgeting"]
 fcp_phases: ["Operate"]
 fcp_personas_primary: ["FinOps Practitioner"]
 fcp_personas_collaborating: ["Finance", "Leadership", "Tax", "Internal Audit"]

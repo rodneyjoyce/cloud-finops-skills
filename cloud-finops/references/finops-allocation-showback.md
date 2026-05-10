@@ -1,9 +1,8 @@
 ---
 name: finops-allocation-showback
-description: Cost allocation methodology and showback. The foundation behind every cost-attribution conversation. Covers FOCUS cost columns and AWS-legacy mapping, defensible allocation keys, shared-services hard cases (network, observability, security, ingress), invoice reconciliation, the no-visibility-to-showback maturity transition, and unallocated spend as a tagging signal. The strict prerequisite for chargeback.
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Allocation"
-fcp_capabilities_secondary: ["Reporting & Analytics"]
+fcp_capabilities_secondary: ["Reporting & Analytics", "Budgeting"]
 fcp_phases: ["Inform"]
 fcp_personas_primary: ["FinOps Practitioner"]
 fcp_personas_collaborating: ["Engineering", "Finance"]

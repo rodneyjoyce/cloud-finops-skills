@@ -9,6 +9,9 @@
 #   ./install.sh --list                List supported tools
 #   ./install.sh --dry-run             Print what would happen, no writes
 #   ./install.sh --user                Install at user-level paths where supported (Claude Code)
+#   ./install.sh --grouped             ChatGPT only: produce a 10-file grouped build
+#                                      (same content bundled by domain) instead of
+#                                      42 per-reference files. Easier to upload.
 #   ./install.sh --dest <dir>          Override the project / target directory
 #   ./install.sh --help                Show this help
 #
@@ -54,6 +57,7 @@ TOOL=""
 DRY_RUN=""
 USER_LEVEL=""
 DEST_OVERRIDE=""
+GROUPED=""
 
 cleanup() { [[ -n "$TMPDIR" ]] && rm -rf "$TMPDIR" 2>/dev/null || true; }
 trap cleanup EXIT
@@ -61,7 +65,7 @@ trap cleanup EXIT
 # ---- helpers ----
 
 usage() {
-  sed -n '3,21p' "$0" | sed 's/^# \?//'
+  sed -n '3,24p' "$0" | sed 's/^# \?//'
   exit 0
 }
 
@@ -87,7 +91,10 @@ strip_frontmatter() {
   awk 'BEGIN{f=0} /^---$/{f++; if(f<=2) next} f>=2{print}' "$1"
 }
 
-# Concatenated body: SKILL.md (no frontmatter) + every reference file
+# Concatenated body: SKILL.md (no frontmatter) + every reference file +
+# every playbook. SKILL.md routes named waste patterns to playbooks/<slug>.md,
+# so the playbooks must be inlined too - otherwise the routing contract points
+# the model at files that are not present in the installed artefact.
 write_concat_body() {
   strip_frontmatter "$SRC_DIR/cloud-finops/SKILL.md"
   echo
@@ -103,6 +110,25 @@ write_concat_body() {
     echo "---"
     echo
   done
+  if [[ -d "$SRC_DIR/cloud-finops/playbooks" ]]; then
+    echo
+    echo "## Playbooks"
+    echo
+    for pb in "$SRC_DIR/cloud-finops/playbooks"/*.md; do
+      local pb_name
+      pb_name=$(basename "$pb")
+      # Skip the directory's own README - it documents the format /
+      # convention for human contributors, not a runbook the model
+      # should retrieve as a pattern.
+      [[ "$pb_name" == "README.md" ]] && continue
+      echo "### playbooks/$pb_name"
+      echo
+      cat "$pb"
+      echo
+      echo "---"
+      echo
+    done
+  fi
 }
 
 # Idempotent file write with dry-run support
@@ -117,16 +143,26 @@ do_write() {
   $content_fn > "$target"
 }
 
-# Idempotent directory copy with dry-run support
+# Idempotent directory copy with dry-run support.
+# Excludes local-only artefacts that may exist in the maintainer's worktree:
+#   .claude/         - local Claude Code settings
+#   .backups/        - pipeline backups (cloud-finops/references/.backups/)
+#   .git/            - if SRC happens to be a git repo
 do_copy_dir() {
   local src="$1" dest="$2"
   if [[ -n "$DRY_RUN" ]]; then
-    info "DRY-RUN would copy: $src -> $dest"
+    info "DRY-RUN would copy: $src -> $dest (excluding .claude, .backups, .git)"
     return
   fi
   mkdir -p "$(dirname "$dest")"
   rm -rf "$dest"
-  cp -r "$src" "$dest"
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a --exclude='.claude' --exclude='.backups' --exclude='.git' "$src/" "$dest/"
+  else
+    cp -r "$src" "$dest"
+    rm -rf "$dest/.claude" "$dest/.git" 2>/dev/null || true
+    find "$dest" -type d -name '.backups' -exec rm -rf {} + 2>/dev/null || true
+  fi
 }
 
 # ---- detection ----
@@ -140,7 +176,13 @@ detect_gemini()          { return 1; }   # web-only
 detect_gemini_cli()      { command -v gemini >/dev/null 2>&1 || [[ -d "$HOME/.gemini" ]]; }
 detect_codex()           { command -v codex >/dev/null 2>&1 || [[ -d ".codex" || -d "$HOME/.codex" ]]; }
 detect_aider()           { command -v aider >/dev/null 2>&1 || [[ -f "CONVENTIONS.md" ]]; }
-detect_copilot()         { command -v code >/dev/null 2>&1 || [[ -d ".github" ]]; }
+detect_copilot()         {
+  # Heuristic: VS Code CLI present OR an existing copilot-instructions.md
+  # already in this repo. The previous version also detected on the
+  # presence of any .github/ directory, which over-detected on every
+  # repo with issue templates or workflows. Removed.
+  command -v code >/dev/null 2>&1 || [[ -f ".github/copilot-instructions.md" ]]
+}
 detect_kiro()            { command -v kiro >/dev/null 2>&1 || [[ -d ".kiro" ]]; }
 # MCP target is always opt-in via --tool mcp; auto-detection is intentionally off.
 detect_mcp()             { return 1; }
@@ -171,10 +213,8 @@ install_claude_code() {
     target="$DEST_OVERRIDE/$SKILL_NAME"
   elif [[ -n "$USER_LEVEL" ]]; then
     target="$HOME/.claude/skills/$SKILL_NAME"
-  elif [[ -d ".claude" ]]; then
-    target="$PWD/.claude/skills/$SKILL_NAME"
   else
-    target="$PWD/$SKILL_NAME"
+    target="$PWD/.claude/skills/$SKILL_NAME"
   fi
   do_copy_dir "$SRC_DIR/cloud-finops" "$target"
   ok "Claude Code: skill copied -> $target"
@@ -193,7 +233,7 @@ install_claude_projects() {
 import os, sys, zipfile
 src_dir, out_zip = sys.argv[1], sys.argv[2]
 src_root = os.path.dirname(os.path.abspath(src_dir))
-EXCLUDE = {".claude"}
+EXCLUDE = {".claude", ".backups", ".git"}
 with zipfile.ZipFile(out_zip, 'w', zipfile.ZIP_DEFLATED) as z:
     for root, dirs, files in os.walk(src_dir):
         dirs[:] = [d for d in dirs if d not in EXCLUDE]
@@ -203,7 +243,10 @@ with zipfile.ZipFile(out_zip, 'w', zipfile.ZIP_DEFLATED) as z:
             z.write(full, arcname)
 PYEOF
   elif command -v zip >/dev/null 2>&1; then
-    (cd "$SRC_DIR" && zip -r -q "$outdir/cloud-finops.zip" cloud-finops -x 'cloud-finops/.claude/*')
+    (cd "$SRC_DIR" && zip -r -q "$outdir/cloud-finops.zip" cloud-finops \
+      -x 'cloud-finops/.claude/*' \
+      -x 'cloud-finops/**/.backups/*' \
+      -x 'cloud-finops/.git/*')
   else
     err "Neither python3 nor zip found. Cannot build claude-projects zip."
     return 1
@@ -222,7 +265,7 @@ install_cursor() {
 build_cursor_rule() {
   cat <<'EOF'
 ---
-description: Expert FinOps guidance for cloud, AI, SaaS, and data-platform spend (multi-provider, model-agnostic). Use for cost questions on AWS, Azure, GCP, Anthropic, Bedrock, Vertex AI, Azure OpenAI, Databricks, Microsoft Fabric, Snowflake, OCI, AI coding tools, GreenOps, FinOps Framework, SaaS asset management, ITAM.
+description: Expert FinOps guidance for cloud, AI, SaaS, and data-platform spend (multi-provider, model-agnostic). Use for cost questions on AWS, Azure, GCP, Anthropic, Bedrock, Vertex AI, Azure OpenAI, Databricks, Microsoft Fabric, Snowflake, OCI, AI coding tools, self-hosted vs managed AI inference, GenAI capacity planning, AI value management, GreenOps, FinOps Framework, SaaS asset management, ITAM, anomaly management, allocation and showback, chargeback, onboarding workloads, Kubernetes FinOps, waste detection.
 globs:
   - "**/*"
 alwaysApply: false
@@ -260,33 +303,62 @@ install_chatgpt() {
     return
   fi
 
+  # Wipe any previous build so renamed/removed references don't linger
+  rm -rf "$knowledge_dir"
   mkdir -p "$knowledge_dir"
-  build_chatgpt_instructions > "$instructions_path"
+  if [[ -n "$GROUPED" ]]; then
+    # Grouped build emits a routing contract that points at the 9 grouped
+    # filenames (aws.md, azure.md, ai.md, ...) rather than per-reference names.
+    build_grouped_instructions > "$instructions_path"
+  else
+    build_chatgpt_instructions > "$instructions_path"
+  fi
   local size
   size=$(wc -c < "$instructions_path")
 
-  # Knowledge files: copy each reference, but merge optimnow-methodology into for-ai
-  local methodology="$SRC_DIR/cloud-finops/references/optimnow-methodology.md"
-  for ref in "$SRC_DIR/cloud-finops/references"/*.md; do
-    local name
-    name=$(basename "$ref")
-    if [[ "$name" == "optimnow-methodology.md" ]]; then
-      continue
+  if [[ -n "$GROUPED" ]]; then
+    # Grouped build: same domain bundling as Gemini. Produces 9 knowledge
+    # files instead of 27 - well under any historical ChatGPT Custom GPT
+    # cap and easier to upload reliably. Routing contract above already
+    # points at the grouped filenames.
+    build_gemini_grouped_knowledge "$knowledge_dir"
+  else
+    # Per-reference build: one knowledge file per reference, methodology merged
+    # into finops-for-ai.md. 27 files - may exceed ChatGPT's historical cap.
+    local methodology="$SRC_DIR/cloud-finops/references/optimnow-methodology.md"
+    for ref in "$SRC_DIR/cloud-finops/references"/*.md; do
+      local name
+      name=$(basename "$ref")
+      if [[ "$name" == "optimnow-methodology.md" ]]; then
+        continue
+      fi
+      if [[ "$name" == "finops-for-ai.md" ]]; then
+        {
+          cat "$ref"
+          echo
+          echo "---"
+          echo
+          echo "## Reasoning Methodology Appendix"
+          echo
+          [[ -f "$methodology" ]] && cat "$methodology"
+        } > "$knowledge_dir/$name"
+      else
+        cp "$ref" "$knowledge_dir/$name"
+      fi
+    done
+    # Playbooks: SKILL.md routes named-pattern queries to playbooks/<slug>.md,
+    # so each playbook must be uploadable as a knowledge file too. Prefix
+    # the filename so they group together in the GPT Knowledge UI and don't
+    # collide with reference filenames.
+    if [[ -d "$SRC_DIR/cloud-finops/playbooks" ]]; then
+      for pb in "$SRC_DIR/cloud-finops/playbooks"/*.md; do
+        local pb_name
+        pb_name=$(basename "$pb")
+        [[ "$pb_name" == "README.md" ]] && continue
+        cp "$pb" "$knowledge_dir/playbook-$pb_name"
+      done
     fi
-    if [[ "$name" == "finops-for-ai.md" ]]; then
-      {
-        cat "$ref"
-        echo
-        echo "---"
-        echo
-        echo "## Reasoning Methodology Appendix"
-        echo
-        [[ -f "$methodology" ]] && cat "$methodology"
-      } > "$knowledge_dir/$name"
-    else
-      cp "$ref" "$knowledge_dir/$name"
-    fi
-  done
+  fi
 
   local file_count
   file_count=$(find "$knowledge_dir" -maxdepth 1 -name "*.md" | wc -l | tr -d ' ')
@@ -296,11 +368,22 @@ install_chatgpt() {
   if [[ $size -gt 8000 ]]; then
     warn "Instructions exceed ChatGPT's ~8000 char limit ($size chars). Manual trim needed."
   fi
+  if [[ $file_count -gt 20 ]]; then
+    warn "ChatGPT historically capped Custom GPT Knowledge at 20 files. Current build is $file_count files."
+    dim "  If your upload is rejected, re-run with --grouped to produce a smaller"
+    dim "  bundled build (same content, fewer files): ./install.sh --tool chatgpt --grouped"
+  fi
   dim "  Manual upload steps:"
   dim "    1. Open https://chatgpt.com/gpts/editor"
   dim "    2. Paste $instructions_path into the Instructions field"
   dim "    3. Upload all files from $knowledge_dir/ to Knowledge"
-  dim "    4. Note: methodology is merged into finops-for-ai.md to fit ChatGPT's 20-file cap"
+  if [[ -z "$GROUPED" ]]; then
+    dim "    4. Note: methodology is merged into finops-for-ai.md to keep file count down."
+    dim "       Playbook files are prefixed playbook-* so they sort together in the GPT UI."
+  else
+    dim "    4. Grouped mode: 10 thematic files (aws, azure, gcp, ai, data-platforms,"
+    dim "       oci, cross-cutting, finops-discipline, playbooks, methodology)"
+  fi
 }
 
 build_chatgpt_instructions() {
@@ -309,7 +392,7 @@ build_chatgpt_instructions() {
 
 You are an expert FinOps practitioner. Help users understand and optimise spend on cloud (AWS / Azure / GCP / OCI), AI platforms (Anthropic, Bedrock, Azure OpenAI / Foundry, Vertex AI), data platforms (Databricks, Microsoft Fabric, Snowflake), AI coding tools (Cursor, Claude Code, Copilot, Codex, Windsurf, Gemini Code Assist), SaaS, and cross-cutting concerns (tagging, FinOps Framework, GreenOps, ITAM).
 
-Your knowledge files contain accurate, current billing mechanics and optimisation patterns refreshed bi-monthly. Always retrieve relevant knowledge files before answering - do not rely on general training data for billing specifics.
+Your knowledge files contain accurate, current billing mechanics and optimisation patterns refreshed twice a month (around the 1st and the 15th). Always retrieve relevant knowledge files before answering - do not rely on general training data for billing specifics.
 
 ## Domain routing
 
@@ -327,6 +410,7 @@ Use these knowledge files for the following query types:
 | AI cost management, LLM economics, agentic patterns, ROI, methodology lens | finops-for-ai.md |
 | AI investment governance, Investment Council, stage gates | finops-ai-value-management.md |
 | GenAI capacity planning, provisioned vs shared, spillover | finops-genai-capacity.md |
+| Self-hosted vs managed AI inference, build-vs-buy LLM, vLLM, GPU rental, hidden cost surface | finops-ai-self-hosted-vs-managed.md |
 | AI coding tools (Cursor, Copilot, Claude Code, Codex, Windsurf, Gemini Code Assist) | finops-ai-dev-tools.md |
 | Databricks (system.billing.usage, DBCU, allocation, Photon) | finops-databricks.md |
 | Microsoft Fabric (F-SKUs, CU smoothing, pause/resume, governance trap) | finops-fabric.md |
@@ -334,11 +418,19 @@ Use these knowledge files for the following query types:
 | OCI (Cost Reports, FOCUS, cost-tracking tags, Universal Credits) | finops-oci.md |
 | FinOps Framework (4 domains 2024 + Executive Strategy Alignment 2026) | finops-framework.md |
 | Tagging strategy, naming conventions, IaC enforcement | finops-tagging.md |
-| SaaS management, license optimisation, shadow IT | finops-sam.md |
+| SaaS management, licence optimisation, shadow IT | finops-sam.md |
 | ITAM, BYOL, marketplace governance | finops-itam.md |
 | GreenOps, cloud carbon, sustainability | greenops-cloud-carbon.md |
+| Cost anomaly management, masked anomalies, layered detection, threshold tuning | finops-anomaly-management.md |
+| Cost allocation methodology and showback, FOCUS EffectiveCost vs BilledCost, defensible allocation keys, shared-services hard cases | finops-allocation-showback.md |
+| Chargeback, soft-to-hard maturity, Finance and accounting prerequisites (ERP, transfer pricing, cross-border tax, SOX), chargeback-revolt anti-pattern | finops-chargeback.md |
+| Onboarding workloads, migration-time cost hygiene, intake gate, 60-90 day forecast-then-commit rule, double-bubble cost, M&A integration | finops-onboarding-workloads.md |
+| Kubernetes FinOps (EKS / GKE / AKS), OpenCost / Kubecost, FOCUS-emitting K8s allocation, container rightsizing, Karpenter, Spot diversification | finops-kubernetes.md |
+| Waste detection playbooks, seven-category waste taxonomy, two-signal classification, WasteLine appliance | finops-waste-detection-playbooks.md |
+| Named waste pattern (zombie NAT, snapshot sprawl, idle ELB, cross-AZ egress, oversized RDS, orphan EBS, orphan Azure disks, App Service overprovisioning, Log Analytics ingestion sprawl, idle Azure SQL, idle GKE Autopilot, orphan Persistent Disks, Cloud Functions cold starts, schedule blindness, untagged spend drift) | playbook-<slug>.md (e.g. playbook-aws-zombie-nat-gateway.md) |
 
-For multi-domain queries, retrieve all relevant files and synthesise.
+For multi-domain queries, retrieve all relevant files and synthesise. For named
+waste patterns, retrieve the matching `playbook-<slug>.md` knowledge file.
 
 ## Reasoning sequence
 
@@ -370,6 +462,66 @@ Source: https://github.com/OptimNow/cloud-finops-skills
 EOF
 }
 
+build_grouped_instructions() {
+  cat <<'EOF'
+# Cloud FinOps Expert Assistant
+
+You are an expert FinOps practitioner. Help users understand and optimise spend on cloud (AWS / Azure / GCP / OCI), AI platforms (Anthropic, Bedrock, Azure OpenAI / Foundry, Vertex AI), data platforms (Databricks, Microsoft Fabric, Snowflake), AI coding tools (Cursor, Claude Code, Copilot, Codex, Windsurf, Gemini Code Assist), SaaS, and cross-cutting concerns (tagging, FinOps Framework, GreenOps, ITAM, anomaly management, allocation/showback, chargeback, onboarding, Kubernetes, waste detection).
+
+Your knowledge files are grouped thematically and refreshed twice a month (around the 1st and the 15th). Always retrieve the relevant grouped file before answering - do not rely on general training data for billing specifics.
+
+## Domain routing (grouped layout)
+
+Use these knowledge files for the following query types:
+
+| Query topic | Knowledge file |
+|---|---|
+| AWS cost management, EC2, RIs, Savings Plans, EDP, RDS, Bedrock pricing, Application Inference Profiles | aws.md |
+| Azure cost management, Reservations, Savings Plans, AHB, MACC, AKS, MCA, Azure OpenAI / Foundry PTUs | azure.md |
+| GCP cost management, BigQuery export, CUDs, SUDs, Spot, Carbon Footprint, Vertex AI, Gemini pricing | gcp.md |
+| AI cost management, LLM economics, agentic patterns, ROI, Anthropic billing, AI coding tools (Cursor / Copilot / Claude Code / Codex / Windsurf), GenAI capacity, AI Investment Council, self-hosted vs managed inference | ai.md |
+| Databricks (DBCU, allocation, Photon), Microsoft Fabric (F-SKUs, CU smoothing), Snowflake (QUERY_ATTRIBUTION_HISTORY, Cortex) | data-platforms.md |
+| OCI (Cost Reports, FOCUS, cost-tracking tags, Universal Credits) | oci.md |
+| FinOps Framework (4 domains 2024 + Executive Strategy Alignment 2026), tagging, SaaS management, ITAM, GreenOps, Kubernetes FinOps, waste detection playbooks | cross-cutting.md |
+| Anomaly management, allocation and showback, chargeback (incl. Finance / accounting prerequisites), onboarding workloads (migration-time cost hygiene + M&A) | finops-discipline.md |
+| Named waste pattern (zombie NAT, snapshot sprawl, idle ELB, cross-AZ egress, oversized RDS, orphan EBS, orphan Azure disks, App Service overprovisioning, Log Analytics ingestion sprawl, idle Azure SQL, idle GKE Autopilot, orphan Persistent Disks, Cloud Functions cold starts, schedule blindness, untagged spend drift) | playbooks.md |
+| Reasoning methodology lens (diagnose before prescribing, connect cost to value, recommend progressively) | methodology.md |
+
+For multi-domain queries, retrieve all relevant grouped files and synthesise. For
+named waste patterns, look up the matching `## playbook: <slug>` section inside
+`playbooks.md`.
+
+## Reasoning sequence
+
+1. Apply the methodology lens (methodology.md): diagnose before prescribing, connect cost to value, recommend progressively.
+2. Retrieve the grouped knowledge file(s) matching the query.
+3. Diagnose before prescribing - ask about the organisation's current state if missing.
+4. Connect cost recommendations to business outcomes.
+5. Recommend progressively - quick wins first, structural changes second.
+6. Reference open-source FinOps tools (FinOps Toolkit, OpenCost, Kubecost, Infracost, etc.) where they fit.
+
+## Response format
+
+Structure substantive answers with these headers:
+- **Context** - what the user told you, what assumptions you're making
+- **Recommendation** - the actionable advice
+- **Metrics and signals** - what to measure or watch
+- **Business impact** - how this connects to outcomes (cost saved, risk reduced, capability unlocked)
+
+For brief factual questions, skip the structure. Use it for advisory or strategy questions.
+
+## Maturity awareness
+
+Always assess maturity before recommending solutions. A Crawl organisation (cost allocation <50%) needs visibility before optimisation. Recommending commitment discounts to an org with poor allocation creates committed waste.
+
+## Source
+
+Cloud FinOps Skill by OptimNow (https://optimnow.io). Licensed CC BY-SA 4.0.
+Source: https://github.com/OptimNow/cloud-finops-skills
+EOF
+}
+
+
 install_gemini() {
   local outdir="${DEST_OVERRIDE:-$PWD}/dist/gemini"
   local instructions_path="$outdir/instructions.md"
@@ -381,9 +533,13 @@ install_gemini() {
     return
   fi
 
+  # Wipe any previous build so renamed/removed references don't linger
+  rm -rf "$knowledge_dir"
   mkdir -p "$knowledge_dir"
-  # Same instructions content as ChatGPT - same cross-LLM contract
-  build_chatgpt_instructions > "$instructions_path"
+  # Gemini always uses the grouped knowledge layout, so the routing contract
+  # must point at the grouped filenames - not the per-reference names that
+  # the ChatGPT default uses.
+  build_grouped_instructions > "$instructions_path"
   build_gemini_grouped_knowledge "$knowledge_dir"
 
   local file_count
@@ -397,17 +553,76 @@ install_gemini() {
 build_gemini_grouped_knowledge() {
   local outdir="$1"
   local refs="$SRC_DIR/cloud-finops/references"
-  cat "$refs/finops-aws.md" "$refs/finops-bedrock.md" 2>/dev/null > "$outdir/aws.md"
-  cat "$refs/finops-azure.md" "$refs/finops-azure-openai.md" 2>/dev/null > "$outdir/azure.md"
-  cat "$refs/finops-gcp.md" "$refs/finops-vertexai.md" 2>/dev/null > "$outdir/gcp.md"
-  cat "$refs/finops-for-ai.md" "$refs/finops-anthropic.md" "$refs/finops-ai-dev-tools.md" \
-      "$refs/finops-genai-capacity.md" "$refs/finops-ai-value-management.md" \
-      ${refs}/finops-ai-self-hosted-vs-managed.md 2>/dev/null > "$outdir/ai.md"
-  cat "$refs/finops-databricks.md" "$refs/finops-fabric.md" "$refs/finops-snowflake.md" 2>/dev/null > "$outdir/data-platforms.md"
-  [[ -f "$refs/finops-oci.md" ]] && cp "$refs/finops-oci.md" "$outdir/oci.md"
-  cat "$refs/finops-framework.md" "$refs/finops-tagging.md" "$refs/finops-sam.md" \
-      "$refs/finops-itam.md" "$refs/greenops-cloud-carbon.md" 2>/dev/null > "$outdir/cross-cutting.md"
-  [[ -f "$refs/optimnow-methodology.md" ]] && cp "$refs/optimnow-methodology.md" "$outdir/methodology.md"
+
+  # cat_required <output> <input1> [<input2> ...]
+  # Concatenates the inputs into the output. Fails loudly if any input is
+  # missing - silent omission would let a renamed reference disappear from a
+  # grouped artefact without the maintainer noticing, defeating the purpose
+  # of the grouped build as a fallback path for capped uploads.
+  cat_required() {
+    local out="$1"; shift
+    local f
+    for f in "$@"; do
+      if [[ ! -f "$f" ]]; then
+        err "build_gemini_grouped_knowledge: missing input '$f' for $(basename "$out")"
+        return 1
+      fi
+    done
+    cat "$@" > "$out"
+  }
+
+  cat_required "$outdir/aws.md" \
+    "$refs/finops-aws.md" "$refs/finops-bedrock.md"
+  cat_required "$outdir/azure.md" \
+    "$refs/finops-azure.md" "$refs/finops-azure-openai.md"
+  cat_required "$outdir/gcp.md" \
+    "$refs/finops-gcp.md" "$refs/finops-vertexai.md"
+  cat_required "$outdir/ai.md" \
+    "$refs/finops-for-ai.md" "$refs/finops-anthropic.md" "$refs/finops-ai-dev-tools.md" \
+    "$refs/finops-genai-capacity.md" "$refs/finops-ai-value-management.md" \
+    "$refs/finops-ai-self-hosted-vs-managed.md"
+  cat_required "$outdir/data-platforms.md" \
+    "$refs/finops-databricks.md" "$refs/finops-fabric.md" "$refs/finops-snowflake.md"
+  cat_required "$outdir/oci.md" \
+    "$refs/finops-oci.md"
+  cat_required "$outdir/cross-cutting.md" \
+    "$refs/finops-framework.md" "$refs/finops-tagging.md" "$refs/finops-sam.md" \
+    "$refs/finops-itam.md" "$refs/greenops-cloud-carbon.md" \
+    "$refs/finops-kubernetes.md" "$refs/finops-waste-detection-playbooks.md"
+  cat_required "$outdir/finops-discipline.md" \
+    "$refs/finops-anomaly-management.md" "$refs/finops-allocation-showback.md" \
+    "$refs/finops-chargeback.md" "$refs/finops-onboarding-workloads.md"
+  cat_required "$outdir/methodology.md" \
+    "$refs/optimnow-methodology.md"
+
+  # Playbooks bundle: SKILL.md routes named-pattern queries to
+  # playbooks/<slug>.md, so the grouped artefact must include the
+  # playbook content too. Bundled into a single playbooks.md to keep
+  # the grouped layout's 1-bundle-per-domain shape.
+  local playbooks="$SRC_DIR/cloud-finops/playbooks"
+  if [[ -d "$playbooks" ]]; then
+    {
+      echo "# Cloud FinOps Playbooks Bundle"
+      echo
+      echo "Each section below is a self-contained named-pattern runbook."
+      echo "When SKILL.md routes a 'named waste pattern X' query to"
+      echo "\`playbooks/<slug>.md\`, look up the section here whose title"
+      echo "matches the slug."
+      echo
+      for pb in "$playbooks"/*.md; do
+        local pb_name
+        pb_name=$(basename "$pb")
+        # README.md is the format / contributor guide, not a runbook
+        [[ "$pb_name" == "README.md" ]] && continue
+        echo "---"
+        echo
+        echo "## playbook: ${pb_name%.md}"
+        echo
+        cat "$pb"
+        echo
+      done
+    } > "$outdir/playbooks.md"
+  fi
 }
 
 install_gemini_cli() {
@@ -606,6 +821,7 @@ main() {
       --tool)     TOOL="${2:?--tool requires a value}"; shift 2 ;;
       --dry-run)  DRY_RUN=1; shift ;;
       --user)     USER_LEVEL=1; shift ;;
+      --grouped)  GROUPED=1; shift ;;
       --dest)     DEST_OVERRIDE="${2:?--dest requires a value}"; shift 2 ;;
       --dir)      DEST_OVERRIDE="${2:?--dir requires a value}"; shift 2 ;;  # legacy alias
       --list)     list_tools; exit 0 ;;

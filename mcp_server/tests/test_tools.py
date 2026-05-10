@@ -70,10 +70,10 @@ def test_find_case_insensitive() -> None:
 
 def test_find_capability_matches_secondary() -> None:
     """Capability filter must match both primary and secondary fields."""
-    result = tools.find_references(capability="Workload Optimization")
+    result = tools.find_references(capability="Usage Optimization")
     names = {r["name"] for r in result["references"]}
-    # finops-aws lists Workload Optimization as a *secondary* capability;
-    # it should still match.
+    # finops-aws lists Usage Optimization as a *secondary* capability
+    # (its primary is Rate Optimization); it should still match.
     assert "finops-aws" in names
 
 

@@ -1,23 +1,28 @@
 # AGENTS.md
 
-Project context for AI assistants and human contributors working on this repository.
+This file is the project context entry point for **Codex CLI** (and other agents
+that read `AGENTS.md` from the project root). For deeper conventions and
+contributor rules, see [CLAUDE.md](./CLAUDE.md) - the two files share the same
+project context, this one is just shorter.
 
 ---
 
 ## What this repo is
 
-A structured, model-agnostic FinOps knowledge skill for AI agents. The `cloud-finops/`
-folder contains reference files that give any LLM accurate Cloud FinOps expertise -
-Codex, GPT, Gemini, or any MCP-compatible agent.
+A structured, model-agnostic FinOps knowledge skill for AI agents. The
+`cloud-finops/` folder contains reference files that give any LLM accurate
+Cloud FinOps expertise - Claude, GPT, Gemini, Codex, or any
+MCP-compatible agent.
 
-- **SKILL.md** - entry point for Codex and generic agents
+- **SKILL.md** - entry point for Claude Code and generic agents
 - **POWER.md** - entry point for Kiro IDE (same references, different format)
-- **references/** - domain-specific content files (billing mechanics, pricing, optimisation patterns)
-- **INSTALLATION.md** - 6 setup options including a model-agnostic response contract for non-Codex models
+- **AGENTS.md** - entry point for Codex CLI (this file)
+- **references/** - 28 domain-specific content files (billing mechanics, pricing,
+  optimisation patterns)
+- **INSTALLATION.md** - cross-tool installer covering 11 tool integrations, plus
+  a model-agnostic response contract for non-Claude models
 
-Both entry points route to the same reference files. No content is duplicated.
-The response contract in INSTALLATION.md (Option 6) ensures structured, billing-grounded
-answers across all models, even when model defaults differ.
+All entry points route to the same reference files. No content is duplicated.
 
 ---
 
@@ -25,141 +30,77 @@ answers across all models, even when model defaults differ.
 
 ```
 cloud-finops-skills/
-├── AGENTS.md              <- You are here
+├── AGENTS.md              <- You are here (Codex CLI entry point)
+├── CLAUDE.md              <- Claude Code project context
 ├── README.md              <- Public-facing documentation
-├── INSTALLATION.md        <- Setup instructions (6 options) + response contract
+├── INSTALLATION.md        <- Cross-tool installer + response contract
 ├── LICENSE.md             <- CC BY-SA 4.0
 ├── install.sh             <- One-liner installer script
+├── llms.txt               <- llms.txt index for cross-agent discovery
 ├── assets/                <- Screenshots for installation guide
 ├── cloud-finops/          <- The skill (this is what gets installed)
 │   ├── SKILL.md           <- Entry point + domain router
 │   ├── POWER.md           <- Kiro IDE entry point
-│   └── references/
-│       ├── optimnow-methodology.md
-│       ├── finops-for-ai.md
-│       ├── finops-ai-value-management.md
-│       ├── finops-genai-capacity.md
-│       ├── finops-anthropic.md
-│       ├── finops-aws.md
-│       ├── finops-bedrock.md
-│       ├── finops-azure.md
-│       ├── finops-azure-openai.md
-│       ├── finops-gcp.md
-│       ├── finops-vertexai.md
-│       ├── finops-tagging.md
-│       ├── finops-framework.md
-│       ├── finops-databricks.md
-│       ├── finops-snowflake.md
-│       ├── finops-oci.md
-│       └── greenops-cloud-carbon.md
+│   └── references/        <- 28 reference files, all with YAML FCP frontmatter
 └── pipeline/              <- Content update pipeline (gitignored, private)
-    ├── run_scan.py        <- Weekly scan entry point
-    ├── run_apply.py       <- Review and apply entry point
-    ├── config.yaml        <- Pipeline configuration
-    ├── sources.yaml       <- 29 content sources (RSS, pricing pages, blogs)
-    ├── scanner/           <- Fetcher + Sonnet-based classifier
-    ├── proposer/          <- CHANGES.md report generator
-    ├── applier/           <- Opus-based diff generator and file editor
-    ├── alerter/           <- Gmail draft builder
-    └── state/             <- Runtime state (scan results, history)
 ```
+
+For the full directory listing of the 28 reference files and the pipeline
+sub-modules, see CLAUDE.md.
 
 ---
 
 ## Content update pipeline
 
-The `pipeline/` folder contains a weekly content scanner that detects FinOps-relevant
-changes across 29 sources and proposes updates to the reference files. It is gitignored
-and not part of the public distribution.
+The `pipeline/` folder contains a twice-monthly content scanner (around the 1st
+and the 15th) that detects FinOps-relevant changes across 29 sources and proposes
+updates to the reference files. It is gitignored and not part of the public
+distribution.
 
-The pipeline is human-in-the-loop: nothing is changed automatically. Every proposed
-update goes through review (list, preview diffs, approve/reject) before touching any
-reference file. See `pipeline/README.md` for the full workflow.
+The pipeline is human-in-the-loop: nothing is changed automatically. Every
+proposed update goes through review (list, preview diffs, approve/reject) before
+touching any reference file.
 
 ---
 
 ## Model compatibility
 
-The skill files are plain markdown - any LLM can read them. What differs across models
-is how well they follow the structure and avoid hallucinating billing rules.
+The skill files are plain markdown - any LLM can read them. What differs across
+models is how well they follow the structure and avoid hallucinating billing
+rules.
 
-- **Codex** (Code, .ai, API) - reads SKILL.md natively, no extra configuration needed
+- **Claude Code, claude.ai, Claude Desktop** - read SKILL.md natively
+- **Codex CLI** - reads this AGENTS.md as project context
 - **Kiro IDE** - reads POWER.md natively
-- **GPT, Gemini, other models** - inject the reference files as context and add the
-  response contract from INSTALLATION.md (Option 6) to the system prompt
+- **GPT, Gemini, other models** - inject the reference files as context and add
+  the response contract from INSTALLATION.md ("API integration / Recommended
+  response contract" section) to the system prompt
 
-The response contract ensures consistent output structure (Context, Recommendation,
-Metrics, Business impact) and prevents models from inventing pricing figures or
-discount mechanics.
-
----
-
-## How to add a new reference file
-
-Follow these four steps whenever you add a new domain:
-
-1. **Create the reference file** in `cloud-finops/references/`
-   - Name it `finops-{domain}.md` (or `{category}-{domain}.md` for non-FinOps topics like `greenops-cloud-carbon.md`)
-   - Follow the structure of an existing reference file as a template
-   - Include practical guidance, not abstract theory
-
-2. **Add a routing entry in SKILL.md**
-   - Add a row to the "Domain routing" table with the query topic and file path
-   - Add a row to the "Reference files" table with the filename, description, and approximate line count
-
-3. **Add a routing entry in POWER.md**
-   - Add a row to the "Domain routing" table (same format as SKILL.md)
-   - Add relevant keywords to the `keywords` list in the YAML frontmatter
-
-4. **Update README.md**
-   - Add a bullet under "What this skill covers"
-   - Add the file to the "Directory structure" listing
-   - Add usage examples if applicable
+The response contract ensures consistent output structure (Context,
+Recommendation, Metrics, Business impact) and prevents models from inventing
+pricing figures or discount mechanics.
 
 ---
 
-## Content rules
+## How to contribute
 
-**Writing style**
+For the full contributor guide (how to add a new reference file, FCP
+frontmatter convention, content rules, PR checklist, Roadmap of deferred work),
+see [CLAUDE.md](./CLAUDE.md). The contributor process is shared regardless of
+which agent surface you use.
+
+Quick rules:
 - Use straight dashes (`-`), never em dashes
-- Use British spelling for public-facing content (optimisation, organisation, behaviour)
-- Be direct and practical. Diagnose before prescribing
-- Connect cost recommendations to business outcomes
-
-**SKILL.md frontmatter**
-- The `description` field must be **under 1024 characters** (Codex.ai upload limit)
-- Only `name` and `description` are required in the YAML frontmatter
-- Do not add a `license` field to the frontmatter (it renders as visible text in Codex.ai)
-
-**License**
-- All content is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
-- Credit OptimNow as the original author
-- Include the license footer on new reference files if following the existing pattern
-
-**Do not commit**
-- `INTERNAL_NOTES.md` is gitignored and must never be committed
-- `pipeline/` is gitignored and must not be made public without explicit decision
+- Use British spelling for public-facing content (optimisation, organisation,
+  behaviour). Product/framework names keep their official spelling.
+- All reference files carry YAML FCP frontmatter mapping the file to the FinOps
+  Framework Capability it serves
+- Bump the plugin version (`.claude-plugin/plugin.json`, minor digit) for
+  user-visible feature changes
 
 ---
 
-## Testing changes
+## License
 
-After editing reference files, verify them by asking questions in the domain you changed.
-Good test patterns:
-
-- Ask a question that requires specific billing mechanics (pricing, break-even, discount rules)
-- Ask a maturity-sensitive question (the response should adapt to Crawl/Walk/Run context)
-- Ask a cross-domain question that requires loading multiple references
-- Test with a non-Codex model using the response contract to verify portability
-
----
-
-## Pull request checklist
-
-- [ ] New reference file follows the `finops-{domain}.md` naming convention
-- [ ] Routing table updated in both SKILL.md and POWER.md
-- [ ] README directory listing and coverage section updated
-- [ ] SKILL.md description stays under 1024 characters
-- [ ] No em dashes in any public content
-- [ ] No sensitive or internal files included
-- [ ] Content is practical and based on how billing actually works, not on documentation summaries
+All content is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+Credit OptimNow as the original author.

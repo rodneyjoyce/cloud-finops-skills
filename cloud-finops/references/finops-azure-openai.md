@@ -2,7 +2,7 @@
 name: finops-azure-openai
 fcp_domain: "Optimize Usage & Cost"
 fcp_capability: "Rate Optimization"
-fcp_capabilities_secondary: ["Workload Optimization"]
+fcp_capabilities_secondary: ["Usage Optimization"]
 fcp_phases: ["Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Product", "Finance"]
@@ -16,8 +16,8 @@ fcp_maturity_entry: "Walk"
 > allocation, and governance. Covers the PTU pool model, unallocated capacity waste,
 > model deployment management, and cost visibility within Azure Cost Management.
 >
-> Distilled from: "Navigating GenAI Capacity Options"  - FinOps Foundation GenAI Working Group, 2025/2026;
-> and "FinOps for AI: Managing LLM Costs in Azure OpenAI"  - PointFive, 2025.
+> Distilled from: "Navigating GenAI Capacity Options" - FinOps Foundation GenAI Working Group, 2025/2026;
+> and "FinOps for AI: Managing LLM Costs in Azure OpenAI" - PointFive, 2025.
 > See also: `finops-genai-capacity.md` for cross-provider capacity concepts.
 > See also: `finops-azure.md` for general Azure FinOps guidance.
 
@@ -27,7 +27,7 @@ fcp_maturity_entry: "Walk"
 
 Azure OpenAI Service (AOAI) provides access to OpenAI models (GPT-4o, GPT-4.1, GPT-5,
 o-series reasoning models, DALL-E, Whisper, and others) through Azure's infrastructure.
-It is separate from OpenAI's direct API  - billing, compliance, and capacity management
+It is separate from OpenAI's direct API - billing, compliance, and capacity management
 are handled through Azure.
 
 ### Billing dimensions
@@ -40,7 +40,7 @@ are handled through Azure.
 | Model choice | Each model has its own per-token rate |
 | Capacity model | Standard (PAYG) vs Provisioned Throughput Units (PTUs) |
 | Fine-tuning | Training token charges + hosting charges for fine-tuned deployments |
-| Image / audio | Billed in units (images per resolution, audio per second)  - separate from tokens |
+| Image / audio | Billed in units (images per resolution, audio per second) - separate from tokens |
 
 **Key cost driver:** output tokens are approximately 3× more computationally expensive
 than input tokens. High output-ratio workloads carry disproportionately higher costs.
@@ -59,7 +59,7 @@ performance, compliance posture, and cost.
 **Key trade-offs:**
 - Global deployment offers the best performance and lowest cost but provides no data
   residency guarantees
-- Data Zone deployment balances compliance and throughput  - suited for EU data
+- Data Zone deployment balances compliance and throughput - suited for EU data
   sovereignty requirements without the throughput penalty of single-region
 - Regional deployment is the strictest option; suitable for regulated industries
   requiring single-region data residency, but performance is lower
@@ -148,7 +148,7 @@ requiring more PTUs.
 ### Key characteristics
 
 - **Full model flexibility:** when a new model is released, retire the old deployment
-  and reassign its PTUs to the new model  - no new reservation required
+  and reassign its PTUs to the new model - no new reservation required
 - **Decoupled reservation and deployment:** a PTU reservation does not guarantee that
   model capacity will be available for your chosen model
 - **Built-in spillover:** overflow traffic automatically routes to standard (PAYG) tier
@@ -170,20 +170,20 @@ for during the wait.
 | Consistent 24/7 workload, latency-sensitive | Strong candidate |
 | Frequent model updates expected | PTU flexibility is the key advantage here |
 | Data privacy / PII requirement | Provisioned endpoints exclude data from training |
-| Bursty traffic with spillover tolerance | Acceptable  - spillover is built in |
-| Cost reduction as primary goal (GPT-5) | Caution  - provisioned may be more expensive |
+| Bursty traffic with spillover tolerance | Acceptable - spillover is built in |
+| Cost reduction as primary goal (GPT-5) | Caution - provisioned may be more expensive |
 | Cost reduction as primary goal (GPT-4.1) | Viable at high utilization (+27% at 100%) |
 
 ### PTU governance checklist
 
-- [ ] Deploy models first  - validate capacity availability before purchasing reservation
+- [ ] Deploy models first - validate capacity availability before purchasing reservation
 - [ ] Calculate break-even utilization for each model (provisioned ÷ standard per-token rate)
 - [ ] Load-test to validate effective throughput against your actual token mix
-- [ ] Monitor unallocated PTUs  - set alerts when PTUs are reserved but undeployed
-- [ ] Monitor allocated PTU utilization  - target >80%
+- [ ] Monitor unallocated PTUs - set alerts when PTUs are reserved but undeployed
+- [ ] Monitor allocated PTU utilization - target >80%
 - [ ] Define spillover policy: what percentage of requests can route to PAYG within SLA?
 - [ ] Set spending alerts on PAYG spillover costs (variable component of a provisioned setup)
-- [ ] Apply existing Azure EA discounts  - verify they apply to PTU reservations
+- [ ] Apply existing Azure EA discounts - verify they apply to PTU reservations
 
 ---
 
@@ -197,7 +197,7 @@ PAYG capacity are exhausted.
 
 ### Spillover cost implications
 
-- Spillover requests are billed at standard PAYG rates  - the variable component of your bill
+- Spillover requests are billed at standard PAYG rates - the variable component of your bill
 - Spillover volume depends on traffic spikes relative to your PTU allocation
 - Monitor spillover rate to determine whether PTU allocation needs adjustment
 
@@ -252,7 +252,7 @@ to the account level.
 This creates a structural visibility gap:
 
 - If multiple applications share one Azure OpenAI account, native billing cannot
-  attribute costs by application  - even if model deployments are separated
+  attribute costs by application - even if model deployments are separated
 - Native Cost Management shows what was spent, but not which application or
   workflow drove the spend
 - Without deployment-level or application-level attribution, optimization and
@@ -310,13 +310,13 @@ highest ROI for the effort.
 
 - Define a quality benchmark for your specific task before selecting a model
 - Test GPT-4o mini / GPT-4.1 mini before defaulting to GPT-4o or GPT-5
-- Reasoning models (o3-mini vs o3) have significant cost differences  - benchmark both
+- Reasoning models (o3-mini vs o3) have significant cost differences - benchmark both
 - Use the lowest-cost model that meets your quality threshold
 - **Model modernization is an optimization lever in its own right:** newer models within
   the same capability tier are often faster and cheaper than the models they replace.
   Replacing o1 with o3 can deliver up to 80–90% cost reduction on reasoning workloads.
   Treat model refresh as a recurring FinOps activity, not a one-time migration.
-- Scan deployments periodically for outdated models  - paying a higher per-token rate
+- Scan deployments periodically for outdated models - paying a higher per-token rate
   for a superseded model generation is pure waste
 
 ### Prompt caching
@@ -329,7 +329,7 @@ Effective for:
 
 ### Prompt optimization
 
-- Audit system prompt length  - verbose instructions inflate every API call
+- Audit system prompt length - verbose instructions inflate every API call
 - Truncate or summarize conversation history for multi-turn applications
 - Avoid sending redundant context in RAG pipelines
 
@@ -354,7 +354,7 @@ delivering production value.
 
 - Identify non-production deployments by linking deployment metadata to environment
   tags (Environment: dev / test / staging)
-- Move non-production workloads to standard (PAYG) tier  - they benefit from
+- Move non-production workloads to standard (PAYG) tier - they benefit from
   spillover tolerance and can absorb occasional throttling
 - Reserve PTU allocations for production workloads with consistent, latency-sensitive
   demand
@@ -366,8 +366,8 @@ Token spend is the most visible driver of Azure OpenAI costs, but it is not the 
 picture. A single AI feature or application may combine multiple model calls, retrieval
 steps, supporting cloud services, and integration layers. Each component adds cost.
 
-**The unit metric that matters is cost per business outcome**  - cost per resolved
-support ticket, cost per generated document, cost per completed transaction  - not
+**The unit metric that matters is cost per business outcome** - cost per resolved
+support ticket, cost per generated document, cost per completed transaction - not
 cost per token. This outcome-based view:
 
 - Provides a common frame of reference for engineering and finance teams
@@ -377,7 +377,7 @@ cost per token. This outcome-based view:
 
 To build use case economics:
 1. Instrument applications to log token counts per request, per feature, and per
-   user journey  - not just in aggregate
+   user journey - not just in aggregate
 2. Map token costs to business transactions using application-level logging or
    middleware
 3. Establish a cost-per-outcome baseline, then track it over time as models and
@@ -399,22 +399,20 @@ it affects how GenAI spend is credited against existing commitments.
 ## Governance checklist
 
 - [ ] Enable Azure Cost Management for OpenAI resources and configure daily anomaly alerts
-- [ ] Define model selection policy  - default to lower-cost tiers unless justified
+- [ ] Define model selection policy - default to lower-cost tiers unless justified
 - [ ] Instrument applications with token counts per request (input + output + cached)
-- [ ] Instrument at the use-case level  - track cost per business outcome, not just aggregate tokens
+- [ ] Instrument at the use-case level - track cost per business outcome, not just aggregate tokens
 - [ ] Use resource groups or subscriptions for team/environment cost separation
 - [ ] Tag all OpenAI resources with owner, team, environment, and cost centre
-- [ ] Define deployment locality per workload based on compliance requirements  - do not default to Regional unless required
+- [ ] Define deployment locality per workload based on compliance requirements - do not default to Regional unless required
 - [ ] Monitor PTU utilization and unallocated PTUs monthly
 - [ ] Track spillover volume and cost as a separate budget line
-- [ ] Move non-production workloads (dev/test/QA) to PAYG  - remove from PTU allocations
-- [ ] Review fine-tuned model hosting charges  - decommission idle fine-tuned deployments
-- [ ] Establish a model modernization cadence  - review deployed model versions quarterly against current Azure OpenAI catalog
+- [ ] Move non-production workloads (dev/test/QA) to PAYG - remove from PTU allocations
+- [ ] Review fine-tuned model hosting charges - decommission idle fine-tuned deployments
+- [ ] Establish a model modernization cadence - review deployed model versions quarterly against current Azure OpenAI catalog
 - [ ] Verify whether OpenAI spend counts toward MACC commitments
-- [ ] Establish a model review cadence  - Azure OpenAI model catalog updates frequently
+- [ ] Establish a model review cadence - Azure OpenAI model catalog updates frequently
 
 ---
 
----
-
-> *Cloud FinOps Skill by [OptimNow](https://optimnow.io)  - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

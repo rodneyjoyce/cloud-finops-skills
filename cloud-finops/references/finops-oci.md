@@ -2,7 +2,7 @@
 name: finops-oci
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Data Ingestion"
-fcp_capabilities_secondary: ["Anomaly Management", "Workload Optimization"]
+fcp_capabilities_secondary: ["Anomaly Management", "Usage Optimization"]
 fcp_phases: ["Inform", "Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Finance"]
@@ -177,6 +177,4 @@ Load balancers incur charges based on provisioned bandwidth shape, even if backe
 
 ---
 
----
-
-> *Cloud FinOps Skill by [OptimNow](https://optimnow.io)  - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

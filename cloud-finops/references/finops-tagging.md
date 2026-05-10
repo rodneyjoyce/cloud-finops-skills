@@ -2,7 +2,7 @@
 name: finops-tagging
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Allocation"
-fcp_capabilities_secondary: ["Policy & Governance"]
+fcp_capabilities_secondary: ["Governance, Policy & Risk", "Automation, Tools & Services"]
 fcp_phases: ["Inform", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Security", "Finance"]
@@ -256,4 +256,4 @@ in a post-deployment process.
 
 ---
 
-> *Cloud FinOps Skill by [OptimNow](https://optimnow.io)  - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

@@ -23,9 +23,9 @@ SaaS has become one of the largest and least visible cost categories in most org
 
 The State of FinOps 2026 survey (6th edition, 1,192 respondents, $83+ billion in cloud spend, published February 2026) confirms that SaaS is now firmly within the FinOps scope: 90% of respondents manage SaaS or plan to (up from 65% in 2025). Licensing management has also grown to 64% (up from 49%). This expansion reflects a practical reality: SaaS and IaaS are often interchangeable (a managed database versus an RDS instance, a SaaS observability tool versus self-hosted Prometheus), so managing one without the other creates blind spots in cost allocation and optimisation.
 
-Gartner predicts that by 2028, over 70% of organisations will centralise SaaS management using a SaaS Management Platform (SMP), up from less than 30% in 2025. Organisations that fail to centralise SaaS lifecycle management will overspend on SaaS by at least 25% due to unused entitlements and unnecessary overlapping tools, and remain five times more susceptible to cyberincidents or data loss.
+Gartner predicts that by 2028, over 70% of organisations will centralize SaaS management using a SaaS Management Platform (SMP), up from less than 30% in 2025. Organizations that fail to centralize SaaS lifecycle management will overspend on SaaS by at least 25% due to unused entitlements and unnecessary overlapping tools, and remain five times more susceptible to cyberincidents or data loss.
 
-The structural problem — sometimes called the "SaaSocalypse" — is not access to tools. It is loss of control. A mid-sized organisation may run 120+ SaaS applications. License renewals go unreviewed. Tools described as mission-critical are used by three people. Finance discovers overlapping tools doing the same job only during emergency audits. Procurement becomes the bottleneck instead of the enabler.
+The structural problem - sometimes called the "SaaSocalypse" - is not access to tools. It is loss of control. A mid-sized organisation may run 120+ SaaS applications. License renewals go unreviewed. Tools described as mission-critical are used by three people. Finance discovers overlapping tools doing the same job only during emergency audits. Procurement becomes the bottleneck instead of the enabler.
 
 **Connection to the FinOps Inform phase:** You cannot optimise what you cannot see. SaaS visibility is the prerequisite for license optimisation, renewal negotiation, and any serious application rationalisation effort.
 
@@ -33,7 +33,7 @@ The structural problem — sometimes called the "SaaSocalypse" — is not access
 
 ## SaaS Sprawl Patterns (6)
 
-These patterns describe the most common forms of SaaS waste. Use them to diagnose an organisation's SaaS estate and prioritise remediation.
+These patterns describe the most common forms of SaaS waste. Use them to diagnose an organisation's SaaS estate and prioritize remediation.
 
 **Unused or Underutilised Licenses (Shelfware)**
 Type: License Waste
@@ -63,7 +63,7 @@ Applications purchased or adopted without IT or procurement approval. Includes f
 - Deploy continuous discovery using multiple methods (see Discovery Methods section)
 - Distinguish between shadow SaaS that signals unmet needs (positive signal) and careless purchasing (governance failure)
 - Create an approved app catalog with a fast-track procurement process for low-cost tools, so employees do not feel the need to bypass IT
-- Shadow IT is often a signal of innovation — govern it, do not crush it
+- Shadow IT is often a signal of innovation - govern it, do not crush it
 
 **Auto-Renewal Without Review**
 Type: Contract Waste
@@ -109,7 +109,7 @@ Limitations: Only covers apps integrated with SSO. Misses shadow SaaS, free-tier
 **Financial and Expense Records**
 Source: Coupa, SAP Ariba, Concur, corporate credit card statements, AP systems
 Strengths: Reveals what the organisation is paying for, including shadow SaaS that appears on expense reports. Can uncover contracts and subscriptions that IT does not know about.
-Limitations: Only shows what is paid for — misses free-tier and trial usage. Delay between purchase and data availability (monthly reconciliation cycles). Line items are often vague, requiring AI-powered categorisation. No user-level attribution.
+Limitations: Only shows what is paid for - misses free-tier and trial usage. Delay between purchase and data availability (monthly reconciliation cycles). Line items are often vague, requiring AI-powered categorisation. No user-level attribution.
 
 **API Connectors (Direct Integrations)**
 Source: Vendor-specific APIs for major SaaS applications
@@ -119,7 +119,7 @@ Limitations: Only available for apps the organisation already knows about. Limit
 **Cloud Access Security Broker (CASB)**
 Source: Network-level traffic analysis (Netskope, Zscaler, Microsoft Defender for Cloud Apps)
 Strengths: Can detect SaaS usage across the corporate network, including shadow SaaS. Designed for security, so it captures risk-relevant data. Good for tightly controlled environments.
-Limitations: Only sees traffic on managed networks. Misses remote workers not on VPN, personal devices, and BYOD. Designed for security rather than financial optimisation — may flag apps but cannot provide cost or license data. Legacy perimeter-based approach that struggles in decentralised organisations.
+Limitations: Only sees traffic on managed networks. Misses remote workers not on VPN, personal devices, and BYOD. Designed for security rather than financial optimisation - may flag apps but cannot provide cost or license data. Legacy perimeter-based approach that struggles in decentralised organisations.
 
 **Browser Extensions**
 Source: Lightweight agents deployed to corporate browsers
@@ -128,7 +128,7 @@ Limitations: Privacy concerns from employees. Difficult to scale across large en
 
 **Email-Based Discovery**
 Source: Corporate email metadata (signup confirmations, password resets, billing notifications)
-Strengths: Works retroactively — can discover SaaS usage from before the tool was deployed. Covers apps authenticated via any method (SSO, username/password, OAuth, social sign-on). High coverage across the long tail of shadow SaaS.
+Strengths: Works retroactively - can discover SaaS usage from before the tool was deployed. Covers apps authenticated via any method (SSO, username/password, OAuth, social sign-on). High coverage across the long tail of shadow SaaS.
 Limitations: Cannot detect SaaS tied to personal email accounts. Privacy considerations around email scanning. Requires careful scoping to balance discovery with employee trust.
 
 **Recommended approach:** Layer SSO + financial records as the foundation. Add browser extensions or CASB for shadow SaaS detection. Use API connectors for deep usage data on high-spend apps. Consider email-based discovery for retroactive inventory building.
@@ -145,7 +145,7 @@ The FinOps Foundation's Licensing & SaaS capability (added to the Framework in 2
 Continuous (not one-off) identification of all SaaS applications in use. The goal is a single source of truth: every app, its owner, its cost, its usage level, its contract terms, and its security status.
 
 **Cost Allocation and Chargeback**
-Map 100% of SaaS spend to cost centres, products, or application owners. SaaS billing data may come through CSP Marketplace, direct vendor invoices, or expense reports — all need to be normalised and allocated. The FinOps Foundation recommends providing SaaS billing data in FOCUS format where possible.
+Map 100% of SaaS spend to cost centres, products, or application owners. SaaS billing data may come through CSP Marketplace, direct vendor invoices, or expense reports - all need to be normalised and allocated. The FinOps Foundation recommends providing SaaS billing data in FOCUS format where possible.
 
 **SaaS Taxonomy**
 Segment applications by function (horizontal vs. vertical) and criticality (core vs. long-tail). Apply tiered governance: high-touch management for top-spend applications, lighter oversight for low-cost tools. This prevents governance overhead from exceeding the cost of the tools being governed.
@@ -159,18 +159,18 @@ Rightsize license tiers, reharvest unused seats, and eliminate shelfware. This i
 Centralised tracking of all renewal dates, notice periods, and contract terms. Usage data from the Inform phase becomes negotiation leverage. The goal: no renewal happens without a data-backed review of whether the tool is still needed, at the right tier, at a competitive price.
 
 **Build vs. Buy Decisions**
-Data-driven comparison between purchasing SaaS versus building internal solutions. Factor in Total Cost of Ownership (TCO) including maintenance, integration, and opportunity cost — not just license price versus development cost.
+Data-driven comparison between purchasing SaaS versus building internal solutions. Factor in Total Cost of Ownership (TCO) including maintenance, integration, and opportunity cost - not just license price versus development cost.
 
 ### Operate
 
 **Contract Lifecycle Management**
-Track the full lifecycle from procurement through renewal or exit. Include: vendor management, termination clauses, price escalation terms, data portability, and true-up/down pricing. Unlike IaaS, most SaaS agreements cannot be changed quickly — some take years to exit. Planning must happen well in advance with procurement and ITAM personas.
+Track the full lifecycle from procurement through renewal or exit. Include: vendor management, termination clauses, price escalation terms, data portability, and true-up/down pricing. Unlike IaaS, most SaaS agreements cannot be changed quickly - some take years to exit. Planning must happen well in advance with procurement and ITAM personas.
 
 **Unit Economics**
 Link SaaS costs to business metrics: cost per transaction, cost per customer, cost per employee. This connects SaaS spend to business value, which is the core FinOps principle. Unit economics also help justify SaaS investments and identify when a tool's cost exceeds its contribution.
 
 **Governance and Policy**
-Approved app catalog, procurement policies, security review requirements, and shadow IT response procedures. The goal is to make the compliant path the easiest path — fast-track procurement for low-cost tools, automated provisioning for approved apps, clear escalation for exceptions.
+Approved app catalog, procurement policies, security review requirements, and shadow IT response procedures. The goal is to make the compliant path the easiest path - fast-track procurement for low-cost tools, automated provisioning for approved apps, clear escalation for exceptions.
 
 ---
 
@@ -186,17 +186,17 @@ Core capabilities across all mature SMPs: continuous SaaS discovery (multi-metho
 
 The Gartner Magic Quadrant for SaaS Management Platforms (published July 2025, analysts: Tom Cipolla, Dan Wilson, Lina Al Dana) evaluated 17 vendors. Notable vendors include:
 
-**Zylo** — Enterprise-focused. Manages over $40B in SaaS spend across its customer base. Strong in continuous discovery, license optimisation, and renewal management. Positions itself as a platform for IT, procurement, finance, and SAM teams working together. Recognised as a Leader in both the 2024 and 2025 Gartner MQ editions. Customers include AbbVie, Adobe, Atlassian, Salesforce.
+**Zylo** - Enterprise-focused. Manages over $40B in SaaS spend across its customer base. Strong in continuous discovery, license optimisation, and renewal management. Positions itself as a platform for IT, procurement, finance, and SAM teams working together. Recognised as a Leader in both the 2024 and 2025 Gartner MQ editions. Customers include AbbVie, Adobe, Atlassian, Salesforce.
 
-**Flexera** — The only vendor recognised in both the 2025 Gartner MQ for SaaS Management Platforms and the 2024 Gartner MQ for Cloud Financial Management Tools. SaaS management is embedded within the broader Flexera One platform, which also covers ITAM and FinOps. Strong multi-source discovery (browser extension, CASB, agent, financial data). Positioned as a Leader in 2025.
+**Flexera** - The only vendor recognised in both the 2025 Gartner MQ for SaaS Management Platforms and the 2024 Gartner MQ for Cloud Financial Management Tools. SaaS management is embedded within the broader Flexera One platform, which also covers ITAM and FinOps. Strong multi-source discovery (browser extension, CASB, agent, financial data). Positioned as a Leader in 2025.
 
-**BetterCloud** — Pioneer in SaaS management. Moved from Visionary to Leader between 2024 and 2025. Strong in SaaS lifecycle management (provisioning, deprovisioning, automation). Has $35B+ in SaaS vendor contracts on the platform, enabling pricing benchmarks for nearly 70 market-leading apps. Focus on operational efficiency and security.
+**BetterCloud** - Pioneer in SaaS management. Moved from Visionary to Leader between 2024 and 2025. Strong in SaaS lifecycle management (provisioning, deprovisioning, automation). Has $35B+ in SaaS vendor contracts on the platform, enabling pricing benchmarks for nearly 70 market-leading apps. Focus on operational efficiency and security.
 
-**Torii** — Founded 2017. Discovery-first approach. Launched agentic SaaS management capabilities in 2025, including AI-powered insights and support for Model Context Protocol (MCP). Evaluated in the 2025 Gartner MQ. Particularly relevant for organisations exploring how SaaS management intersects with AI agent workflows.
+**Torii** - Founded 2017. Discovery-first approach. Launched agentic SaaS management capabilities in 2025, including AI-powered insights and support for Model Context Protocol (MCP). Evaluated in the 2025 Gartner MQ. Particularly relevant for organisations exploring how SaaS management intersects with AI agent workflows.
 
-**SAP LeanIX SaaS Management** — Successor to Cleanshelf (acquired by LeanIX in 2021, subsequently integrated into SAP ecosystem). Natural fit for organisations already operating within SAP infrastructure. Provides SaaS governance with enterprise architecture context.
+**SAP LeanIX SaaS Management** - Successor to Cleanshelf (acquired by LeanIX in 2021, subsequently integrated into SAP ecosystem). Natural fit for organisations already operating within SAP infrastructure. Provides SaaS governance with enterprise architecture context.
 
-**Productiv** — SaaS Intelligence platform, known for deep feature-level usage analytics. Useful for renewal negotiations and demonstrating actual ROI. Note: Productiv was not among the 17 vendors evaluated in the 2025 Gartner Magic Quadrant.
+**Productiv** - SaaS Intelligence platform, known for deep feature-level usage analytics. Useful for renewal negotiations and demonstrating actual ROI. Note: Productiv was not among the 17 vendors evaluated in the 2025 Gartner Magic Quadrant.
 
 **Other evaluated vendors (2025 MQ):** 1Password, Auvik, Axonius, Calero, CloudEagle.ai, Corma, Josys, Lumos, MegazoneCloud, ServiceNow, USU, Viio, Zluri.
 
@@ -220,4 +220,82 @@ When evaluating SMPs, assess against these dimensions:
 
 ### RACI between teams
 
-SaaS management is inherently cross-functional. The FinOps Foundation notes that the scope of the FinOps team's involvement depends on organisational setup and the maturity of existing ITAM/SAM teams. On one end, FinOps teams manage SaaS end-to-end. On the other, they collaborate with established ITAM/SAM, Procurement, and Finance teams
+SaaS management is inherently cross-functional. The FinOps Foundation notes that the scope of the FinOps team's involvement depends on organisational setup and the maturity of existing ITAM/SAM teams. On one end, FinOps teams manage SaaS end-to-end. On the other, they collaborate with established ITAM/SAM, Procurement, and Finance teams.
+
+A typical RACI for SaaS management:
+
+| Activity | FinOps | IT/SAM | Procurement | Finance | Security |
+|---|---|---|---|---|---|
+| Discovery and inventory | R | A | C | I | C |
+| Cost allocation | R | C | I | A | I |
+| License optimisation | R | A | C | I | I |
+| Renewal negotiation | C | C | A | R | I |
+| Security review | I | C | I | I | A |
+| Shadow IT response | C | A | I | I | R |
+| Contract management | C | I | A | C | C |
+| Budget and forecasting | R | C | C | A | I |
+
+R = Responsible, A = Accountable, C = Consulted, I = Informed. This is illustrative, not prescriptive. Organizations will differ.
+
+### Crawl / Walk / Run maturity for SAM
+
+| Indicator | Crawl | Walk | Run |
+|---|---|---|---|
+| SaaS inventory | Spreadsheet, updated quarterly | SMP with multi-source discovery | Continuous, automated, real-time |
+| Spend visibility | Partial, found during audits | 80%+ of spend tracked | 95%+ allocated to cost centres |
+| Shadow IT detection | Reactive (discovered by accident) | Periodic scans via SSO + finance | Continuous multi-signal detection |
+| License optimisation | Manual, annual | Quarterly reviews, some automation | Automated reharvesting, tier rightsizing |
+| Renewal management | Ad hoc, often missed | Centralised calendar, 60-day alerts | Data-backed review for every renewal |
+| Governance | No formal policy | Approved app catalog exists | Fast-track procurement, automated provisioning |
+| ITAM/FinOps alignment | Separate teams, no coordination | Regular collaboration meetings | Integrated practice, shared KPIs |
+
+Always assess maturity before recommending solutions. A Crawl organisation needs a basic inventory before it can meaningfully optimise licenses. Recommending an enterprise SMP to a team that has never audited its SaaS estate is premature.
+
+---
+
+## Connection to AI Transition
+
+SaaS management governance is a prerequisite for any serious AI integration strategy. The argument: if an organisation cannot answer "what SaaS tools are we running, what do they cost, and what business logic do they contain?" then it has no foundation for deciding what to replace, integrate, or retire when AI agents mature.
+
+**Why this matters now:**
+
+SaaS applications are, at their core, CRUD databases with embedded business logic. As AI agents become capable of operating across multiple systems and data sources, some of that business logic may migrate out of SaaS tools and into agent workflows. This does not mean SaaS is dead. It means SaaS without structure will not survive the era of agents.
+
+**Practical implications for the transition period:**
+
+- Organizations need full visibility into their current SaaS estate before making informed decisions about what to replace, integrate, or retire
+- SaaS inventory data becomes an input to AI strategy: which tools contain business logic that could be displaced by agents? Which are data stores that agents will need to access?
+- Torii's 2025 launch of MCP-compatible agentic capabilities signals the direction: SMPs themselves are becoming platforms for AI agent orchestration
+- Until AI agents actually displace SaaS at scale (which may take years), organisations need the ability to know their current stack, control it deliberately, and evolve it with confidence
+
+**Digital sovereignty (European context):**
+
+For European organisations, SaaS governance intersects with sovereignty concerns. Who controls the infrastructure? Where does the data live? What happens when vendor pricing, policies, or geopolitics change? These are governance questions, not technical questions, and they require the same structured approach as cost optimisation.
+
+**Environmental dimension:**
+
+Always-on SaaS services, duplicated infrastructure across overlapping tools, and unnecessary compute cycles all carry an environmental cost. SaaS rationalisation - reducing the number of tools, consolidating redundant services, eliminating shelfware - has direct sustainability benefits. Digital efficiency and sustainability are increasingly the same conversation.
+
+---
+
+## Key metrics
+
+| Metric | Description | Target |
+|---|---|---|
+| % of SaaS spend under management | Spend tracked and allocated vs. total SaaS spend | >90% |
+| Number of discovered apps | Total apps in inventory, including shadow SaaS | Baseline, then trend |
+| License utilization rate | Active users / allocated licenses | >85% |
+| Shelfware rate | Unused licenses / total licenses | <15% |
+| Renewal review coverage | Renewals reviewed before auto-renewal / total renewals | 100% for top-spend apps |
+| Shadow SaaS ratio | Unmanaged apps / total apps | Decreasing quarter over quarter |
+| Cost per employee (SaaS) | Total SaaS spend / headcount | Benchmark against industry |
+| Redundant app count | Apps with overlapping functionality | Decreasing |
+| Time to deprovision | Days between employee departure and SaaS access revocation | <1 day |
+
+---
+
+> Sources: FinOps Foundation (Licensing & SaaS capability; FinOps for SaaS scope; State of FinOps 2026),
+> Gartner MQ for SaaS Management Platforms (July 2025), Halit Oener "The SaaSocalypse"
+> (March 2026), Flexera 2025 State of Cloud Report, vendor documentation.
+
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

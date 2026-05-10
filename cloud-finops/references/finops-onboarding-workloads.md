@@ -1,9 +1,8 @@
 ---
 name: finops-onboarding-workloads
-description: Migration-time cost hygiene. Covers the intake gate that prevents new workloads from landing untagged, unallocated, and unforecast; the 60-90 day forecast-then-commit rule for fresh workloads; the double-bubble cost of running source and target in parallel; M&A integration patterns; FOCUS-during-migration logic; architecture review integration; and the migration-cost-estimate-vs-actuals trap that catches most data-centre-to-cloud projects.
-fcp_domain: "Manage the FinOps Practice"
-fcp_capability: "Onboarding Workloads"
-fcp_capabilities_secondary: ["Allocation", "Architecting for Cloud"]
+fcp_domain: "Optimize Usage & Cost"
+fcp_capability: "Architecting & Workload Placement"
+fcp_capabilities_secondary: ["Allocation", "FinOps Practice Operations", "Budgeting", "Forecasting"]
 fcp_phases: ["Inform", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Finance", "Procurement", "Leadership"]

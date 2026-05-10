@@ -11,13 +11,9 @@ fcp_maturity_entry: "Crawl"
 
 # FinOps Framework Reference
 
-> Source: FinOps Foundation (finops.org/framework). The structure documented below is the
-> 2024 framework (4 domains, 22 capabilities). The Foundation published a **2026 framework
-> update** that adds an **Executive Strategy Alignment** dimension and renames several
-> capabilities (notably **Workload Optimization → Usage Optimization**). See "2026 framework
-> update" section below for the changes; verify the authoritative current capability list
-> at https://www.finops.org/insights/2026-finops-framework/ before quoting in customer
-> engagements.
+> Source: FinOps Foundation (finops.org/framework), 2024 version.
+> This file covers the complete FinOps Framework: principles, phases, maturity model,
+> domains, capabilities, and personas.
 
 ---
 
@@ -141,106 +137,101 @@ become difficult to reverse.
 
 ---
 
-## The 4 Domains and 22 Capabilities (2024 baseline)
+## The 4 Domains and 22 Capabilities (2026 update)
 
-> The structure documented in this section is the **2024 framework baseline**. The
-> FinOps Foundation published a **2026 framework update** (Executive Strategy
-> Alignment dimension; Workload Optimization renamed to Usage Optimization;
-> capability list refreshed) - see "2026 framework update" further down for the
-> changes. In customer engagements as of 2026, use the 2026 capability names; the
-> 2024 baseline below remains useful for mapping legacy artefacts (older
-> assessments, vendor proposals, procurement decks) to current terminology.
+The FinOps Foundation refreshed the framework in 2026. Six capabilities were
+renamed to be more inclusive of non-public-cloud technology spend (SaaS,
+licensing, AI), one new capability was added (`Executive Strategy Alignment`),
+and the previous `Onboarding Workloads` capability was absorbed into
+`Architecting & Workload Placement` (intake-time decisions) and
+`FinOps Practice Operations` (the intake-gate process discipline).
 
-### Domain 1: Understand Usage and Cost
+Mapping vs the 2024 framework:
+
+| 2024 name | 2026 name | Domain |
+|---|---|---|
+| Architecting for Cloud | Architecting & Workload Placement | Optimize Usage & Cost |
+| Workload Optimization | Usage Optimization | Optimize Usage & Cost |
+| Cloud Sustainability | Sustainability | Optimize Usage & Cost |
+| Benchmarking | KPIs & Benchmarking | Quantify Business Value |
+| Policy & Governance | Governance, Policy & Risk | Manage the FinOps Practice |
+| FinOps Tools & Services | Automation, Tools & Services | Manage the FinOps Practice |
+| (none) | Executive Strategy Alignment | Manage the FinOps Practice (NEW) |
+| Onboarding Workloads | (folded - see above) | (removed) |
+
+### Domain 1: Understand Usage & Cost
 
 | Capability | Description |
 |---|---|
-| Data Ingestion | Collecting billing data from cloud providers into a central platform. FOCUS specification (v1.2 for AWS and Azure, v1.0-1.2 for other providers) enables normalised data ingestion across multiple clouds. |
-| Allocation | Distributing shared costs to cost centers, teams, or products |
-| Reporting and Analytics | Providing actionable cost and usage reports |
+| Data Ingestion | Collecting billing and usage data from cloud, SaaS, AI, and licensing providers into a central platform. FOCUS conformance (v1.2 for AWS and Azure, v1.0-1.2 for other providers) is the recommended cross-source schema. |
+| Allocation | Distributing shared costs to cost centres, teams, or products |
+| Reporting & Analytics | Providing actionable cost and usage reports across audiences (Finance, Engineering, Leadership) |
 | Anomaly Management | Detecting and responding to unexpected cost changes |
 
 ### Domain 2: Quantify Business Value
 
 | Capability | Description |
 |---|---|
-| Planning and Estimating | Forecasting cloud spend for new projects and features |
-| Budgeting | Setting and managing cloud budgets across the organization |
-| Forecasting | Predicting future cloud spend based on current trends |
-| Unit Economics | Connecting cloud cost to business output metrics |
-| Sustainability | Measuring and reducing the carbon impact of cloud usage |
+| Planning & Estimating | Forecasting cost for new projects, features, and architectural changes before deployment |
+| Forecasting | Predicting future spend based on current trends and committed business plans |
+| Budgeting | Setting and managing cost budgets across the organisation |
+| KPIs & Benchmarking | Establishing measurable cost-and-value indicators and comparing against internal trend or external benchmarks |
+| Unit Economics | Connecting cost to business output metrics (cost per tenant, per request, per business outcome) |
 
-### Domain 3: Optimize Usage and Cost
+### Domain 3: Optimize Usage & Cost
 
 | Capability | Description |
 |---|---|
-| Rightsizing | Matching resource size to actual workload requirements |
-| Commitment Discounts | Managing RIs, Savings Plans, and CUDs for sustained workloads |
-| Workload Optimization | Architectural changes that reduce cost at the workload level |
-| License Optimization | Managing software licenses (BYOL, AHUB, marketplace) |
-| Cloud Sustainability | Reducing energy and carbon footprint of cloud workloads |
+| Architecting & Workload Placement | Designing workloads and choosing where they run so cost is appropriate to value at deployment time. Covers migration-time placement decisions, intake-gate sizing, and architecture review. |
+| Usage Optimization | Architectural and operational changes that reduce cost at the workload level (rightsizing, scheduling, scale-to-zero, modernisation, idle elimination) |
+| Rate Optimization | Managing commitment discounts (RIs, Savings Plans, CUDs, Reservations) and negotiated agreements (EDP, MACC, GCP commits) |
+| Licensing & SaaS | Managing software entitlements - BYOL, marketplace, SaaS subscriptions, AI tool seats, AI inference contracts |
+| Sustainability | Measuring and reducing the energy / carbon impact of technology workloads, and connecting sustainability to cost-and-value decisions |
 
 ### Domain 4: Manage the FinOps Practice
 
 | Capability | Description |
 |---|---|
-| FinOps Practice Operations | Running the FinOps team and driving organizational adoption. This includes both reactive and intentional team building patterns - organisations often start reactively (responding to unexplained bills or unattributed spend) before transitioning to proactive practice establishment. |
-| FinOps Assessment | Measuring maturity across all capabilities |
-| FinOps Education and Enablement | Training teams to incorporate FinOps into daily work |
-| Onboarding Workflows | Managing cost implications of cloud migrations |
-| Cloud Policy and Governance | Establishing controls that align cloud use with business objectives |
-| FinOps Tools and Services | Evaluating and integrating tools to support FinOps capabilities. FOCUS exports are now offered by most major providers but **conformance levels vary** - AWS Data Exports for FOCUS 1.2 went GA on 19 November 2025; Azure Cost Management offers a FOCUS 1.2 preview with documented conformance gaps; GCP and others publish FOCUS exports at varying levels. Distinguish ratified FOCUS 1.2 conformance from preview / partial-conformance exports when planning multi-cloud normalisation. Source: https://focus.finops.org/focus-specification/ |
-| Invoicing and Chargeback | Reconciling cloud invoices and implementing financial accountability |
-| Cloud Vendor Management | Managing relationships, contracts, and commitments with cloud providers |
+| Executive Strategy Alignment | Connecting FinOps to executive decision-making across executive priority alignment, multi-year investment strategy, product prioritisation, and strategic decision support (NEW in 2026) |
+| FinOps Practice Operations | Running the FinOps team and driving organisational adoption. Covers both reactive team formation (responding to unexplained bills, unattributed spend) and intentional team formation (cloud adoption strategy, platform teams, cloud centres of excellence) |
+| Governance, Policy & Risk | Establishing controls that align technology use with business objectives and managing financial / operational / compliance risk |
+| FinOps Education & Enablement | Training teams - Engineering, Finance, Product, Procurement - to incorporate FinOps into daily work |
+| Invoicing & Chargeback | Reconciling invoices and implementing financial accountability (showback, soft chargeback, hard chargeback) |
+| FinOps Assessment | Measuring maturity across all capabilities and producing per-capability scorecards |
+| Automation, Tools & Services | Evaluating and integrating tools and automation that support FinOps capabilities. FOCUS-conformant exports are available from AWS, Azure, GCP, Oracle, Tencent, Huawei, OVHCloud, Alibaba, and Nebius. |
+| Intersecting Disciplines | Integration with adjacent operating disciplines (ITAM, ITSM, ITFM, Security, Sustainability, Procurement) |
 
----
+### Building FinOps teams: Reactive vs intentional approaches
 
-## 2026 framework update
+Organisations typically form FinOps teams through one of two patterns:
 
-The FinOps Foundation published a 2026 framework update that builds on the 2024
-structure documented above. Verify exact capability names and the full delta against
-the official page (https://www.finops.org/insights/2026-finops-framework/) before
-quoting in a customer engagement - the Foundation continues to refine the framework
-between major versions.
+**Reactive team formation** occurs when organisations respond to immediate pain points:
+- Unexplained cloud bills that shock finance teams
+- Unattributed spend that prevents accountability
+- Budget overruns that trigger executive attention
+- Failed cloud migrations due to unexpected costs
 
-**Headline changes:**
+**Intentional team formation** happens when organisations proactively establish FinOps:
+- As part of cloud adoption strategy
+- Before major digital transformation initiatives
+- When establishing platform teams or cloud centres of excellence
+- During organisational restructuring that creates new accountability models
 
-- **Executive Strategy Alignment** is added as an explicit dimension. The 2024
-  framework treated executive engagement as embedded across "Manage the FinOps
-  Practice"; the 2026 version makes strategic alignment with C-suite priorities a
-  named capability area in its own right. Practical implication: FinOps practitioners
-  reporting to CTO/CIO (78% per State of FinOps 2026) need an explicit cadence for
-  surfacing technology-spend trade-offs at the executive level.
-- **Workload Optimization → Usage Optimization.** The capability previously named
-  Workload Optimization has been renamed to **Usage Optimization**. The semantic
-  shift reframes the work from architectural rewrites of workloads to the broader
-  practice of matching consumption to demand (which includes, but is not limited
-  to, architectural change). Rightsizing, autoscaling, scheduling, and demand
-  shaping all live under Usage Optimization.
-- **Capability list refreshed.** The capability count and grouping have been
-  refined relative to the 2024 "4 domains, 22 capabilities" structure. Treat the
-  numbers in the table above as the 2024 baseline; the authoritative 2026 list is
-  on the Foundation page.
+**Transitioning from reactive to proactive:**
+1. **Stabilise the immediate crisis** - address the triggering issue first to build credibility
+2. **Document lessons learned** - use the reactive trigger as a case study for broader adoption
+3. **Establish forward-looking processes** - shift from firefighting to prevention
+4. **Build cross-functional relationships** - expand beyond the initial crisis team
+5. **Define long-term charter** - move from ad hoc responses to strategic practice
 
-**What did not change:**
+**Common triggers that drive FinOps team formation:**
+- Cloud spend exceeding 10% of IT budget
+- Failed audit findings on cloud cost controls
+- M&A activity requiring cloud estate consolidation
+- Board-level questions about cloud ROI
+- Competitive pressure to improve unit economics
 
-- The 6 principles. They remain the canonical statements of FinOps philosophy.
-- The 3 phases (Inform / Optimize / Operate) and the Crawl / Walk / Run maturity
-  model.
-- The persona model and allied-persona framing.
-
-**FinOps engagement implications:**
-
-- When using framework capabilities as the spine of a maturity assessment, use the
-  2026 capability names with customers - the 2024 names are now legacy.
-- "Workload Optimization" still appears in older customer artefacts (procurement
-  decks, vendor proposals, prior assessment reports). Treat it as equivalent to
-  Usage Optimization rather than rewriting historical documents.
-- The Executive Strategy Alignment addition is a useful prompt for engagements
-  that have plateaued at "tactical optimisation" - it reframes the work as
-  strategic, not just operational.
-
-Source: https://www.finops.org/insights/2026-finops-framework/
+Source: Holori Blog on building FinOps teams (https://holori.com/how-to-build-a-finops-team/)
 
 ---
 
@@ -316,38 +307,6 @@ beginning to include labour costs.
 from "Advancing the People who manage the Value of Cloud" to "Advancing the People who
 manage the Value of Technology."
 
-### Building FinOps teams: Reactive vs. intentional approaches
-
-Organisations typically form FinOps teams through one of two patterns:
-
-**Reactive team formation** occurs when organisations respond to immediate pain points:
-- Unexplained cloud bills that shock finance teams
-- Unattributed spend that prevents accountability
-- Budget overruns that trigger executive attention
-- Failed cloud migrations due to unexpected costs
-
-**Intentional team formation** happens when organisations proactively establish FinOps:
-- As part of cloud adoption strategy
-- Before major digital transformation initiatives
-- When establishing platform teams or cloud centres of excellence
-- During organisational restructuring that creates new accountability models
-
-**Transitioning from reactive to proactive:**
-1. **Stabilise the immediate crisis** - address the triggering issue first to build credibility
-2. **Document lessons learned** - use the reactive trigger as a case study for broader adoption
-3. **Establish forward-looking processes** - shift from firefighting to prevention
-4. **Build cross-functional relationships** - expand beyond the initial crisis team
-5. **Define long-term charter** - move from ad hoc responses to strategic practice
-
-**Common triggers that drive FinOps team formation:**
-- Cloud spend exceeding 10% of IT budget
-- Failed audit findings on cloud cost controls
-- M&A activity requiring cloud estate consolidation
-- Board-level questions about cloud ROI
-- Competitive pressure to improve unit economics
-
-Source: Holori Blog on building FinOps teams (https://holori.com/how-to-build-a-finops-team/)
-
 ---
 
 ## Maturity Model - Detailed
@@ -355,3 +314,85 @@ Source: Holori Blog on building FinOps teams (https://holori.com/how-to-build-a-
 ### Crawl
 - Processes are manual, reactive, and inconsistent
 - Basic cost visibility exists but allocation is incomplete (<50%)
+- Optimization is ad hoc - one-off projects rather than continuous practice
+- FinOps is driven by one person or team with limited organizational reach
+- Commitment discount coverage is low and unmanaged
+
+**Priority at Crawl:** Establish visibility and allocation before anything else.
+Do not attempt chargeback. Do not purchase large commitment discounts without allocation.
+
+### Walk
+- Processes are documented and repeatable
+- Cost allocation >80%, showback reports delivered to teams
+- Optimization is proactive - rightsizing and waste elimination run continuously
+- FinOps is cross-functional - engineering and finance participate regularly
+- Commitment discount coverage ~70%, managed with utilization monitoring
+
+**Priority at Walk:** Establish unit economics, expand optimization scope, begin
+governance automation. Evaluate readiness for chargeback.
+
+### Run
+- Processes are automated and self-improving
+- Cost allocation >90%, real-time visibility, anomalies auto-detected
+- Optimization is embedded in engineering workflows - not a separate activity
+- FinOps culture is distributed - teams own their costs without central policing
+- Commitment discount coverage 80%+, managed by automation with human oversight
+- Chargeback implemented where organizationally appropriate
+
+**Priority at Run:** Continuous improvement, automation of governance, agentic FinOps
+patterns where they add value without introducing risk.
+
+---
+
+## Common FinOps implementation mistakes
+
+**Starting with optimization before visibility**
+Rightsizing without allocation produces savings no one can claim or repeat. Establish
+who owns what before optimizing what.
+
+**Purchasing commitment discounts on unallocated spend**
+Committing to reserved capacity before understanding usage patterns creates stranded
+reservations. Analyze 90+ days of usage before purchasing commitments.
+
+**Implementing chargeback before showback**
+Organizations that jump to financial accountability before teams understand their costs
+create resistance, not ownership. Show first, charge second.
+
+**Building dashboards instead of processes**
+A new dashboard without a defined review cadence and decision-making process is
+documentation, not FinOps. The meeting matters as much as the data.
+
+**Treating tagging as a one-time project**
+Tagging compliance degrades over time without enforcement. Treat it as an ongoing
+operational process with automated compliance checking.
+
+**Centralizing all FinOps decisions**
+A FinOps team that owns all decisions creates a bottleneck and removes team ownership.
+The FinOps function should enable distributed decision-making, not replace it.
+
+**Building practices without community support**
+Developing FinOps practices in isolation without engaging the broader FinOps community
+misses valuable lessons learned. Leverage community resources, attend meetups, and
+participate in forums to avoid reinventing solutions.
+
+**Allowing inaccurate data to erode engineering trust**
+Engineers quickly lose faith in FinOps initiatives when cost data is wrong, incomplete,
+or misattributed. Prioritise data accuracy and validation before pushing adoption -
+one bad report can undermine months of relationship building.
+
+**Managing commitments manually**
+Spreadsheet-based commitment management becomes unmanageable at scale and leads to
+underutilisation or overcommitment. Automate commitment tracking, recommendations,
+and purchasing workflows early.
+
+**Running unproductive cost review meetings**
+Meetings that review costs without clear actions, ownership, or follow-up waste time
+and create FinOps fatigue. Structure meetings with specific agendas, action items,
+and accountability mechanisms.
+
+---
+
+> Sources: FinOps Foundation (finops.org/framework, 2024 version; State of FinOps 2026);
+> FinOps Weekly podcast on common implementation mistakes; FinOps Weekly blog on shift-left practices.
+
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*

@@ -6,7 +6,7 @@ the conversion for every supported tool. Per-tool blocks below are copy-pasteabl
 
 ## Prerequisites
 
-- `git` (for clone / fetch — only required if running the installer remotely)
+- `git` (for clone / fetch - only required if running the installer remotely)
 - `bash` 4+ (macOS / Linux / WSL)
 - For the Claude Projects zip: `python3` or `zip`
 
@@ -76,8 +76,10 @@ Claude Code projects.
 Builds `dist/claude-projects/cloud-finops.zip`. Upload via Claude.ai or Claude Desktop:
 **Settings → Skills → Upload zip**.
 
-The release workflow also attaches the same zip to every GitHub release - you can grab
-it from https://github.com/OptimNow/cloud-finops-skills/releases.
+The release workflow also attaches a version-tagged build
+(`cloud-finops-vX.Y.Z.zip`) to every GitHub release - you can grab it from
+https://github.com/OptimNow/cloud-finops-skills/releases without running the
+installer locally.
 
 ### Cursor
 
@@ -109,9 +111,27 @@ Builds two artefacts in `dist/chatgpt/`:
 - `instructions.md` - target ≤ 8000 chars; the routing logic, reasoning sequence, and
   response contract that go into the GPT's Instructions field. The installer warns if
   the file exceeds the limit.
-- `knowledge/*.md` - 20 reference files for upload to the GPT's Knowledge section. The
-  21st reference (`optimnow-methodology.md`) is **merged into `finops-for-ai.md`** to
-  fit ChatGPT's 20-file cap; the methodology lens stays available via that file.
+- `knowledge/*.md` - **42 files** in the default per-reference build:
+  - 27 reference files (one per domain; `optimnow-methodology.md` is **merged into
+    `finops-for-ai.md`**)
+  - 15 playbook files prefixed `playbook-<slug>.md` so they sort together in the
+    GPT Knowledge UI
+  - The instructions routing contract points named waste patterns
+    (zombie NAT, snapshot sprawl, etc.) at `playbook-<slug>.md` and other queries at
+    the matching reference filename
+
+ChatGPT historically capped Custom GPT Knowledge at 20 files. If your upload is
+rejected, re-run the installer with the grouped flag:
+
+```bash
+./install.sh --tool chatgpt --grouped
+```
+
+The grouped build still writes to `dist/chatgpt/` (so all the upload steps below still
+apply) but emits a **10-file thematic bundle** (aws, azure, gcp, ai, data-platforms,
+oci, cross-cutting, finops-discipline, playbooks, methodology) with a separate routing
+contract that points at the grouped filenames. Same content, fewer files, easier
+upload.
 
 Then manually:
 
@@ -119,6 +139,10 @@ Then manually:
 2. Paste `dist/chatgpt/instructions.md` into the Instructions field
 3. Upload all files from `dist/chatgpt/knowledge/` to the Knowledge section
 4. Set name (`Cloud FinOps`), category, visibility per preference
+
+**Public Custom GPT on the Roadmap.** A maintained public Cloud FinOps GPT is tracked
+in the `Roadmap > In-flight` section of `CLAUDE.md`; until it ships, the self-host
+path above is the supported install.
 
 **Trade-off:** ChatGPT's 8K Instructions limit means routing + response contract live
 inline, but the reference content is RAG-retrieved from Knowledge files. Compared to
@@ -131,11 +155,18 @@ retrieves chunks rather than loading the full skill into context.
 ./install.sh --tool gemini
 ```
 
-Builds `dist/gemini/instructions.md` (same content as ChatGPT) and
-`dist/gemini/knowledge/*.md` - references **grouped by domain** (aws, azure, gcp, ai,
-data-platforms, oci, cross-cutting, methodology) to fit Gemini Gems' tighter file cap.
+Builds `dist/gemini/instructions.md` (a routing contract that points at the grouped
+filenames) and `dist/gemini/knowledge/*.md` - **10 files** grouped by domain: aws,
+azure, gcp, ai, data-platforms, oci, cross-cutting, finops-discipline, playbooks,
+methodology. The `playbooks.md` bundle concatenates all named-pattern runbooks; the
+instructions routing tells the model to look up the matching `## playbook: <slug>`
+section inside it.
 
 Manual upload at https://gemini.google.com/gems/. Same trade-off as ChatGPT applies.
+
+**Public Gemini Gem on the Roadmap.** A maintained public Cloud FinOps Gem is
+tracked in the `Roadmap > In-flight` section of `CLAUDE.md`; until it ships, the
+self-host path above is the supported install.
 
 ### Gemini CLI
 
@@ -290,19 +321,33 @@ import os
 
 def load_cloud_finops_skill(skill_dir: str) -> str:
     skill_md = open(f"{skill_dir}/SKILL.md").read()
-    references = []
+    sections = []
+
+    # References (long-form provider / capability files)
     ref_dir = f"{skill_dir}/references"
     for filename in sorted(os.listdir(ref_dir)):
         if filename.endswith(".md"):
             content = open(f"{ref_dir}/{filename}").read()
-            references.append(f"## {filename}\n\n{content}")
-    return skill_md + "\n\n---\n\n" + "\n\n---\n\n".join(references)
+            sections.append(f"## references/{filename}\n\n{content}")
+
+    # Playbooks (named-pattern runbooks - SKILL.md routes named waste
+    # patterns to playbooks/<slug>.md, so they must be loaded too)
+    pb_dir = f"{skill_dir}/playbooks"
+    if os.path.isdir(pb_dir):
+        for filename in sorted(os.listdir(pb_dir)):
+            if filename.endswith(".md") and filename != "README.md":
+                content = open(f"{pb_dir}/{filename}").read()
+                sections.append(f"## playbooks/{filename}\n\n{content}")
+
+    return skill_md + "\n\n---\n\n" + "\n\n---\n\n".join(sections)
 
 system_prompt = load_cloud_finops_skill("./cloud-finops")
 ```
 
 For token efficiency, load only the references relevant to your use case. For most
 single-domain queries, one reference file plus `optimnow-methodology.md` is sufficient.
+The playbooks layer is small (~3 KB each) so loading the full set is usually cheap;
+drop it only if your token budget is very tight.
 
 ### Recommended response contract
 
@@ -375,9 +420,11 @@ already covers the major FinOps query types.
 the limit. If it does, manually trim the routing table to only the providers you care
 about, or upload the trimmed routing as a knowledge file and keep instructions minimal.
 
-**ChatGPT only allows 20 knowledge files:** the installer merges `optimnow-methodology.md`
-into `finops-for-ai.md` to fit. If you have other custom knowledge files you want to
-keep, drop one of the references manually instead.
+**ChatGPT rejects the knowledge upload (file count):** the default build produces 42
+knowledge files (27 references + 15 playbooks; methodology merged into
+`finops-for-ai.md`). If ChatGPT enforces a lower cap, re-run with the grouped flag:
+`./install.sh --tool chatgpt --grouped`. The grouped build packs the same content into
+10 thematic files in `dist/chatgpt/` and emits a matching routing contract.
 
 **Token budget exceeded on system-prompt injection:** load only the domain references
 relevant to your query. For most use cases, `SKILL.md` + 1-2 references is enough.

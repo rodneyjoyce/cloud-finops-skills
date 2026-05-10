@@ -1,0 +1,115 @@
+name: Auto-tag and release on plugin.json bump
+
+# When a push to main changes .claude-plugin/plugin.json, read the version
+# field, create a matching v<version> tag (if one does not already exist),
+# build the cloud-finops-v<version>.zip artefact, and create the GitHub
+# Release with the zip attached.
+#
+# Why we don't just push the tag and let release.yml fire:
+# GitHub blocks workflows triggered by GITHUB_TOKEN events to prevent
+# recursive loops. When this workflow pushes the tag, release.yml's
+# `push: tags` trigger is silently ignored, so the release would never
+# be created. Building the release here keeps the chain in one job.
+# release.yml still exists as a fallback for tags pushed manually
+# (gh release create / git push v1.x.y from a developer machine).
+#
+# This closes the failure mode the cloud-finops-skills repo hit between
+# v1.12 and v1.20.0: the plugin.json version was bumped through several PRs
+# (1.13, 1.14, ..., 1.19) without anyone manually tagging, so release.yml
+# never fired and the latest release zip drifted weeks behind main.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.claude-plugin/plugin.json'
+
+permissions:
+  contents: write   # required to push the new tag and create the release
+
+jobs:
+  tag-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # need full history so `git tag` sees existing tags
+
+      - name: Read version from plugin.json
+        id: read_version
+        run: |
+          set -euo pipefail
+          version=$(jq -r '.version' .claude-plugin/plugin.json)
+          if [[ -z "$version" || "$version" == "null" ]]; then
+            echo "::error::plugin.json has no .version field"
+            exit 1
+          fi
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::plugin.json .version=$version is not semver-like (X.Y.Z)"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if tag already exists
+        id: check_tag
+        run: |
+          set -euo pipefail
+          tag="${{ steps.read_version.outputs.tag }}"
+          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists, nothing to do."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag $tag does not exist yet."
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create and push tag
+        if: steps.check_tag.outputs.skip == 'false'
+        run: |
+          set -euo pipefail
+          tag="${{ steps.read_version.outputs.tag }}"
+          version="${{ steps.read_version.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Single-line tag message; the user-facing release notes are
+          # auto-populated below by softprops/action-gh-release.
+          git tag -a "$tag" -m "Auto-tagged from .claude-plugin/plugin.json bump to $version"
+
+          git push origin "$tag"
+          echo "Pushed tag $tag"
+
+      - name: Build cloud-finops-${tag}.zip
+        if: steps.check_tag.outputs.skip == 'false'
+        id: build_zip
+        run: |
+          set -euo pipefail
+          tag="${{ steps.read_version.outputs.tag }}"
+          ZIP_NAME="cloud-finops-${tag}.zip"
+          # Same exclusions as release.yml so the artefact is identical
+          # whether it comes from auto-tag or from a manual tag push.
+          zip -r "${ZIP_NAME}" cloud-finops \
+            -x 'cloud-finops/.claude/*' \
+            -x 'cloud-finops/**/.backups/*' \
+            -x 'cloud-finops/.git/*'
+          ls -lh "${ZIP_NAME}"
+          unzip -l "${ZIP_NAME}" | head -5
+          echo "zip_name=${ZIP_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release with zip attached
+        if: steps.check_tag.outputs.skip == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.read_version.outputs.tag }}
+          tag_name: ${{ steps.read_version.outputs.tag }}
+          files: ${{ steps.build_zip.outputs.zip_name }}
+          generate_release_notes: true
+          body: |
+            ## Cloud FinOps Skill ${{ steps.read_version.outputs.tag }}
+
+            The attached `cloud-finops-${{ steps.read_version.outputs.tag }}.zip` is the skill bundle for upload into Claude Desktop / claude.ai (Settings -> Skills -> Upload).
+
+            For Claude Code users (and 10 other tools), see [INSTALLATION.md](https://github.com/OptimNow/cloud-finops-skills/blob/main/INSTALLATION.md) for the cross-tool installer and the model-agnostic response contract.

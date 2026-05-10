@@ -1,8 +1,8 @@
 ---
 name: finops-anomaly-management
-description: Cost anomaly management as a standalone Inform-phase capability. Covers AWS / Azure / GCP native tooling, threshold philosophy, the layered-detection pattern that catches masked anomalies, integration with Security, and Crawl/Walk/Run maturity progression.
 fcp_domain: "Understand Usage & Cost"
 fcp_capability: "Anomaly Management"
+fcp_capabilities_secondary: ["Budgeting"]
 fcp_phases: ["Inform", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner"]
 fcp_personas_collaborating: ["Engineering", "Finance", "Security"]

@@ -1,7 +1,7 @@
 ---
 name: finops-anthropic
 fcp_domain: "Optimize Usage & Cost"
-fcp_capability: "Workload Optimization"
+fcp_capability: "Usage Optimization"
 fcp_phases: ["Optimize"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
 fcp_personas_collaborating: ["Product", "Finance"]
@@ -282,8 +282,6 @@ The same pricing pattern is emerging across providers (OpenAI priority/flex tier
 batch discounts, managed services). The governance posture built for Anthropic - tier
 detection, anomaly detection, cost allocation by feature/team/environment, guardrails
 for premium modes and managed services - is reusable across the GenAI vendor landscape.
-
----
 
 ---
 

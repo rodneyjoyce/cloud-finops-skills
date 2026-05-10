@@ -1,7 +1,7 @@
 ---
 name: finops-databricks
 fcp_domain: "Optimize Usage & Cost"
-fcp_capability: "Workload Optimization"
+fcp_capability: "Usage Optimization"
 fcp_capabilities_secondary: ["Rate Optimization", "Allocation"]
 fcp_phases: ["Optimize", "Operate"]
 fcp_personas_primary: ["FinOps Practitioner", "Engineering"]
@@ -135,7 +135,7 @@ provisioned-throughput sizing for ones consistently below 50% utilisation.
 **Inefficient Query Design In Databricks Sql And Spark Jobs**
 Service: Databricks SQL | Type: Inefficient Configuration
 
-Many Spark and SQL workloads in Databricks suffer from micro-optimization issues  - such as unfiltered joins, unnecessary shuffles, missing broadcast joins, and repeated scans of uncached data. These problems increase compute time and resource utilization, especially in exploratory or development environments.
+Many Spark and SQL workloads in Databricks suffer from micro-optimization issues - such as unfiltered joins, unnecessary shuffles, missing broadcast joins, and repeated scans of uncached data. These problems increase compute time and resource utilization, especially in exploratory or development environments.
 
 - Enable Adaptive Query Execution to improve join strategies and reduce shuffle
 - Use broadcast joins for small lookup tables where applicable
@@ -180,7 +180,7 @@ Autoscaling is a core mechanism for aligning compute supply with workload demand
 **Underuse Of Serverless For Short Or Interactive Workloads**
 Service: Databricks SQL | Type: Inefficient Configuration
 
-Many organizations continue running short-lived or low-intensity SQL workloads  - such as dashboards, exploratory queries, and BI tool integrations  - on traditional clusters. This leads to idle compute, overprovisioning, and high baseline costs, especially when the clusters are always-on.
+Many organizations continue running short-lived or low-intensity SQL workloads - such as dashboards, exploratory queries, and BI tool integrations - on traditional clusters. This leads to idle compute, overprovisioning, and high baseline costs, especially when the clusters are always-on.
 
 - Migrate lightweight SQL workloads and dashboards to Databricks SQL Serverless
 - Enable serverless for high-concurrency, low-compute scenarios where persistent compute isn’t needed
@@ -189,7 +189,7 @@ Many organizations continue running short-lived or low-intensity SQL workloads  
 **Inefficient Bi Queries Driving Excessive Compute Usage**
 Service: Interactive Clusters | Type: Inefficient Query Patterns
 
-Business Intelligence dashboards and ad-hoc analyst queries frequently drive Databricks compute usage  - especially when: * Dashboards are auto-refreshed too frequently * Queries scan full datasets instead of leveraging filtered views or materialized tables * Inefficient joins or large broadcast operations are used * Redundant or exploratory queries are triggered during interactive exploration This often results in clusters staying active for longer than necessary, or being autoscaled up to handle inefficient workloads, leading to unnecessary DBU consumption.
+Business Intelligence dashboards and ad-hoc analyst queries frequently drive Databricks compute usage - especially when: * Dashboards are auto-refreshed too frequently * Queries scan full datasets instead of leveraging filtered views or materialized tables * Inefficient joins or large broadcast operations are used * Redundant or exploratory queries are triggered during interactive exploration This often results in clusters staying active for longer than necessary, or being autoscaled up to handle inefficient workloads, leading to unnecessary DBU consumption.
 
 - Refactor BI queries to limit scan scope and reduce complexity
 - Materialize frequently used intermediate results into temp or Delta tables
@@ -287,7 +287,7 @@ In many Databricks environments, large Delta tables are created without enabling
 **Inefficient Use Of Job Clusters In Databricks Workflows**
 Service: Databricks Workflows | Type: Suboptimal Cluster Configuration
 
-When multiple tasks within a workflow are executed on separate job clusters  - despite having similar compute requirements  - organizations incur unnecessary overhead. Each cluster must initialize independently, adding latency and cost.
+When multiple tasks within a workflow are executed on separate job clusters - despite having similar compute requirements - organizations incur unnecessary overhead. Each cluster must initialize independently, adding latency and cost.
 
 - Configure a shared job cluster to run multiple tasks within the same workflow when compute requirements are similar
 - Leverage cluster reuse settings to reduce start-up overhead and improve efficiency
@@ -296,7 +296,7 @@ When multiple tasks within a workflow are executed on separate job clusters  - d
 **Lack Of Functional Cost Attribution In Databricks Workloads**
 Service: Databricks | Type: Visibility Gap
 
-Databricks cost optimization begins with visibility. Unlike traditional IaaS services, Databricks operates as an orchestration layer spanning compute, storage, and execution  - but its billing data often lacks granularity by workload, job, or team.
+Databricks cost optimization begins with visibility. Unlike traditional IaaS services, Databricks operates as an orchestration layer spanning compute, storage, and execution - but its billing data often lacks granularity by workload, job, or team.
 
 - Orchestration (DBUs): Analyze query/job-level execution and optimize workload design
 - Compute: Review underlying VM types and cost models (e.g., Spot, RI, Savings Plans)
@@ -451,4 +451,4 @@ practitioner conversation on data-platform allocation (Databricks + Fabric).
 
 ---
 
-> *Cloud FinOps Skill by [OptimNow](https://optimnow.io)  - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
+> *Cloud FinOps Skill by [OptimNow](https://optimnow.io) - licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).*
