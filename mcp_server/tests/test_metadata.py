@@ -38,3 +38,41 @@ def test_description_is_non_empty_for_every_reference() -> None:
 
 def test_lookup_unknown_returns_none() -> None:
     assert metadata.get_by_name("nope-not-here") is None
+
+
+# --- playbook index ---------------------------------------------------------
+
+
+def test_playbook_index_returns_15() -> None:
+    playbooks = metadata.get_playbook_index()
+    assert len(playbooks) == 15
+
+
+def test_playbook_index_excludes_readme() -> None:
+    names = {p.name for p in metadata.get_playbook_index()}
+    assert "README" not in names
+    assert "readme" not in names
+
+
+def test_playbook_index_is_sorted_by_name() -> None:
+    names = [p.name for p in metadata.get_playbook_index()]
+    assert names == sorted(names)
+
+
+def test_known_playbook_has_expected_fields() -> None:
+    """aws-zombie-nat-gateway is a stable anchor."""
+    pb = metadata.get_playbook_by_name("aws-zombie-nat-gateway")
+    assert pb is not None
+    assert pb.scope == "aws"
+    assert pb.waste_category == "idle"
+    assert pb.confidence == "obvious"
+    assert "NAT Gateway" in pb.title
+
+
+def test_every_playbook_has_a_title() -> None:
+    for pb in metadata.get_playbook_index():
+        assert pb.title, f"{pb.name} has no title"
+
+
+def test_lookup_unknown_playbook_returns_none() -> None:
+    assert metadata.get_playbook_by_name("nope-not-here") is None

@@ -41,7 +41,14 @@ async def test_e2e_lists_tools(server_params: StdioServerParameters) -> None:
             await session.initialize()
             result = await session.list_tools()
             tool_names = {t.name for t in result.tools}
-            assert {"list_references", "get_reference", "find_references"}.issubset(tool_names)
+            assert {
+                "list_references",
+                "get_reference",
+                "find_references",
+                "list_playbooks",
+                "get_playbook",
+                "find_playbooks",
+            }.issubset(tool_names)
 
 
 @pytest.mark.asyncio
@@ -77,6 +84,44 @@ async def test_e2e_find_references(server_params: StdioServerParameters) -> None
             assert payload["total"] >= 1
             for ref in payload["references"]:
                 assert "Optimize" in ref["fcp_phases"]
+
+
+@pytest.mark.asyncio
+async def test_e2e_list_playbooks(server_params: StdioServerParameters) -> None:
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            result = await session.call_tool("list_playbooks", {})
+            payload = _payload(result)
+            assert payload["total"] == 15
+
+
+@pytest.mark.asyncio
+async def test_e2e_get_playbook(server_params: StdioServerParameters) -> None:
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            result = await session.call_tool(
+                "get_playbook", {"name": "aws-zombie-nat-gateway"}
+            )
+            payload = _payload(result)
+            assert payload["name"] == "aws-zombie-nat-gateway"
+            assert "## Detection" in payload["content"]
+
+
+@pytest.mark.asyncio
+async def test_e2e_find_playbooks(server_params: StdioServerParameters) -> None:
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            result = await session.call_tool(
+                "find_playbooks", {"scope": "aws", "waste_category": "idle"}
+            )
+            payload = _payload(result)
+            assert payload["total"] >= 1
+            for pb in payload["playbooks"]:
+                assert pb["scope"] == "aws"
+                assert pb["waste_category"] == "idle"
 
 
 def _payload(result) -> dict:

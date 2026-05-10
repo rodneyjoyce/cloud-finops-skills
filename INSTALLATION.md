@@ -229,8 +229,8 @@ entry point.
 
 The `mcp` target prints install hint + per-client config snippets. It does not run
 `pip` for you. The MCP server is a separate Python package (`cloud-finops-mcp`) that
-exposes the 28 references as queryable tools - useful for agents that need search-style
-retrieval rather than full-context injection.
+exposes the 28 references and 15 named-pattern playbooks as queryable tools - useful
+for agents that need search-style retrieval rather than full-context injection.
 
 **Install the server:**
 
@@ -240,12 +240,24 @@ pip install cloud-finops-mcp
 uvx cloud-finops-mcp
 ```
 
-**Three tools (all read-only):**
+**Six tools (all read-only), split across two surfaces:**
+
+References (long-form provider/discipline files):
 
 - `list_references()` - 28 references with their FCP metadata
 - `get_reference(name)` - full markdown body of one reference
 - `find_references(domain?, capability?, phase?, persona?, maturity?)` - faceted query
   over the FinOps Capability/Phase frontmatter
+
+Playbooks (small named-pattern runbooks):
+
+- `list_playbooks()` - 15 playbooks with scope / service / waste-category metadata
+- `get_playbook(name)` - full markdown body of one playbook
+- `find_playbooks(scope?, service?, waste_category?, confidence?)` - faceted query
+
+Use a playbook for *"how do I detect/fix this specific pattern?"* (zombie NAT, snapshot
+sprawl, idle ELB). Use a reference for billing mechanics, commitment strategy,
+allocation methodology, or any cross-pattern reasoning.
 
 **Configure your client** by adding the appropriate snippet to its MCP config file:
 

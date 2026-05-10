@@ -1,17 +1,19 @@
 # cloud-finops-mcp
 
 MCP server exposing the [OptimNow Cloud FinOps skill](https://github.com/OptimNow/cloud-finops-skills)
-(28 references) as queryable tools for any MCP-aware client (Claude Code, Cursor,
-Codex CLI, Windsurf, Aider, Cline, etc.).
+(28 reference files + 15 named-pattern playbooks) as queryable tools for any
+MCP-aware client (Claude Code, Cursor, Codex CLI, Windsurf, Aider, Cline, etc.).
 
 The skill itself ships in canonical Claude Agent-Skills format and is also installable
 via the cross-tool installer (`./install.sh`) for direct context injection. This MCP
-server is the **enrichment path**: instead of loading the full 28-file skill into the
+server is the **enrichment path**: instead of loading the full skill into the
 prompt, the agent calls tools to discover, filter, and fetch only what it needs.
 
 ## What the server exposes
 
-Three tools, all read-only:
+Six tools, all read-only, split across two surfaces.
+
+**References** — long-form provider and discipline files (~300-500 lines each):
 
 | Tool | Purpose |
 |---|---|
@@ -19,7 +21,7 @@ Three tools, all read-only:
 | `get_reference(name)` | Fetch the full markdown body of one reference. |
 | `find_references(domain?, capability?, phase?, persona?, maturity?)` | Faceted query over the FinOps Capability/Phase frontmatter. |
 
-The faceted query supports any combination of:
+The reference faceted query supports any combination of:
 
 - `domain` - FinOps Framework domain (e.g. `Optimize Usage & Cost`, `Quantify Business Value`)
 - `capability` - FinOps capability (matches both primary and secondary)
@@ -27,7 +29,32 @@ The faceted query supports any combination of:
 - `persona` - matches both primary and collaborating personas
 - `maturity` - `Crawl`, `Walk`, `Run`
 
-All filters AND together. String matches are case-insensitive and exact.
+**Playbooks** — small named-pattern runbooks (~80-130 lines each):
+
+| Tool | Purpose |
+|---|---|
+| `list_playbooks()` | List all 15 named-pattern playbooks with their metadata. |
+| `get_playbook(name)` | Fetch the full markdown body of one playbook. |
+| `find_playbooks(scope?, service?, waste_category?, confidence?)` | Faceted query over the playbook frontmatter. |
+
+The playbook faceted query supports:
+
+- `scope` - `aws`, `azure`, `gcp`, or `cross-cloud`
+- `service` - provider service (e.g. `AWS NAT Gateway`); exact-match
+- `waste_category` - `orphaned`, `idle`, `overprovisioned`, `commitment-mismatch`,
+  `schedule-blindness`, `modernization`, `ai-ml-inefficiency`, `egress`
+- `confidence` - `obvious`, `likely`, `possible` (OptimNow three-tier model)
+
+All filters across both surfaces AND together. String matches are case-insensitive
+and exact (no substring matching).
+
+**When to use which surface:**
+
+- A **playbook** answers *"how do I detect/fix this specific pattern?"* (zombie NAT,
+  snapshot sprawl, idle ELB). It includes problem statement, symptoms, a detection
+  query (CUR / KQL / BigQuery SQL / CLI), fix steps, and the anti-pattern.
+- A **reference** answers anything broader: billing mechanics, commitment strategy,
+  allocation methodology, persona-specific framings, or cross-pattern reasoning.
 
 ## Install
 
@@ -116,6 +143,16 @@ Agent prompt: *"Pull the AWS reference."*
 
 Calls `get_reference(name="finops-aws")` and gets back the full markdown body
 (~300 lines) instead of the entire 28-file knowledge base.
+
+Agent prompt: *"Show me the obvious-confidence AWS waste playbooks."*
+
+Calls `find_playbooks(scope="aws", confidence="obvious")` and gets back the list
+of high-signal AWS patterns (zombie NAT gateway, orphaned EBS volumes, etc.).
+
+Agent prompt: *"Walk me through the zombie NAT gateway pattern."*
+
+Calls `get_playbook(name="aws-zombie-nat-gateway")` and gets back the ~90-line
+runbook (problem, symptoms, detection query, fix, anti-pattern, see-also).
 
 ## When to use this vs the installer
 

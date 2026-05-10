@@ -16,22 +16,27 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = Path(__file__).resolve().parents[1] / "src" / "cloud_finops_mcp" / "data"
-SOURCE_DIR = REPO_ROOT / "cloud-finops" / "references"
+PLAYBOOKS_DIR = DATA_DIR / "playbooks"
+REFERENCES_SOURCE = REPO_ROOT / "cloud-finops" / "references"
+PLAYBOOKS_SOURCE = REPO_ROOT / "cloud-finops" / "playbooks"
 
 
-def _ensure_data() -> None:
-    if any(DATA_DIR.glob("*.md")):
+def _ensure_dir(dest: Path, source: Path, *, skip: set[str]) -> None:
+    if any(dest.glob("*.md")):
         return
-    if not SOURCE_DIR.is_dir():
-        pytest.skip(f"reference source missing at {SOURCE_DIR}")
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    for src in SOURCE_DIR.glob("*.md"):
-        shutil.copy2(src, DATA_DIR / src.name)
+    if not source.is_dir():
+        pytest.skip(f"source missing at {source}")
+    dest.mkdir(parents=True, exist_ok=True)
+    for src in source.glob("*.md"):
+        if src.name in skip:
+            continue
+        shutil.copy2(src, dest / src.name)
 
 
 @pytest.fixture(autouse=True, scope="session")
 def _populate_data() -> None:
-    _ensure_data()
+    _ensure_dir(DATA_DIR, REFERENCES_SOURCE, skip=set())
+    _ensure_dir(PLAYBOOKS_DIR, PLAYBOOKS_SOURCE, skip={"README.md"})
     # Ensure a fresh import picks up data/ — important when the tree was
     # populated mid-session.
     sys.modules.pop("cloud_finops_mcp.metadata", None)

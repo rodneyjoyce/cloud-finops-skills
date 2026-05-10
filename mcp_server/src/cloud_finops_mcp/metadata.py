@@ -1,7 +1,11 @@
-"""Reference-file index built from FCP frontmatter.
+"""Reference + playbook indexes built from YAML frontmatter.
 
-Walks the bundled ``data/`` directory at startup, parses YAML frontmatter from
-each ``.md`` file, and builds an in-memory index used by the tool surfaces.
+Walks the bundled ``data/`` directory at startup, parses frontmatter from each
+``.md`` file, and builds two in-memory indexes used by the tool surfaces:
+
+- references (FCP frontmatter: domain, capability, phases, personas, maturity)
+- playbooks  (named-pattern frontmatter: scope, service, waste_category,
+  confidence)
 """
 
 from __future__ import annotations
@@ -13,6 +17,7 @@ from pathlib import Path
 import yaml
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
+PLAYBOOKS_DIR = DATA_DIR / "playbooks"
 
 # FCP fields we expose. Anything not listed here is ignored by the index.
 FCP_SCALAR_FIELDS = (
@@ -151,6 +156,91 @@ def get_by_name(name: str) -> Reference | None:
     return None
 
 
+# --- playbooks --------------------------------------------------------------
+
+
+@dataclass
+class Playbook:
+    """One indexed named-pattern playbook.
+
+    Playbooks live in ``cloud-finops/playbooks/`` and follow a different
+    frontmatter schema from references: a single waste-pattern slug plus
+    ``scope``, ``service``, ``waste_category``, and ``confidence``.
+    """
+
+    name: str
+    path: Path
+    title: str
+    scope: str | None = None
+    service: str | None = None
+    waste_category: str | None = None
+    confidence: str | None = None
+    lines: int = 0
+
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "title": self.title,
+            "scope": self.scope,
+            "service": self.service,
+            "waste_category": self.waste_category,
+            "confidence": self.confidence,
+            "lines": self.lines,
+        }
+
+
+def _extract_title(body: str, fallback: str) -> str:
+    """Pull the first ``#`` heading as the human-readable title."""
+    for line in body.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("# "):
+            return stripped.lstrip("# ").strip()
+    return fallback
+
+
+def _parse_playbook(path: Path) -> Playbook:
+    text = path.read_text(encoding="utf-8")
+    fm, body = _split_frontmatter(text)
+
+    name = str(fm.get("name") or path.stem)
+    title = _extract_title(body, fallback=name)
+    lines = text.count("\n") + (0 if text.endswith("\n") else 1)
+
+    def _scalar(key: str) -> str | None:
+        value = fm.get(key)
+        return value if isinstance(value, str) else None
+
+    return Playbook(
+        name=name,
+        path=path,
+        title=title,
+        scope=_scalar("scope"),
+        service=_scalar("service"),
+        waste_category=_scalar("waste_category"),
+        confidence=_scalar("confidence"),
+        lines=lines,
+    )
+
+
+@lru_cache(maxsize=1)
+def get_playbook_index() -> list[Playbook]:
+    """Return the full index of bundled playbooks, sorted by name."""
+    if not PLAYBOOKS_DIR.exists():
+        return []
+    playbooks = [_parse_playbook(p) for p in PLAYBOOKS_DIR.glob("*.md")]
+    playbooks.sort(key=lambda p: p.name)
+    return playbooks
+
+
+def get_playbook_by_name(name: str) -> Playbook | None:
+    """Look up a playbook by its slug (frontmatter ``name`` or filename stem)."""
+    for pb in get_playbook_index():
+        if pb.name == name:
+            return pb
+    return None
+
+
 def reset_cache() -> None:
-    """Test hook: drop the cached index so the next call rebuilds it."""
+    """Test hook: drop both cached indexes so the next call rebuilds them."""
     get_index.cache_clear()
+    get_playbook_index.cache_clear()

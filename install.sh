@@ -742,8 +742,11 @@ install_mcp() {
   # Print install hint + per-client config snippets. We intentionally do NOT
   # run pip from a shell installer.
   printf "${C_BOLD}Cloud FinOps MCP server${C_RESET}\n"
-  dim "  Adds three queryable tools (list_references, get_reference, find_references)"
-  dim "  to any MCP-aware client. Faceted filtering by FinOps Capability/Phase metadata."
+  dim "  Adds six queryable tools across two surfaces:"
+  dim "    references: list_references / get_reference / find_references"
+  dim "                (faceted by FinOps Capability/Phase frontmatter)"
+  dim "    playbooks:  list_playbooks / get_playbook / find_playbooks"
+  dim "                (faceted by scope / service / waste_category / confidence)"
   printf "\n"
   ok "Step 1 - install the server (Python 3.10+):"
   printf "    pip install cloud-finops-mcp\n"

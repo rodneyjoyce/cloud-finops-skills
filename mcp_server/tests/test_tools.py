@@ -101,3 +101,91 @@ def test_find_no_match_returns_empty() -> None:
 def test_find_filters_echo_input() -> None:
     result = tools.find_references(phase="Optimize", persona="Engineering")
     assert result["filters"] == {"phase": "Optimize", "persona": "Engineering"}
+
+
+# --- list_playbooks ---------------------------------------------------------
+
+
+def test_list_playbooks_returns_15() -> None:
+    result = tools.list_playbooks()
+    assert result["total"] == 15
+    assert len(result["playbooks"]) == 15
+    sample = result["playbooks"][0]
+    assert {"name", "title", "scope", "waste_category", "confidence", "lines"}.issubset(sample)
+
+
+# --- get_playbook -----------------------------------------------------------
+
+
+def test_get_playbook_returns_full_content() -> None:
+    result = tools.get_playbook("aws-zombie-nat-gateway")
+    assert result["name"] == "aws-zombie-nat-gateway"
+    assert "NAT Gateway" in result["title"]
+    assert "## Detection" in result["content"]
+
+
+def test_get_playbook_unknown_returns_suggestions() -> None:
+    result = tools.get_playbook("aws-zombie-nat")  # truncated
+    assert "error" in result
+    assert "aws-zombie-nat-gateway" in result["suggestions"]
+
+
+def test_get_playbook_empty_name_rejects() -> None:
+    result = tools.get_playbook("")
+    assert "error" in result
+    assert result["suggestions"] == []
+
+
+# --- find_playbooks ---------------------------------------------------------
+
+
+def test_find_playbooks_no_filters_returns_everything() -> None:
+    result = tools.find_playbooks()
+    assert result["total"] == 15
+    assert result["filters"] == {}
+
+
+def test_find_playbooks_by_scope() -> None:
+    result = tools.find_playbooks(scope="aws")
+    names = {p["name"] for p in result["playbooks"]}
+    assert "aws-zombie-nat-gateway" in names
+    for pb in result["playbooks"]:
+        assert pb["scope"] == "aws"
+
+
+def test_find_playbooks_case_insensitive() -> None:
+    a = tools.find_playbooks(scope="AWS")
+    b = tools.find_playbooks(scope="aws")
+    assert a["total"] == b["total"]
+
+
+def test_find_playbooks_by_waste_category() -> None:
+    result = tools.find_playbooks(waste_category="idle")
+    assert result["total"] >= 1
+    for pb in result["playbooks"]:
+        assert pb["waste_category"] == "idle"
+
+
+def test_find_playbooks_by_confidence() -> None:
+    result = tools.find_playbooks(confidence="obvious")
+    assert result["total"] >= 1
+    for pb in result["playbooks"]:
+        assert pb["confidence"] == "obvious"
+
+
+def test_find_playbooks_and_semantics_intersect() -> None:
+    aws_pbs = {p["name"] for p in tools.find_playbooks(scope="aws")["playbooks"]}
+    idle_pbs = {p["name"] for p in tools.find_playbooks(waste_category="idle")["playbooks"]}
+    both = {p["name"] for p in tools.find_playbooks(scope="aws", waste_category="idle")["playbooks"]}
+    assert both == aws_pbs & idle_pbs
+
+
+def test_find_playbooks_no_match_returns_empty() -> None:
+    result = tools.find_playbooks(scope="not-a-scope")
+    assert result["total"] == 0
+    assert result["playbooks"] == []
+
+
+def test_find_playbooks_filters_echo_input() -> None:
+    result = tools.find_playbooks(scope="aws", waste_category="idle")
+    assert result["filters"] == {"scope": "aws", "waste_category": "idle"}
